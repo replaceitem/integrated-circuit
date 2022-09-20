@@ -154,6 +154,6 @@ public class ComparatorComponent extends AbstractRedstoneGateComponent {
 
     @Override
     public boolean isSolidBlock(Circuit circuit, ComponentPos pos) {
-        return true;
+        return false;
     }
 }
