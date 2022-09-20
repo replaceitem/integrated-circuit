@@ -1,0 +1,37 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:copy_name",
+              "source": "block_entity"
+            },
+            {
+              "function": "minecraft:copy_nbt",
+              "ops": [
+                {
+                  "op": "replace",
+                  "source": "WHAT",
+                  "target": "BlockEntityTag.WHAT"
+                }
+              ],
+              "source": "block_entity"
+            }
+          ],
+          "name": "integrated_circuit:integrated_circuit"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ]
+}

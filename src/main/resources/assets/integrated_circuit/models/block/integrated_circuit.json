@@ -1,0 +1,38 @@
+{
+	"credit": "Made with Blockbench",
+	"ambientocclusion": false,
+	"textures": {
+		"base": "block/smooth_stone",
+		"box": "integrated_circuit:block/integrated_circuit_box",
+		"particle": "integrated_circuit:block/integrated_circuit_top",
+		"top": "integrated_circuit:block/integrated_circuit_top"
+	},
+	"elements": [
+		{
+			"name": "ic_top",
+			"from": [4, 2, 4],
+			"to": [12, 3, 12],
+			"faces": {
+				"north": {"uv": [0, 0, 16, 2], "texture": "#box"},
+				"east": {"uv": [0, 0, 16, 2], "texture": "#box"},
+				"south": {"uv": [0, 0, 16, 2], "texture": "#box"},
+				"west": {"uv": [0, 0, 16, 2], "texture": "#box"},
+				"up": {"uv": [16, 16, 0, 0], "texture": "#box"},
+				"down": {"uv": [16, 0, 0, 16], "texture": "#box"}
+			}
+		},
+		{
+			"name": "ic_base",
+			"from": [0, 0, 0],
+			"to": [16, 2, 16],
+			"faces": {
+				"north": {"uv": [0, 14, 16, 16], "texture": "#base", "cullface": "north"},
+				"east": {"uv": [0, 14, 16, 16], "texture": "#base", "cullface": "east"},
+				"south": {"uv": [0, 14, 16, 16], "texture": "#base", "cullface": "south"},
+				"west": {"uv": [0, 14, 16, 16], "texture": "#base", "cullface": "west"},
+				"up": {"uv": [0, 0, 16, 16], "texture": "#top"},
+				"down": {"uv": [0, 0, 16, 16], "texture": "#base", "cullface": "down"}
+			}
+		}
+	]
+}

@@ -1,0 +1,6 @@
+{
+  "block.integrated_circuit.integrated_circuit": "Integrated Circuit",
+  "component.integrated_circuit.block": "Solid Block",
+  "component.integrated_circuit.wire": "Wire",
+  "component.integrated_circuit.repeater": "Repeater"
+}

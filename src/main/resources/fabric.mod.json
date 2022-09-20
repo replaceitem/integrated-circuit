@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "integrated-circuit",
+  "version": "${version}",
+  "name": "Integrated Circuit",
+  "description": "Adds an integrated circuit block",
+  "authors": [
+    "replaceitem"
+  ],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/integrated-circuit/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+      "net.replaceitem.integratedcircuit.client.IntegratedCircuitClient"
+    ],
+    "main": [
+      "net.replaceitem.integratedcircuit.IntegratedCircuit"
+    ]
+  },
+  "mixins": [
+    "integrated-circuit.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.14.9",
+    "fabric": "*",
+    "minecraft": "1.19.2"
+  }
+}
