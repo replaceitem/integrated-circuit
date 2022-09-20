@@ -6,7 +6,7 @@ redstone components. Each side of the circuit can be used as an input or output 
 
 <iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/rxT5y_9KsVI" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
-![The integrated circuit block](block.png)
+![The integrated circuit block](https://raw.githubusercontent.com/replaceitem/integrated-circuit/master/block.png)
 
 ![Example circuit](https://i.imgur.com/QbySfvI.gif)
 
