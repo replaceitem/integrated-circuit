@@ -4,7 +4,7 @@ import net.minecraft.block.Block;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import net.replaceitem.integratedcircuit.IntegratedCircuitIdentifier;
+import net.replaceitem.integratedcircuit.util.IntegratedCircuitIdentifier;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
 import net.replaceitem.integratedcircuit.circuit.ComponentPos;
 import net.replaceitem.integratedcircuit.circuit.ServerCircuit;

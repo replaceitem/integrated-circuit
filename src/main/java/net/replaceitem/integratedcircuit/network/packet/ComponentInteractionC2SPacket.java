@@ -5,10 +5,8 @@ import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
-import net.replaceitem.integratedcircuit.IntegratedCircuitIdentifier;
+import net.replaceitem.integratedcircuit.util.IntegratedCircuitIdentifier;
 import net.replaceitem.integratedcircuit.circuit.ComponentPos;
-import net.replaceitem.integratedcircuit.circuit.Components;
-import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
 
 public class ComponentInteractionC2SPacket {
     public static final Identifier ID = new IntegratedCircuitIdentifier("component_interaction_c2s_packet");

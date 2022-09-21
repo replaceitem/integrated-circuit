@@ -8,8 +8,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
-import net.replaceitem.integratedcircuit.circuit.Circuit;
-import net.replaceitem.integratedcircuit.IntegratedCircuitIdentifier;
+import net.replaceitem.integratedcircuit.util.IntegratedCircuitIdentifier;
 import net.replaceitem.integratedcircuit.circuit.ClientCircuit;
 
 public class EditIntegratedCircuitS2CPacket {

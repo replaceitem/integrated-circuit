@@ -6,7 +6,6 @@ import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityT
 import net.minecraft.block.Block;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.item.Item;
-import net.minecraft.recipe.BookCloningRecipe;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.SpecialRecipeSerializer;
 import net.minecraft.util.registry.Registry;
@@ -14,6 +13,7 @@ import net.replaceitem.integratedcircuit.network.ServerPacketHandler;
 import net.replaceitem.integratedcircuit.network.packet.ComponentInteractionC2SPacket;
 import net.replaceitem.integratedcircuit.network.packet.PlaceComponentC2SPacket;
 import net.replaceitem.integratedcircuit.network.packet.FinishEditingC2SPacket;
+import net.replaceitem.integratedcircuit.util.IntegratedCircuitIdentifier;
 
 public class IntegratedCircuit implements ModInitializer {
 

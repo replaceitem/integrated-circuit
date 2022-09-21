@@ -2,11 +2,10 @@ package net.replaceitem.integratedcircuit.network.packet;
 
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
-import net.replaceitem.integratedcircuit.IntegratedCircuitIdentifier;
+import net.replaceitem.integratedcircuit.util.IntegratedCircuitIdentifier;
 
 public class FinishEditingC2SPacket {
 

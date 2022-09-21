@@ -1,7 +1,6 @@
 package net.replaceitem.integratedcircuit.circuit;
 
 import net.minecraft.util.Identifier;
-import net.replaceitem.integratedcircuit.IntegratedCircuitIdentifier;
 
 public class PortType {
 
