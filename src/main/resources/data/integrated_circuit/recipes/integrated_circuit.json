@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " _ ",
+    "BRB",
+    "SSS"
+  ],
+  "key": {
+    "_": {
+      "item": "minecraft:quartz_slab"
+    },
+    "B": {
+      "item": "minecraft:black_terracotta"
+    },
+    "R": {
+      "item": "minecraft:redstone_block"
+    },
+    "S": {
+      "item": "minecraft:stone"
+    }
+  },
+  "result": {
+    "item": "integrated_circuit:integrated_circuit",
+    "count": 1
+  }
+}
