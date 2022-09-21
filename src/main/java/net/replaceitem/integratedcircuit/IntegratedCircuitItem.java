@@ -14,18 +14,14 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class IntegratedCircuitItem extends BlockItem {
+    public static final Text NAME_EMPTY = Text.translatable("integrated_circuit.empty_circuit");
+    
     public IntegratedCircuitItem() {
         super(IntegratedCircuit.INTEGRATED_CIRCUIT_BLOCK,  new FabricItemSettings().group(ItemGroup.REDSTONE));
     }
 
     @Override
-    public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
-        //super.appendTooltip(stack, world, tooltip, context);
-        NbtCompound blockEntityNbt = BlockItem.getBlockEntityNbt(stack);
-        if(blockEntityNbt != null && blockEntityNbt.contains("CustomName", NbtElement.STRING_TYPE)) {
-            tooltip.add(Text.Serializer.fromJson(blockEntityNbt.getString("CustomName")));
-        }
+    public Text getName(ItemStack stack) {
+        return stack.hasNbt() ? super.getName(stack) : NAME_EMPTY;
     }
-
-
 }
