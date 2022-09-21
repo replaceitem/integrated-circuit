@@ -151,13 +151,4 @@ public class IntegratedCircuitBlock extends HorizontalFacingBlock implements Blo
             integratedCircuitBlockEntity.getCircuit().tick(world1, pos, state1, blockEntity);
         };
     }
-
-    @Override
-    public ItemStack getPickStack(BlockView world, BlockPos pos, BlockState state) {
-        ItemStack pickStack = super.getPickStack(world, pos, state);
-        if(world.getBlockEntity(pos) instanceof IntegratedCircuitBlockEntity integratedCircuitBlockEntity) {
-            pickStack.setCustomName(integratedCircuitBlockEntity.getCustomName());
-        }
-        return pickStack;
-    }
 }
