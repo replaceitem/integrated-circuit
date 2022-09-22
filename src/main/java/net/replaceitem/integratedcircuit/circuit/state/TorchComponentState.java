@@ -2,8 +2,9 @@ package net.replaceitem.integratedcircuit.circuit.state;
 
 import net.replaceitem.integratedcircuit.circuit.Components;
 import net.replaceitem.integratedcircuit.util.Direction;
+import net.replaceitem.integratedcircuit.util.SignalStrengthAccessor;
 
-public class TorchComponentState extends RotatableComponentState {
+public class TorchComponentState extends RotatableComponentState implements SignalStrengthAccessor {
 
     private boolean lit;
     
@@ -31,4 +32,8 @@ public class TorchComponentState extends RotatableComponentState {
         return this;
     }
 
+    @Override
+    public int getSignalStrength() {
+        return lit ? 15 : 0;
+    }
 }

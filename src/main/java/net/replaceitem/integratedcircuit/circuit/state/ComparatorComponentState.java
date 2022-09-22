@@ -2,8 +2,9 @@ package net.replaceitem.integratedcircuit.circuit.state;
 
 import net.replaceitem.integratedcircuit.circuit.Components;
 import net.replaceitem.integratedcircuit.util.Direction;
+import net.replaceitem.integratedcircuit.util.SignalStrengthAccessor;
 
-public class ComparatorComponentState extends AbstractRedstoneGateComponentState {
+public class ComparatorComponentState extends AbstractRedstoneGateComponentState implements SignalStrengthAccessor {
 
     protected boolean subtractMode;
     protected byte outputSignal;
@@ -42,5 +43,10 @@ public class ComparatorComponentState extends AbstractRedstoneGateComponentState
     }
     public void setOutputSignal(int outputSignal) {
         setOutputSignal((byte) outputSignal);
+    }
+
+    @Override
+    public int getSignalStrength() {
+        return outputSignal;
     }
 }

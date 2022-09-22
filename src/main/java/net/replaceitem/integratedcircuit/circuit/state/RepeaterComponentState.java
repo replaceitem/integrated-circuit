@@ -2,8 +2,9 @@ package net.replaceitem.integratedcircuit.circuit.state;
 
 import net.replaceitem.integratedcircuit.circuit.Components;
 import net.replaceitem.integratedcircuit.util.Direction;
+import net.replaceitem.integratedcircuit.util.SignalStrengthAccessor;
 
-public class RepeaterComponentState extends AbstractRedstoneGateComponentState {
+public class RepeaterComponentState extends AbstractRedstoneGateComponentState implements SignalStrengthAccessor {
 
     protected int delay;
     protected boolean locked;
@@ -47,5 +48,10 @@ public class RepeaterComponentState extends AbstractRedstoneGateComponentState {
 
     public RepeaterComponentState cycleDelay() {
         return this.setDelay((this.delay + 1) % 4);
+    }
+
+    @Override
+    public int getSignalStrength() {
+        return powered ? 15 : 0;
     }
 }

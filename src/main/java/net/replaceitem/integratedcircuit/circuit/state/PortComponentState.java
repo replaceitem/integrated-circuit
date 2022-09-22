@@ -5,8 +5,9 @@ import net.replaceitem.integratedcircuit.circuit.Components;
 import net.replaceitem.integratedcircuit.circuit.ServerCircuit;
 import net.replaceitem.integratedcircuit.circuit.components.PortComponent;
 import net.replaceitem.integratedcircuit.util.Direction;
+import net.replaceitem.integratedcircuit.util.SignalStrengthAccessor;
 
-public class PortComponentState extends RotatableComponentState {
+public class PortComponentState extends RotatableComponentState implements SignalStrengthAccessor {
     
     private byte power;
     private boolean isOutput;
@@ -58,5 +59,10 @@ public class PortComponentState extends RotatableComponentState {
     
     public int getInternalPower(ServerCircuit circuit, ComponentPos pos) {
         return ((PortComponent) this.component).getInternalPower(circuit, pos, this);
+    }
+
+    @Override
+    public int getSignalStrength() {
+        return power;
     }
 }

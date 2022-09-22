@@ -6,18 +6,24 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ColorHelper;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Quaternion;
+import net.minecraft.util.math.Vec3d;
 import net.replaceitem.integratedcircuit.circuit.*;
 import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
 import net.replaceitem.integratedcircuit.circuit.state.PortComponentState;
 import net.replaceitem.integratedcircuit.circuit.state.RotatableComponentState;
+import net.replaceitem.integratedcircuit.mixin.RedstoneWireBlockAccessor;
 import net.replaceitem.integratedcircuit.network.packet.EditIntegratedCircuitS2CPacket;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.IntegratedCircuitIdentifier;
 import net.replaceitem.integratedcircuit.network.packet.FinishEditingC2SPacket;
 import net.replaceitem.integratedcircuit.util.Direction;
+import net.replaceitem.integratedcircuit.util.SignalStrengthAccessor;
 import org.lwjgl.glfw.GLFW;
 
 
@@ -102,6 +108,17 @@ public class IntegratedCircuitScreen extends Screen {
         this.drawTexture(matrices, x, y, 0, 0, BACKGROUND_WIDTH, BACKGROUND_HEIGHT);
 
         this.textRenderer.draw(matrices, this.title, this.titleX, this.titleY, 0x404040);
+        
+        ComponentPos pos = getComponentPosAt(mouseX, mouseY);
+        ComponentState componentState = circuit.getComponentState(pos);
+        if(componentState instanceof SignalStrengthAccessor signalStrengthAccessor) {
+            int signalStrength = signalStrengthAccessor.getSignalStrength();
+            String signalStrengthString = String.valueOf(signalStrength);
+            int signalStrengthStringLength = textRenderer.getWidth(signalStrengthString);
+            Vec3d colorVec = RedstoneWireBlockAccessor.getCOLORS()[signalStrength].multiply(255);
+            int color = ColorHelper.Argb.getArgb(0xFF, (int) colorVec.x, (int) colorVec.y, (int) colorVec.z);
+            this.textRenderer.draw(matrices, Text.literal(signalStrengthString), this.x + BACKGROUND_WIDTH - 6 - signalStrengthStringLength,this.titleY, color);
+        }
 
         this.renderContent(matrices);
         this.renderPalette(matrices);
