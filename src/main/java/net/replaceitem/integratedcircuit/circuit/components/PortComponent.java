@@ -27,7 +27,9 @@ public class PortComponent extends Component {
         super(id, Text.translatable("component.integrated_circuit.port"));
     }
 
-    private static final Identifier TEXTURE = new IntegratedCircuitIdentifier("textures/integrated_circuit/port.png");
+    private static final Identifier TEXTURE_ARROW = new IntegratedCircuitIdentifier("textures/integrated_circuit/port.png");
+    private static final Identifier TEXTURE_X = new IntegratedCircuitIdentifier("textures/integrated_circuit/wire_x.png");
+    private static final Identifier TEXTURE_Y = new IntegratedCircuitIdentifier("textures/integrated_circuit/wire_y.png");
 
 
     @Override
@@ -53,8 +55,13 @@ public class PortComponent extends Component {
         float r = (float) color.x;
         float g = (float) color.y;
         float b = (float) color.z;
+
+
+        Direction rotation = portComponentState.getRotation();
+        IntegratedCircuitScreen.renderComponentTexture(matrices, TEXTURE_ARROW, x, y, rotation.toInt(), r, g, b, a);
         
-        IntegratedCircuitScreen.renderComponentTexture(matrices, TEXTURE, x, y, portComponentState.getRotation().toInt(), r, g, b, a);
+        Identifier wireTexture = rotation.getAxis() == Direction.Axis.X ? TEXTURE_X : TEXTURE_Y;
+        IntegratedCircuitScreen.renderComponentTexture(matrices, wireTexture, x, y, 0, r, g, b, a);
     }
 
 
