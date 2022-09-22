@@ -14,9 +14,11 @@ redstone components. Each side of the circuit can be used as an input or output 
 
 ## How to use
 
-(For now this is a creative only mod, but I plan to add a crafting recipe and a way to duplicate circuits later)
+Integrated circuits can be crafted using this crafting recipe
 
-In the redstone tab, you can find the Integrated circuit item.
+![Crafting recipe](https://raw.githubusercontent.com/replaceitem/integrated-circuit/master/recipe.png)
+
+In creative, you can also find it in the redstone tab.
 When you place it down and click on it, it will open the circuit editor screen.
 You can select a block on the left, and place it in the 15x15 grid as you normally would in minecraft.
 To rotate a component, you use the scroll wheel.
@@ -24,3 +26,6 @@ Adjusting repeater delay or the comparator mode is done by clicking on a compone
 
 The four ports are labeled using four colors to associate them with the sides of the integrated circuit block.
 Each port can be an input or output, which can be changed by clicking on it in the editor.
+
+You can also copy circuits by putting an integrated circuit in the crafting grid,
+along with empty integrated circuits, similar to how books are copied.
