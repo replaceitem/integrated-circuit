@@ -1,7 +1,6 @@
-package net.replaceitem.integratedcircuit.circuit;
+package net.replaceitem.integratedcircuit.util;
 
 import net.minecraft.util.math.Vec3i;
-import net.replaceitem.integratedcircuit.util.Direction;
 
 public class ComponentPos extends Vec3i { // using vec3, but only 2d required
 

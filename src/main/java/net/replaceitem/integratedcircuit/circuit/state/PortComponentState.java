@@ -1,6 +1,6 @@
 package net.replaceitem.integratedcircuit.circuit.state;
 
-import net.replaceitem.integratedcircuit.circuit.ComponentPos;
+import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.circuit.Components;
 import net.replaceitem.integratedcircuit.circuit.ServerCircuit;
 import net.replaceitem.integratedcircuit.circuit.components.PortComponent;

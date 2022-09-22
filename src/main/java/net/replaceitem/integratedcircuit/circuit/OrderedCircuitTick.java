@@ -4,6 +4,7 @@ package net.replaceitem.integratedcircuit.circuit;
 import it.unimi.dsi.fastutil.Hash;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.world.TickPriority;
+import net.replaceitem.integratedcircuit.util.ComponentPos;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Comparator;

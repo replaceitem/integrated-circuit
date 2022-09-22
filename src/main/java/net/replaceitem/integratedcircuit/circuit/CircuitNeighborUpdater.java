@@ -1,10 +1,7 @@
 package net.replaceitem.integratedcircuit.circuit;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.WorldAccess;
 import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
+import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.Direction;
 import org.jetbrains.annotations.Nullable;
 
