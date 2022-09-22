@@ -77,6 +77,40 @@ public class PortComponent extends Component {
         }
     }
 
+    @Override
+    public void onStateReplaced(ComponentState state, ServerCircuit circuit, ComponentPos pos, ComponentState newState) {
+        if (state.isOf(newState.getComponent())) {
+            return;
+        }
+        super.onStateReplaced(state, circuit, pos, newState);
+        for (Direction direction : Direction.VALUES) {
+            circuit.updateNeighborsAlways(pos.offset(direction), this);
+        }
+        this.updateOffsetNeighbors(circuit, pos);
+    }
+
+    @Override
+    public void onBlockAdded(ComponentState state, ServerCircuit circuit, ComponentPos pos, ComponentState oldState) {
+        this.updateOffsetNeighbors(circuit, pos);
+    }
+
+    private void updateOffsetNeighbors(ServerCircuit circuit, ComponentPos pos) {
+        for (Direction direction : Direction.VALUES) {
+            this.updateNeighbors(circuit, pos.offset(direction));
+        }
+    }
+
+    private void updateNeighbors(ServerCircuit circuit, ComponentPos pos) {
+        ComponentState componentState = circuit.getComponentState(pos);
+        if (!(componentState.isOf(this) || componentState.isOf(Components.WIRE))) {
+            return;
+        }
+        circuit.updateNeighborsAlways(pos, this);
+        for (Direction direction : Direction.VALUES) {
+            circuit.updateNeighborsAlways(pos.offset(direction), this);
+        }
+    }
+
     private int getReceivedRedstonePower(ServerCircuit world, ComponentPos pos) {
         Components.WIRE.wiresGivePower = false;
         int i = world.getReceivedRedstonePower(pos);

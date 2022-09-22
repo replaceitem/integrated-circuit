@@ -273,7 +273,6 @@ public class IntegratedCircuitScreen extends Screen {
         boolean isAttack = client.options.attackKey.matchesMouse(button);
         boolean isPick = client.options.pickItemKey.matchesMouse(button);
         if(isUse && circuit.isPort(clickedPos)) {
-            int port = circuit.getPortNumber(clickedPos);
             circuit.cycleState(clickedPos, this.pos);
             return true;
         }
