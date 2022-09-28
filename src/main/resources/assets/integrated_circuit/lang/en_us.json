@@ -1,7 +1,4 @@
 {
   "block.integrated_circuit.integrated_circuit": "Integrated Circuit",
-  "integrated_circuit.empty_circuit": "Empty Integrated Circuit",
-  "component.integrated_circuit.block": "Solid Block",
-  "component.integrated_circuit.wire": "Wire",
-  "component.integrated_circuit.repeater": "Repeater"
+  "integrated_circuit.empty_circuit": "Empty Integrated Circuit"
 }
