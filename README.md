@@ -9,8 +9,6 @@ A Minecraft mod that adds an integrated circuit redstone component.
 Each integrated circuit block has a 15x15 grid where you can place two-dimensional
 redstone components. Each side of the circuit can be used as an input or output for your circuit.
 
-<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/rxT5y_9KsVI" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-
 ![The integrated circuit block](https://raw.githubusercontent.com/replaceitem/integrated-circuit/master/block.png)
 
 ![Example circuit](https://i.imgur.com/QbySfvI.gif)
