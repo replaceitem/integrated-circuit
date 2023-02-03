@@ -4,7 +4,7 @@ plugins {
     id "com.modrinth.minotaur" version "2.+"
 }
 
-version = project.mod_version
+version = project.minecraft_version+'-'+project.mod_version
 group = project.maven_group
 
 repositories {
