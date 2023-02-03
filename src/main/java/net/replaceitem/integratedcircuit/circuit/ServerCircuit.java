@@ -7,7 +7,7 @@ import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.TickPriority;
+import net.minecraft.world.tick.TickPriority;
 import net.minecraft.world.World;
 import net.replaceitem.integratedcircuit.IntegratedCircuitBlock;
 import net.replaceitem.integratedcircuit.IntegratedCircuitBlockEntity;

@@ -3,7 +3,7 @@ package net.replaceitem.integratedcircuit.circuit.components;
 import net.minecraft.block.Block;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.random.Random;
-import net.minecraft.world.TickPriority;
+import net.minecraft.world.tick.TickPriority;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
 import net.replaceitem.integratedcircuit.circuit.Component;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
