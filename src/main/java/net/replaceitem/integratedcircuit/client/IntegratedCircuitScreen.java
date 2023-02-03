@@ -266,14 +266,12 @@ public class IntegratedCircuitScreen extends Screen {
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         ComponentPos clickedPos = getComponentPosAt((int) mouseX, (int) mouseY);
-        boolean isUse = this.client.options.useKey.matchesMouse(button);
-        boolean isAttack = client.options.attackKey.matchesMouse(button);
-        boolean isPick = client.options.pickItemKey.matchesMouse(button);
-        if(isUse && circuit.isPort(clickedPos)) {
+        
+        if(circuit.isPort(clickedPos)) {
             circuit.cycleState(clickedPos, this.pos);
             return true;
         }
-        if(isUse && mouseX >= this.x+PALETTE_X && mouseX < this.x+PALETTE_X+14) {
+        if(mouseX >= this.x+PALETTE_X && mouseX < this.x+PALETTE_X+14) {
             int slot = getPaletteSlotAt((int) mouseY);
             if(slot >= 0 && slot < PALETTE.length) {
                 if(selectedComponentSlot != slot) {
@@ -286,6 +284,9 @@ public class IntegratedCircuitScreen extends Screen {
         }
         
         if(circuit.isInside(clickedPos) && this.client != null) {
+            boolean isUse = this.client.options.useKey.matchesMouse(button);
+            boolean isAttack = client.options.attackKey.matchesMouse(button);
+            boolean isPick = client.options.pickItemKey.matchesMouse(button);
             if(isUse) {
                 ComponentState state = circuit.getComponentState(clickedPos);
                 if(state.isAir()) {
