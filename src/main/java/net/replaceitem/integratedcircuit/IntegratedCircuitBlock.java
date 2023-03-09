@@ -134,6 +134,7 @@ public class IntegratedCircuitBlock extends HorizontalFacingBlock implements Blo
 
     @Override
     public int getWeakRedstonePower(BlockState state, BlockView world, BlockPos pos, Direction direction) {
+        if(direction.getAxis().isVertical()) return 0;
         BlockEntity blockEntity = world.getBlockEntity(pos);
         if(blockEntity instanceof IntegratedCircuitBlockEntity integratedCircuitBlockEntity) {
             Direction facing = state.get(FACING);
