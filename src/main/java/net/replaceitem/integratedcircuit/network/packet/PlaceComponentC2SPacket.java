@@ -5,11 +5,11 @@ import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
+import net.replaceitem.integratedcircuit.util.FlatDirection;
 import net.replaceitem.integratedcircuit.util.IntegratedCircuitIdentifier;
 import net.replaceitem.integratedcircuit.circuit.Component;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.circuit.Components;
-import net.replaceitem.integratedcircuit.util.Direction;
 
 public class PlaceComponentC2SPacket {
     public static final Identifier ID = new IntegratedCircuitIdentifier("place_component_c2s_packet");
@@ -17,9 +17,9 @@ public class PlaceComponentC2SPacket {
     public final ComponentPos pos;
     public final BlockPos blockPos;
     public final Component component;
-    public final Direction rotation;
+    public final FlatDirection rotation;
 
-    public PlaceComponentC2SPacket(ComponentPos pos, BlockPos blockPos, Component component, Direction rotation) {
+    public PlaceComponentC2SPacket(ComponentPos pos, BlockPos blockPos, Component component, FlatDirection rotation) {
         this.pos = pos;
         this.blockPos = blockPos;
         this.component = component;
@@ -31,7 +31,7 @@ public class PlaceComponentC2SPacket {
                 new ComponentPos(buf.readByte(), buf.readByte()),
                 buf.readBlockPos(),
                 Components.getComponentById(buf.readByte()),
-                Direction.VALUES[buf.readByte()]
+                FlatDirection.VALUES[buf.readByte()]
         );
     }
 

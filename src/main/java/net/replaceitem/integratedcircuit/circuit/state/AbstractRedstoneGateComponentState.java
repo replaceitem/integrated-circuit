@@ -1,14 +1,14 @@
 package net.replaceitem.integratedcircuit.circuit.state;
 
 import net.replaceitem.integratedcircuit.circuit.Component;
-import net.replaceitem.integratedcircuit.util.Direction;
+import net.replaceitem.integratedcircuit.util.FlatDirection;
 
 public class AbstractRedstoneGateComponentState extends RotatableComponentState {
     
     protected boolean powered;
 
 
-    public AbstractRedstoneGateComponentState(Component component, Direction rotation, boolean powered) {
+    public AbstractRedstoneGateComponentState(Component component, FlatDirection rotation, boolean powered) {
         super(component, rotation);
         this.powered = powered;
     }

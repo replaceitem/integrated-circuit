@@ -1,7 +1,7 @@
 package net.replaceitem.integratedcircuit.circuit.state;
 
 import net.replaceitem.integratedcircuit.circuit.Components;
-import net.replaceitem.integratedcircuit.util.Direction;
+import net.replaceitem.integratedcircuit.util.FlatDirection;
 import net.replaceitem.integratedcircuit.util.SignalStrengthAccessor;
 
 public class RepeaterComponentState extends AbstractRedstoneGateComponentState implements SignalStrengthAccessor {
@@ -9,7 +9,7 @@ public class RepeaterComponentState extends AbstractRedstoneGateComponentState i
     protected int delay;
     protected boolean locked;
 
-    public RepeaterComponentState(Direction direction, boolean powered, int delay, boolean locked) {
+    public RepeaterComponentState(FlatDirection direction, boolean powered, int delay, boolean locked) {
         super(Components.REPEATER, direction, powered);
         this.delay = delay;
         this.locked = locked;

@@ -2,7 +2,7 @@ package net.replaceitem.integratedcircuit.circuit;
 
 import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
-import net.replaceitem.integratedcircuit.util.Direction;
+import net.replaceitem.integratedcircuit.util.FlatDirection;
 import org.jetbrains.annotations.Nullable;
 
 
@@ -12,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class CircuitNeighborUpdater {
     
-    public static final Direction[] UPDATE_ORDER = new Direction[]{Direction.WEST, Direction.EAST, Direction.NORTH, Direction.SOUTH};
+    public static final FlatDirection[] UPDATE_ORDER = new FlatDirection[]{FlatDirection.WEST, FlatDirection.EAST, FlatDirection.NORTH, FlatDirection.SOUTH};
     
     protected final ServerCircuit circuit;
     
@@ -20,11 +20,11 @@ public class CircuitNeighborUpdater {
         this.circuit = circuit;
     }
 
-    public void replaceWithStateForNeighborUpdate(Direction direction, ComponentState neighborState, ComponentPos pos, ComponentPos neighborPos, int flags) {
+    public void replaceWithStateForNeighborUpdate(FlatDirection direction, ComponentState neighborState, ComponentPos pos, ComponentPos neighborPos, int flags) {
         CircuitNeighborUpdater.replaceWithStateForNeighborUpdate(this.circuit, direction, neighborState, pos, neighborPos, flags);
     }
     
-    public static void replaceWithStateForNeighborUpdate(ServerCircuit world, Direction direction, ComponentState neighborState, ComponentPos pos, ComponentPos neighborPos, int flags) {
+    public static void replaceWithStateForNeighborUpdate(ServerCircuit world, FlatDirection direction, ComponentState neighborState, ComponentPos pos, ComponentPos neighborPos, int flags) {
         ComponentState blockState = world.getComponentState(pos);
         ComponentState blockState2 = blockState.getStateForNeighborUpdate(direction, neighborState, world, pos, neighborPos);
         Component.replace(blockState, blockState2, world, pos, flags);
@@ -39,8 +39,8 @@ public class CircuitNeighborUpdater {
         CircuitNeighborUpdater.tryNeighborUpdate(this.circuit, state, pos, sourceBlock, sourcePos, notify);
     }
 
-    public void updateNeighbors(ComponentPos pos, Component sourceBlock, @Nullable Direction except) {
-        for (Direction direction : UPDATE_ORDER) {
+    public void updateNeighbors(ComponentPos pos, Component sourceBlock, @Nullable FlatDirection except) {
+        for (FlatDirection direction : UPDATE_ORDER) {
             if (direction == except) continue;
             this.updateNeighbor(pos.offset(direction), sourceBlock, pos);
         }

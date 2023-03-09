@@ -1,27 +1,27 @@
 package net.replaceitem.integratedcircuit.circuit.state;
 
 import net.replaceitem.integratedcircuit.circuit.Component;
-import net.replaceitem.integratedcircuit.util.Direction;
+import net.replaceitem.integratedcircuit.util.FlatDirection;
 
 public class RotatableComponentState extends ComponentState {
 
-    protected Direction direction;
+    protected FlatDirection direction;
 
-    public RotatableComponentState(Component component, Direction direction) {
+    public RotatableComponentState(Component component, FlatDirection direction) {
         super(component);
         this.direction = direction;
     }
 
     public RotatableComponentState(Component component, byte data) {
         super(component);
-        this.direction = Direction.VALUES[data & 0b11];
+        this.direction = FlatDirection.VALUES[data & 0b11];
     }
 
-    public Direction getRotation() {
+    public FlatDirection getRotation() {
         return direction;
     }
 
-    public RotatableComponentState setRotation(Direction direction) {
+    public RotatableComponentState setRotation(FlatDirection direction) {
         this.direction = direction;
         return this;
     }

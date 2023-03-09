@@ -31,6 +31,7 @@ import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldView;
 import net.replaceitem.integratedcircuit.network.packet.EditIntegratedCircuitS2CPacket;
+import net.replaceitem.integratedcircuit.util.FlatDirection;
 import org.jetbrains.annotations.Nullable;
 
 public class IntegratedCircuitBlock extends HorizontalFacingBlock implements BlockEntityProvider {
@@ -103,10 +104,10 @@ public class IntegratedCircuitBlock extends HorizontalFacingBlock implements Blo
         }
     }
 
-    public int getInputPower(World world, BlockPos pos, net.replaceitem.integratedcircuit.util.Direction dir) {
+    public int getInputPower(World world, BlockPos pos, FlatDirection dir) {
         BlockState circuitBlockState = world.getBlockState(pos);
         Direction facing = circuitBlockState.get(FACING);
-        Direction direction = dir.rotated(net.replaceitem.integratedcircuit.util.Direction.fromVanillaDirection(facing).toInt()).getVanillaDirection();
+        Direction direction = dir.rotated(FlatDirection.fromVanillaDirection(facing).toInt()).getVanillaDirection();
         BlockPos blockPos = pos.offset(direction);
         BlockState blockState = world.getBlockState(blockPos);
         int i = world.getEmittedRedstonePower(blockPos, direction);
@@ -136,7 +137,7 @@ public class IntegratedCircuitBlock extends HorizontalFacingBlock implements Blo
         BlockEntity blockEntity = world.getBlockEntity(pos);
         if(blockEntity instanceof IntegratedCircuitBlockEntity integratedCircuitBlockEntity) {
             Direction facing = state.get(FACING);
-            net.replaceitem.integratedcircuit.util.Direction newDir = net.replaceitem.integratedcircuit.util.Direction.fromVanillaDirection(direction).rotated(-net.replaceitem.integratedcircuit.util.Direction.fromVanillaDirection(facing).toInt());
+            FlatDirection newDir = FlatDirection.fromVanillaDirection(direction).rotated(-FlatDirection.fromVanillaDirection(facing).toInt());
             return integratedCircuitBlockEntity.getOutputStrength(newDir.getOpposite());
         }
         return 0;

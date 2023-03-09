@@ -1,14 +1,14 @@
 package net.replaceitem.integratedcircuit.circuit.state;
 
 import net.replaceitem.integratedcircuit.circuit.Components;
-import net.replaceitem.integratedcircuit.util.Direction;
+import net.replaceitem.integratedcircuit.util.FlatDirection;
 import net.replaceitem.integratedcircuit.util.SignalStrengthAccessor;
 
 public class ObserverComponentState extends RotatableComponentState implements SignalStrengthAccessor {
     
     private boolean powered;
 
-    public ObserverComponentState(Direction direction, boolean powered) {
+    public ObserverComponentState(FlatDirection direction, boolean powered) {
         super(Components.OBSERVER, direction);
         this.powered = powered;
     }

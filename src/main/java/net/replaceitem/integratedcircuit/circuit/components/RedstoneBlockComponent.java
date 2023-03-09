@@ -11,7 +11,7 @@ import net.replaceitem.integratedcircuit.circuit.ServerCircuit;
 import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
 import net.replaceitem.integratedcircuit.circuit.state.RedstoneBlockComponentState;
 import net.replaceitem.integratedcircuit.client.IntegratedCircuitScreen;
-import net.replaceitem.integratedcircuit.util.Direction;
+import net.replaceitem.integratedcircuit.util.FlatDirection;
 
 public class RedstoneBlockComponent extends Component {
     public RedstoneBlockComponent(int id) {
@@ -46,12 +46,12 @@ public class RedstoneBlockComponent extends Component {
     }
 
     @Override
-    public boolean isSideSolidFullSquare(Circuit circuit, ComponentPos blockPos, Direction direction) {
+    public boolean isSideSolidFullSquare(Circuit circuit, ComponentPos blockPos, FlatDirection direction) {
         return true;
     }
 
     @Override
-    public int getWeakRedstonePower(ComponentState state, ServerCircuit circuit, ComponentPos pos, Direction direction) {
+    public int getWeakRedstonePower(ComponentState state, ServerCircuit circuit, ComponentPos pos, FlatDirection direction) {
         return 15;
     }
 }

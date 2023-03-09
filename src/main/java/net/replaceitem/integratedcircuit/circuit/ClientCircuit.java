@@ -7,7 +7,7 @@ import net.replaceitem.integratedcircuit.circuit.state.PortComponentState;
 import net.replaceitem.integratedcircuit.network.packet.ComponentInteractionC2SPacket;
 import net.replaceitem.integratedcircuit.network.packet.PlaceComponentC2SPacket;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
-import net.replaceitem.integratedcircuit.util.Direction;
+import net.replaceitem.integratedcircuit.util.FlatDirection;
 
 public class ClientCircuit extends Circuit {
     
@@ -30,12 +30,12 @@ public class ClientCircuit extends Circuit {
         }
     }
 
-    public void placeComponentState(ComponentPos pos, Component component, Direction cursorRotation, BlockPos blockPos) {
+    public void placeComponentState(ComponentPos pos, Component component, FlatDirection cursorRotation, BlockPos blockPos) {
         new PlaceComponentC2SPacket(pos, blockPos, component, cursorRotation).send();
     }
 
     public void breakComponentState(ComponentPos pos, BlockPos blockPos) {
-        this.placeComponentState(pos, Components.AIR, Direction.NORTH, blockPos);
+        this.placeComponentState(pos, Components.AIR, FlatDirection.NORTH, blockPos);
     }
 
     public void cycleState(ComponentPos pos, BlockPos blockPos) {

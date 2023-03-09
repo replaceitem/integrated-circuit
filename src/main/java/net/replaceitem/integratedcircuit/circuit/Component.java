@@ -7,7 +7,7 @@ import net.minecraft.util.math.random.Random;
 import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
 import net.replaceitem.integratedcircuit.circuit.state.RotatableComponentState;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
-import net.replaceitem.integratedcircuit.util.Direction;
+import net.replaceitem.integratedcircuit.util.FlatDirection;
 
 public abstract class Component {
     
@@ -27,7 +27,7 @@ public abstract class Component {
     private final Text name;
 
 
-    public static final Direction[] DIRECTIONS = new Direction[]{Direction.WEST, Direction.EAST, Direction.NORTH, Direction.SOUTH};
+    public static final FlatDirection[] DIRECTIONS = new FlatDirection[]{FlatDirection.WEST, FlatDirection.EAST, FlatDirection.NORTH, FlatDirection.SOUTH};
 
     public Component(int id, Text name) {
         this.id = id;
@@ -51,7 +51,7 @@ public abstract class Component {
     }
 
     public abstract ComponentState getDefaultState();
-    public ComponentState getPlacementState(ServerCircuit circuit, ComponentPos pos, Direction rotation) {
+    public ComponentState getPlacementState(ServerCircuit circuit, ComponentPos pos, FlatDirection rotation) {
         ComponentState defaultState = getDefaultState();
         if(defaultState instanceof RotatableComponentState rotatableComponentState) rotatableComponentState.setRotation(rotation);
         return defaultState;
@@ -94,7 +94,7 @@ public abstract class Component {
         
     }
 
-    public ComponentState getStateForNeighborUpdate(ComponentState state, Direction direction, ComponentState neighborState, ServerCircuit circuit, ComponentPos pos, ComponentPos neighborPos) {
+    public ComponentState getStateForNeighborUpdate(ComponentState state, FlatDirection direction, ComponentState neighborState, ServerCircuit circuit, ComponentPos pos, ComponentPos neighborPos) {
         return state;
     }
 
@@ -102,15 +102,15 @@ public abstract class Component {
 
     public abstract boolean isSolidBlock(Circuit circuit, ComponentPos pos);
 
-    public boolean isSideSolidFullSquare(Circuit circuit, ComponentPos blockPos, Direction direction) {
+    public boolean isSideSolidFullSquare(Circuit circuit, ComponentPos blockPos, FlatDirection direction) {
         return isSolidBlock(circuit, blockPos);
     }
 
-    public int getWeakRedstonePower(ComponentState state, ServerCircuit circuit, ComponentPos pos, Direction direction) {
+    public int getWeakRedstonePower(ComponentState state, ServerCircuit circuit, ComponentPos pos, FlatDirection direction) {
         return 0;
     }
 
-    public int getStrongRedstonePower(ComponentState state, ServerCircuit circuit, ComponentPos pos, Direction direction) {
+    public int getStrongRedstonePower(ComponentState state, ServerCircuit circuit, ComponentPos pos, FlatDirection direction) {
         return 0;
     }
 

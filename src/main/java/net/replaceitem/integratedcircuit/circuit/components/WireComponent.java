@@ -6,6 +6,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
+import net.replaceitem.integratedcircuit.util.FlatDirection;
 import net.replaceitem.integratedcircuit.util.IntegratedCircuitIdentifier;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
 import net.replaceitem.integratedcircuit.circuit.Component;
@@ -19,7 +20,6 @@ import net.replaceitem.integratedcircuit.circuit.state.RepeaterComponentState;
 import net.replaceitem.integratedcircuit.circuit.state.WireComponentState;
 import net.replaceitem.integratedcircuit.client.IntegratedCircuitScreen;
 import net.replaceitem.integratedcircuit.mixin.RedstoneWireBlockAccessor;
-import net.replaceitem.integratedcircuit.util.Direction;
 
 import java.util.HashSet;
 
@@ -50,7 +50,7 @@ public class WireComponent extends Component {
     }
     
     @Override
-    public ComponentState getPlacementState(ServerCircuit circuit, ComponentPos pos, Direction rotation) {
+    public ComponentState getPlacementState(ServerCircuit circuit, ComponentPos pos, FlatDirection rotation) {
         return this.getPlacementState(circuit, this.getDotState(), pos);
     }
 
@@ -76,16 +76,16 @@ public class WireComponent extends Component {
         float g = (float) color.y;
         float b = (float) color.z;
 
-        if(wireComponentState.isConnected(Direction.NORTH)) IntegratedCircuitScreen.renderComponentTexture(matrices, TEXTURE_Y, x, y, 0, r, g, b, a, 0, 0, size, halfSize);
-        if(wireComponentState.isConnected(Direction.EAST)) IntegratedCircuitScreen.renderComponentTexture(matrices, TEXTURE_X, x, y, 0, r, g, b, a, halfSize, 0, halfSize, size);
-        if(wireComponentState.isConnected(Direction.SOUTH)) IntegratedCircuitScreen.renderComponentTexture(matrices, TEXTURE_Y, x, y, 0, r, g, b, a, 0, halfSize, size, halfSize);
-        if(wireComponentState.isConnected(Direction.WEST)) IntegratedCircuitScreen.renderComponentTexture(matrices, TEXTURE_X, x, y, 0, r, g, b, a, 0, 0, halfSize, size);
+        if(wireComponentState.isConnected(FlatDirection.NORTH)) IntegratedCircuitScreen.renderComponentTexture(matrices, TEXTURE_Y, x, y, 0, r, g, b, a, 0, 0, size, halfSize);
+        if(wireComponentState.isConnected(FlatDirection.EAST)) IntegratedCircuitScreen.renderComponentTexture(matrices, TEXTURE_X, x, y, 0, r, g, b, a, halfSize, 0, halfSize, size);
+        if(wireComponentState.isConnected(FlatDirection.SOUTH)) IntegratedCircuitScreen.renderComponentTexture(matrices, TEXTURE_Y, x, y, 0, r, g, b, a, 0, halfSize, size, halfSize);
+        if(wireComponentState.isConnected(FlatDirection.WEST)) IntegratedCircuitScreen.renderComponentTexture(matrices, TEXTURE_X, x, y, 0, r, g, b, a, 0, 0, halfSize, size);
 
         int connections = 0;
-        for (Direction direction : Direction.VALUES) if(wireComponentState.isConnected(direction)) connections++;
+        for (FlatDirection direction : FlatDirection.VALUES) if(wireComponentState.isConnected(direction)) connections++;
         if(connections != 2) IntegratedCircuitScreen.renderComponentTexture(matrices, TEXTURE_DOT, x, y, 0, r, g, b, a, 0, 0, size, size);
         
-        if(!(wireComponentState.isConnected(Direction.NORTH) && wireComponentState.isConnected(Direction.SOUTH) || wireComponentState.isConnected(Direction.EAST) && wireComponentState.isConnected(Direction.WEST))) {
+        if(!(wireComponentState.isConnected(FlatDirection.NORTH) && wireComponentState.isConnected(FlatDirection.SOUTH) || wireComponentState.isConnected(FlatDirection.EAST) && wireComponentState.isConnected(FlatDirection.WEST))) {
             IntegratedCircuitScreen.renderComponentTexture(matrices, TEXTURE_DOT, x, y, 0, r, g, b, a, 0, 0, size, size);
         }
     }
@@ -108,7 +108,7 @@ public class WireComponent extends Component {
             }
             HashSet<ComponentPos> set = Sets.newHashSet();
             set.add(pos);
-            for (Direction direction : Direction.VALUES) {
+            for (FlatDirection direction : FlatDirection.VALUES) {
                 set.add(pos.offset(direction));
             }
             for (ComponentPos blockPos : set) {
@@ -118,7 +118,7 @@ public class WireComponent extends Component {
     }
 
     private void updateOffsetNeighbors(ServerCircuit circuit, ComponentPos pos) {
-        for (Direction direction : Direction.VALUES) {
+        for (FlatDirection direction : FlatDirection.VALUES) {
             this.updateNeighbors(circuit, pos.offset(direction));
         }
     }
@@ -129,7 +129,7 @@ public class WireComponent extends Component {
             return;
         }
         circuit.updateNeighborsAlways(pos, this);
-        for (Direction direction : Direction.VALUES) {
+        for (FlatDirection direction : FlatDirection.VALUES) {
             circuit.updateNeighborsAlways(pos.offset(direction), this);
         }
     }
@@ -141,7 +141,7 @@ public class WireComponent extends Component {
     }
 
     @Override
-    public ComponentState getStateForNeighborUpdate(ComponentState state, Direction direction, ComponentState neighborState, ServerCircuit circuit, ComponentPos pos, ComponentPos neighborPos) {
+    public ComponentState getStateForNeighborUpdate(ComponentState state, FlatDirection direction, ComponentState neighborState, ServerCircuit circuit, ComponentPos pos, ComponentPos neighborPos) {
         if(!(state instanceof WireComponentState wireComponentState)) throw new IllegalStateException("Invalid component state for component");
         boolean wireConnection = this.getRenderConnectionType(circuit, pos, direction);
         if (wireConnection == wireComponentState.isConnected(direction) && !isFullyConnected(state)) {
@@ -158,7 +158,7 @@ public class WireComponent extends Component {
             return;
         }
         super.onStateReplaced(state, circuit, pos, newState);
-        for (Direction direction : Direction.VALUES) {
+        for (FlatDirection direction : FlatDirection.VALUES) {
             circuit.updateNeighborsAlways(pos.offset(direction), this);
         }
         this.update(circuit, pos, state);
@@ -179,7 +179,7 @@ public class WireComponent extends Component {
     }
 
     private void updateForNewState(ServerCircuit world, ComponentPos pos, WireComponentState oldState, WireComponentState newState) {
-        for (Direction direction : Direction.VALUES) {
+        for (FlatDirection direction : FlatDirection.VALUES) {
             ComponentPos blockPos = pos.offset(direction);
             if (oldState.isConnected(direction) == newState.isConnected(direction) || !world.getComponentState(blockPos).isSolidBlock(world, blockPos)) continue;
             world.updateNeighborsExcept(blockPos, newState.getComponent(), direction.getOpposite());
@@ -216,30 +216,30 @@ public class WireComponent extends Component {
         if (notConnected && isNotConnected(wireComponentState)) {
             return wireComponentState;
         }
-        boolean n = wireComponentState.isConnected(Direction.NORTH);
-        boolean e = wireComponentState.isConnected(Direction.SOUTH);
-        boolean s = wireComponentState.isConnected(Direction.EAST);
-        boolean w = wireComponentState.isConnected(Direction.WEST);
+        boolean n = wireComponentState.isConnected(FlatDirection.NORTH);
+        boolean e = wireComponentState.isConnected(FlatDirection.SOUTH);
+        boolean s = wireComponentState.isConnected(FlatDirection.EAST);
+        boolean w = wireComponentState.isConnected(FlatDirection.WEST);
         boolean ne = !n && !e;
         boolean sw = !s && !w;
         if (!w && ne) {
-            wireComponentState = ((WireComponentState) wireComponentState.copy()).setConnected(Direction.WEST, true);
+            wireComponentState = ((WireComponentState) wireComponentState.copy()).setConnected(FlatDirection.WEST, true);
         }
         if (!s && ne) {
-            wireComponentState = ((WireComponentState) wireComponentState.copy()).setConnected(Direction.EAST, true);
+            wireComponentState = ((WireComponentState) wireComponentState.copy()).setConnected(FlatDirection.EAST, true);
         }
         if (!n && sw) {
-            wireComponentState = ((WireComponentState) wireComponentState.copy()).setConnected(Direction.NORTH, true);
+            wireComponentState = ((WireComponentState) wireComponentState.copy()).setConnected(FlatDirection.NORTH, true);
         }
         if (!e && sw) {
-            wireComponentState = ((WireComponentState) wireComponentState.copy()).setConnected(Direction.SOUTH, true);
+            wireComponentState = ((WireComponentState) wireComponentState.copy()).setConnected(FlatDirection.SOUTH, true);
         }
         return wireComponentState;
     }
     
     private WireComponentState getDefaultWireState(Circuit circuit, ComponentState state, ComponentPos pos) {
         if(!(state instanceof WireComponentState wireComponentState)) throw new IllegalStateException("Invalid component state for component");
-        for (Direction direction : Direction.VALUES) {
+        for (FlatDirection direction : FlatDirection.VALUES) {
             if (wireComponentState.isConnected(direction)) continue;
             boolean wireConnection = this.getRenderConnectionType(circuit, pos, direction);
             wireComponentState = ((WireComponentState) wireComponentState.copy()).setConnected(direction,wireConnection);
@@ -257,18 +257,18 @@ public class WireComponent extends Component {
         return wireComponentState.getConnections() == 0b1111;
     }
 
-    private boolean getRenderConnectionType(Circuit circuit, ComponentPos pos, Direction direction) {
+    private boolean getRenderConnectionType(Circuit circuit, ComponentPos pos, FlatDirection direction) {
         ComponentPos blockPos = pos.offset(direction);
         ComponentState blockState = circuit.getComponentState(blockPos);
         return WireComponent.connectsTo(blockState, direction);
     }
 
-    private static boolean connectsTo(ComponentState state, Direction direction) {
+    private static boolean connectsTo(ComponentState state, FlatDirection direction) {
         if (state.isOf(Components.WIRE)) {
             return true;
         }
         if (state.isOf(Components.REPEATER) && state instanceof RepeaterComponentState repeaterComponentState) {
-            Direction rotation = repeaterComponentState.getRotation();
+            FlatDirection rotation = repeaterComponentState.getRotation();
             return rotation == direction || rotation.getOpposite() == direction;
         }
         if (state.isOf(Components.OBSERVER) && state instanceof ObserverComponentState observerComponentState) {
@@ -284,7 +284,7 @@ public class WireComponent extends Component {
         this.wiresGivePower = true;
         int j = 0;
         if (i < 15) {
-            for (Direction direction : Direction.VALUES) {
+            for (FlatDirection direction : FlatDirection.VALUES) {
                 ComponentPos blockPos = pos.offset(direction);
                 ComponentState blockState = world.getComponentState(blockPos);
                 j = Math.max(j, increasePower(blockState));
@@ -299,7 +299,7 @@ public class WireComponent extends Component {
     }
 
     @Override
-    public int getWeakRedstonePower(ComponentState state, ServerCircuit circuit, ComponentPos pos, Direction direction) {
+    public int getWeakRedstonePower(ComponentState state, ServerCircuit circuit, ComponentPos pos, FlatDirection direction) {
         if(!(state instanceof WireComponentState wireComponentState)) throw new IllegalStateException("Invalid component state for component");
         if (!this.wiresGivePower) {
             return 0;
@@ -315,7 +315,7 @@ public class WireComponent extends Component {
     }
 
     @Override
-    public int getStrongRedstonePower(ComponentState state, ServerCircuit circuit, ComponentPos pos, Direction direction) {
+    public int getStrongRedstonePower(ComponentState state, ServerCircuit circuit, ComponentPos pos, FlatDirection direction) {
         return this.getWeakRedstonePower(state, circuit, pos, direction);
     }
 

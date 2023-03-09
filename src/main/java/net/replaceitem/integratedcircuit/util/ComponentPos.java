@@ -20,25 +20,25 @@ public class ComponentPos extends Vec3i { // using vec3, but only 2d required
         return new ComponentPos(getX()*amount, getY()*amount);
     }
 
-    public ComponentPos offset(Direction direction, int amount) {
+    public ComponentPos offset(FlatDirection direction, int amount) {
         return this.add(direction.getOffset().multiply(amount));
     }
 
-    public ComponentPos offset(Direction direction) {
+    public ComponentPos offset(FlatDirection direction) {
         return this.add(direction.getOffset());
     }
     
     public ComponentPos north() {
-        return this.offset(Direction.NORTH);
+        return this.offset(FlatDirection.NORTH);
     }
     public ComponentPos east() {
-        return this.offset(Direction.EAST);
+        return this.offset(FlatDirection.EAST);
     }
     public ComponentPos south() {
-        return this.offset(Direction.SOUTH);
+        return this.offset(FlatDirection.SOUTH);
     }
     public ComponentPos west() {
-        return this.offset(Direction.WEST);
+        return this.offset(FlatDirection.WEST);
     }
 
     @Override

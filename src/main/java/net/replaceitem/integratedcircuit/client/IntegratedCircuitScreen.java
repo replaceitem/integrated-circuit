@@ -19,9 +19,9 @@ import net.replaceitem.integratedcircuit.circuit.state.RotatableComponentState;
 import net.replaceitem.integratedcircuit.mixin.RedstoneWireBlockAccessor;
 import net.replaceitem.integratedcircuit.network.packet.EditIntegratedCircuitS2CPacket;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
+import net.replaceitem.integratedcircuit.util.FlatDirection;
 import net.replaceitem.integratedcircuit.util.IntegratedCircuitIdentifier;
 import net.replaceitem.integratedcircuit.network.packet.FinishEditingC2SPacket;
-import net.replaceitem.integratedcircuit.util.Direction;
 import net.replaceitem.integratedcircuit.util.SignalStrengthAccessor;
 import org.lwjgl.glfw.GLFW;
 
@@ -54,7 +54,7 @@ public class IntegratedCircuitScreen extends Screen {
     protected final BlockPos pos;
 
     private int selectedComponentSlot = -1;
-    private Direction cursorRotation = Direction.NORTH;
+    private FlatDirection cursorRotation = FlatDirection.NORTH;
     private ComponentState cursorState = null;
 
 

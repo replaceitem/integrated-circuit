@@ -15,7 +15,7 @@ import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
 import net.replaceitem.integratedcircuit.circuit.state.PortComponentState;
 import net.replaceitem.integratedcircuit.network.packet.ComponentUpdateS2CPacket;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
-import net.replaceitem.integratedcircuit.util.Direction;
+import net.replaceitem.integratedcircuit.util.FlatDirection;
 
 import java.util.UUID;
 
@@ -42,7 +42,7 @@ public class ServerCircuit extends Circuit {
     }
     
     public void tick(World world, BlockPos pos, BlockState state, BlockEntity blockEntity) {
-        for (Direction direction : Direction.VALUES) {
+        for (FlatDirection direction : FlatDirection.VALUES) {
             int newPower = ((IntegratedCircuitBlock) state.getBlock()).getInputPower(world, pos, direction);
             this.ports[direction.toInt()].assignExternalPower(this, PORTS_GRID_POS[direction.toInt()], newPower);
         }
@@ -50,7 +50,7 @@ public class ServerCircuit extends Circuit {
 
         IntegratedCircuitBlockEntity integratedCircuitBlockEntity = (IntegratedCircuitBlockEntity) blockEntity;
         boolean updateNeeded = false;
-        for (Direction direction : Direction.VALUES) {
+        for (FlatDirection direction : FlatDirection.VALUES) {
             int oldPower = integratedCircuitBlockEntity.getOutputStrength(direction);
             int newPower = this.ports[direction.toInt()].getInternalPower(this, PORTS_GRID_POS[direction.toInt()]);
             integratedCircuitBlockEntity.setOutputStrength(direction, newPower);
@@ -111,7 +111,7 @@ public class ServerCircuit extends Circuit {
         this.circuitTickScheduler.loadFromNbt(list, this.getTime());
     }
 
-    public void placeComponentFromClient(ComponentPos pos, Component component, Direction rotation) {
+    public void placeComponentFromClient(ComponentPos pos, Component component, FlatDirection rotation) {
 
         ComponentState placementState = component.getPlacementState(this, pos, rotation);
         if(placementState == null) placementState = Components.AIR_DEFAULT_STATE;
@@ -163,7 +163,7 @@ public class ServerCircuit extends Circuit {
 
     public int getReceivedRedstonePower(ComponentPos pos) {
         int i = 0;
-        for (Direction direction : Direction.VALUES) {
+        for (FlatDirection direction : FlatDirection.VALUES) {
             int j = this.getEmittedRedstonePower(pos.offset(direction), direction);
             if (j >= 15) {
                 return 15;
@@ -174,7 +174,7 @@ public class ServerCircuit extends Circuit {
         return i;
     }
 
-    public int getEmittedRedstonePower(ComponentPos pos, Direction direction) {
+    public int getEmittedRedstonePower(ComponentPos pos, FlatDirection direction) {
         ComponentState blockState = this.getComponentState(pos);
         int i = blockState.getWeakRedstonePower(this, pos, direction);
         if (blockState.isSolidBlock(this, pos)) {
@@ -183,41 +183,41 @@ public class ServerCircuit extends Circuit {
         return i;
     }
 
-    public boolean isEmittingRedstonePower(ComponentPos pos, Direction direction) {
+    public boolean isEmittingRedstonePower(ComponentPos pos, FlatDirection direction) {
         return this.getEmittedRedstonePower(pos, direction) > 0;
     }
 
     private int getReceivedStrongRedstonePower(ComponentPos pos) {
         int i = 0;
-        if ((i = Math.max(i, this.getStrongRedstonePower(pos.north(), Direction.NORTH))) >= 15) {
+        if ((i = Math.max(i, this.getStrongRedstonePower(pos.north(), FlatDirection.NORTH))) >= 15) {
             return i;
         }
-        if ((i = Math.max(i, this.getStrongRedstonePower(pos.south(), Direction.SOUTH))) >= 15) {
+        if ((i = Math.max(i, this.getStrongRedstonePower(pos.south(), FlatDirection.SOUTH))) >= 15) {
             return i;
         }
-        if ((i = Math.max(i, this.getStrongRedstonePower(pos.west(), Direction.WEST))) >= 15) {
+        if ((i = Math.max(i, this.getStrongRedstonePower(pos.west(), FlatDirection.WEST))) >= 15) {
             return i;
         }
-        if ((i = Math.max(i, this.getStrongRedstonePower(pos.east(), Direction.EAST))) >= 15) {
+        if ((i = Math.max(i, this.getStrongRedstonePower(pos.east(), FlatDirection.EAST))) >= 15) {
             return i;
         }
         return i;
     }
 
     public boolean isReceivingRedstonePower(ComponentPos pos) {
-        if (this.getEmittedRedstonePower(pos.north(), Direction.NORTH) > 0) {
+        if (this.getEmittedRedstonePower(pos.north(), FlatDirection.NORTH) > 0) {
             return true;
         }
-        if (this.getEmittedRedstonePower(pos.south(), Direction.SOUTH) > 0) {
+        if (this.getEmittedRedstonePower(pos.south(), FlatDirection.SOUTH) > 0) {
             return true;
         }
-        if (this.getEmittedRedstonePower(pos.west(), Direction.WEST) > 0) {
+        if (this.getEmittedRedstonePower(pos.west(), FlatDirection.WEST) > 0) {
             return true;
         }
-        return this.getEmittedRedstonePower(pos.east(), Direction.EAST) > 0;
+        return this.getEmittedRedstonePower(pos.east(), FlatDirection.EAST) > 0;
     }
 
-    public int getStrongRedstonePower(ComponentPos pos, Direction direction) {
+    public int getStrongRedstonePower(ComponentPos pos, FlatDirection direction) {
         return this.getComponentState(pos).getStrongRedstonePower(this, pos, direction);
     }
 
@@ -232,9 +232,9 @@ public class ServerCircuit extends Circuit {
     public void cycleState(ComponentPos pos) {
         if(isPort(pos)) {
             int portNumber = getPortNumber(pos);
-            Direction portSide = Direction.VALUES[portNumber];
+            FlatDirection portSide = FlatDirection.VALUES[portNumber];
             PortComponentState portComponentState = ports[portNumber];
-            Direction newRotation = portComponentState.getRotation() == portSide ? portSide.getOpposite() : portSide;
+            FlatDirection newRotation = portComponentState.getRotation() == portSide ? portSide.getOpposite() : portSide;
             setPortComponentState(pos, new PortComponentState(newRotation, (byte) 0, newRotation == portSide), Component.NOTIFY_ALL);
         } else {
             ComponentState state = this.getComponentState(pos);
@@ -270,7 +270,7 @@ public class ServerCircuit extends Circuit {
         this.neighborUpdater.updateNeighbors(pos, sourceComponent, null);
     }
 
-    public void updateNeighborsExcept(ComponentPos pos, Component sourceComponent, Direction direction) {
+    public void updateNeighborsExcept(ComponentPos pos, Component sourceComponent, FlatDirection direction) {
         this.neighborUpdater.updateNeighbors(pos, sourceComponent, direction);
     }
 
@@ -282,7 +282,7 @@ public class ServerCircuit extends Circuit {
         this.neighborUpdater.updateNeighbor(state, pos, sourceComponent, sourcePos, notify);
     }
 
-    public void replaceWithStateForNeighborUpdate(Direction direction, ComponentState neighborState, ComponentPos pos, ComponentPos neighborPos, int flags) {
+    public void replaceWithStateForNeighborUpdate(FlatDirection direction, ComponentState neighborState, ComponentPos pos, ComponentPos neighborPos, int flags) {
         this.neighborUpdater.replaceWithStateForNeighborUpdate(direction, neighborState, pos, neighborPos, flags);
     }
 }
