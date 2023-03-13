@@ -8,7 +8,7 @@ import net.minecraft.util.math.MathHelper;
 import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
 import net.replaceitem.integratedcircuit.circuit.state.PortComponentState;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
-import net.replaceitem.integratedcircuit.util.Direction;
+import net.replaceitem.integratedcircuit.util.FlatDirection;
 
 import java.util.Arrays;
 
@@ -41,7 +41,7 @@ public abstract class Circuit implements CircuitAccess {
             Arrays.fill(componentState, Components.AIR.getDefaultState());
         }
         for (int i = 0; i < ports.length; i++) {
-            ports[i] = new PortComponentState(Direction.VALUES[i].getOpposite(), (byte) 0, false);
+            ports[i] = new PortComponentState(FlatDirection.VALUES[i].getOpposite(), (byte) 0, false);
         }
 
         this.neighborUpdater = new CircuitNeighborUpdater(this);

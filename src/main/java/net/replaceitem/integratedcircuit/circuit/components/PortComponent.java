@@ -7,6 +7,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 import net.replaceitem.integratedcircuit.circuit.state.*;
+import net.replaceitem.integratedcircuit.util.FlatDirection;
 import net.replaceitem.integratedcircuit.util.IntegratedCircuitIdentifier;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
 import net.replaceitem.integratedcircuit.circuit.Component;
@@ -15,7 +16,6 @@ import net.replaceitem.integratedcircuit.circuit.Components;
 import net.replaceitem.integratedcircuit.circuit.ServerCircuit;
 import net.replaceitem.integratedcircuit.client.IntegratedCircuitScreen;
 import net.replaceitem.integratedcircuit.mixin.RedstoneWireBlockAccessor;
-import net.replaceitem.integratedcircuit.util.Direction;
 
 import java.util.HashSet;
 
@@ -32,7 +32,7 @@ public class PortComponent extends Component {
 
     @Override
     public ComponentState getDefaultState() {
-        return new PortComponentState(Direction.NORTH, (byte) 0, false);
+        return new PortComponentState(FlatDirection.NORTH, (byte) 0, false);
     }
 
     @Override
@@ -55,10 +55,10 @@ public class PortComponent extends Component {
         float b = (float) color.z;
 
 
-        Direction rotation = portComponentState.getRotation();
+        FlatDirection rotation = portComponentState.getRotation();
         IntegratedCircuitScreen.renderComponentTexture(matrices, TEXTURE_ARROW, x, y, rotation.toInt(), r, g, b, a);
         
-        Identifier wireTexture = rotation.getAxis() == Direction.Axis.X ? TEXTURE_X : TEXTURE_Y;
+        Identifier wireTexture = rotation.getAxis() == FlatDirection.Axis.X ? TEXTURE_X : TEXTURE_Y;
         IntegratedCircuitScreen.renderComponentTexture(matrices, wireTexture, x, y, 0, r, g, b, a);
     }
 
@@ -81,7 +81,7 @@ public class PortComponent extends Component {
             return;
         }
         super.onStateReplaced(state, circuit, pos, newState);
-        for (Direction direction : Direction.VALUES) {
+        for (FlatDirection direction : FlatDirection.VALUES) {
             circuit.updateNeighborsAlways(pos.offset(direction), this);
         }
         this.updateOffsetNeighbors(circuit, pos);
@@ -101,8 +101,8 @@ public class PortComponent extends Component {
         circuit.setComponentState(pos, newState, Block.NOTIFY_LISTENERS);
     }
 
-    private void updateOffsetNeighbors(Circuit circuit, ComponentPos pos) {
-        for (Direction direction : Direction.VALUES) {
+    private void updateOffsetNeighbors(ServerCircuit circuit, ComponentPos pos) {
+        for (FlatDirection direction : FlatDirection.VALUES) {
             this.updateNeighbors(circuit, pos.offset(direction));
         }
     }
@@ -113,7 +113,7 @@ public class PortComponent extends Component {
             return;
         }
         circuit.updateNeighborsAlways(pos, this);
-        for (Direction direction : Direction.VALUES) {
+        for (FlatDirection direction : FlatDirection.VALUES) {
             circuit.updateNeighborsAlways(pos.offset(direction), this);
         }
     }
@@ -124,7 +124,7 @@ public class PortComponent extends Component {
         Components.WIRE.wiresGivePower = true;
         int j = 0;
         if (i < 15) {
-            for (Direction direction : Direction.VALUES) {
+            for (FlatDirection direction : FlatDirection.VALUES) {
                 ComponentPos blockPos = pos.offset(direction);
                 ComponentState blockState = world.getComponentState(blockPos);
                 j = Math.max(j, increasePower(blockState));
@@ -151,7 +151,7 @@ public class PortComponent extends Component {
             }
             HashSet<ComponentPos> set = Sets.newHashSet();
             set.add(pos);
-            for (Direction updateDirection : Direction.VALUES) {
+            for (FlatDirection updateDirection : FlatDirection.VALUES) {
                 set.add(pos.offset(updateDirection));
             }
             for (ComponentPos blockPos : set) {
@@ -171,12 +171,12 @@ public class PortComponent extends Component {
     }
 
     @Override
-    public int getStrongRedstonePower(ComponentState state, Circuit circuit, ComponentPos pos, Direction direction) {
+    public int getStrongRedstonePower(ComponentState state, Circuit circuit, ComponentPos pos, FlatDirection direction) {
         return state.getWeakRedstonePower(circuit, pos, direction);
     }
 
     @Override
-    public int getWeakRedstonePower(ComponentState state, Circuit circuit, ComponentPos pos, Direction direction) {
+    public int getWeakRedstonePower(ComponentState state, Circuit circuit, ComponentPos pos, FlatDirection direction) {
         if(!(state instanceof PortComponentState portComponentState)) throw new IllegalStateException("Invalid component state for component");
         if(!Components.WIRE.wiresGivePower) return 0;
         return portComponentState.getRotation().getOpposite() == direction ? portComponentState.getPower() : 0;

@@ -4,7 +4,7 @@ import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.circuit.Components;
 import net.replaceitem.integratedcircuit.circuit.ServerCircuit;
 import net.replaceitem.integratedcircuit.circuit.components.PortComponent;
-import net.replaceitem.integratedcircuit.util.Direction;
+import net.replaceitem.integratedcircuit.util.FlatDirection;
 import net.replaceitem.integratedcircuit.util.SignalStrengthAccessor;
 
 public class PortComponentState extends RotatableComponentState implements SignalStrengthAccessor {
@@ -12,7 +12,7 @@ public class PortComponentState extends RotatableComponentState implements Signa
     private byte power;
     private boolean isOutput;
 
-    public PortComponentState(Direction direction, byte power, boolean isOutput) {
+    public PortComponentState(FlatDirection direction, byte power, boolean isOutput) {
         super(Components.PORT, direction);
         this.power = power;
         this.isOutput = isOutput;

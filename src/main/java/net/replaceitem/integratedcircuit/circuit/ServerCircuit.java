@@ -13,7 +13,7 @@ import net.replaceitem.integratedcircuit.IntegratedCircuitBlockEntity;
 import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
 import net.replaceitem.integratedcircuit.network.packet.ComponentUpdateS2CPacket;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
-import net.replaceitem.integratedcircuit.util.Direction;
+import net.replaceitem.integratedcircuit.util.FlatDirection;
 
 import java.util.UUID;
 
@@ -38,7 +38,7 @@ public class ServerCircuit extends Circuit {
     }
     
     public void tick(World world, BlockPos pos, BlockState state, BlockEntity blockEntity) {
-        for (Direction direction : Direction.VALUES) {
+        for (FlatDirection direction : FlatDirection.VALUES) {
             int newPower = ((IntegratedCircuitBlock) state.getBlock()).getInputPower(world, pos, direction);
             this.ports[direction.toInt()].assignExternalPower(this, PORTS_GRID_POS[direction.toInt()], newPower);
         }
@@ -46,7 +46,7 @@ public class ServerCircuit extends Circuit {
 
         IntegratedCircuitBlockEntity integratedCircuitBlockEntity = (IntegratedCircuitBlockEntity) blockEntity;
         boolean updateNeeded = false;
-        for (Direction direction : Direction.VALUES) {
+        for (FlatDirection direction : FlatDirection.VALUES) {
             int oldPower = integratedCircuitBlockEntity.getOutputStrength(direction);
             int newPower = this.ports[direction.toInt()].getInternalPower(this, PORTS_GRID_POS[direction.toInt()]);
             integratedCircuitBlockEntity.setOutputStrength(direction, newPower);
@@ -107,7 +107,7 @@ public class ServerCircuit extends Circuit {
         this.circuitTickScheduler.loadFromNbt(list, this.getTime());
     }
 
-    public void placeComponentFromClient(ComponentPos pos, Component component, Direction rotation) {
+    public void placeComponentFromClient(ComponentPos pos, Component component, FlatDirection rotation) {
 
         ComponentState placementState = component.getPlacementState(this, pos, rotation);
         if(placementState == null) placementState = Components.AIR_DEFAULT_STATE;
@@ -141,7 +141,7 @@ public class ServerCircuit extends Circuit {
         this.neighborUpdater.updateNeighbors(pos, sourceComponent, null);
     }
 
-    public void updateNeighborsExcept(ComponentPos pos, Component sourceComponent, Direction direction) {
+    public void updateNeighborsExcept(ComponentPos pos, Component sourceComponent, FlatDirection direction) {
         this.neighborUpdater.updateNeighbors(pos, sourceComponent, direction);
     }
 

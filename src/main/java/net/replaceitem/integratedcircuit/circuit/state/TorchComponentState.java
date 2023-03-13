@@ -1,14 +1,14 @@
 package net.replaceitem.integratedcircuit.circuit.state;
 
 import net.replaceitem.integratedcircuit.circuit.Components;
-import net.replaceitem.integratedcircuit.util.Direction;
+import net.replaceitem.integratedcircuit.util.FlatDirection;
 import net.replaceitem.integratedcircuit.util.SignalStrengthAccessor;
 
 public class TorchComponentState extends RotatableComponentState implements SignalStrengthAccessor {
 
     private boolean lit;
     
-    public TorchComponentState(Direction direction, boolean lit) {
+    public TorchComponentState(FlatDirection direction, boolean lit) {
         super(Components.TORCH, direction);
         this.lit = lit;
     }

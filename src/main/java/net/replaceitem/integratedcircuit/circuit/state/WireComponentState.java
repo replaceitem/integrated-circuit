@@ -1,7 +1,7 @@
 package net.replaceitem.integratedcircuit.circuit.state;
 
 import net.replaceitem.integratedcircuit.circuit.Components;
-import net.replaceitem.integratedcircuit.util.Direction;
+import net.replaceitem.integratedcircuit.util.FlatDirection;
 import net.replaceitem.integratedcircuit.util.SignalStrengthAccessor;
 
 
@@ -26,11 +26,11 @@ public class WireComponentState extends ComponentState implements SignalStrength
         return (byte) ((this.connections & 0xF) | (this.power & 0xF) << 4);
     }
 
-    public boolean isConnected(Direction direction) {
+    public boolean isConnected(FlatDirection direction) {
         return (1 << direction.toInt() & this.connections) != 0;
     }
 
-    public WireComponentState setConnected(Direction direction, boolean connected) {
+    public WireComponentState setConnected(FlatDirection direction, boolean connected) {
         int mask = 1 << direction.toInt();
         this.connections = (byte) (connected ? connections | mask : connections & ~mask);
         return this;

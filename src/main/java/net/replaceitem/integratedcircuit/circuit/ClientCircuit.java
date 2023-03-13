@@ -7,12 +7,12 @@ import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
 import net.replaceitem.integratedcircuit.network.packet.ComponentInteractionC2SPacket;
 import net.replaceitem.integratedcircuit.network.packet.PlaceComponentC2SPacket;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
-import net.replaceitem.integratedcircuit.util.Direction;
+import net.replaceitem.integratedcircuit.util.FlatDirection;
 
 public class ClientCircuit extends Circuit {
 
     private final ClientWorld world;
-    
+
     public ClientCircuit(ClientWorld world) {
         super(true);
         this.world = world;
@@ -39,14 +39,14 @@ public class ClientCircuit extends Circuit {
         this.setComponentState(pos, state, Component.NOTIFY_ALL | Component.FORCE_STATE);
     }
 
-    public void placeComponentState(ComponentPos pos, Component component, Direction placementRotation, BlockPos blockPos) {
+    public void placeComponentState(ComponentPos pos, Component component, FlatDirection placementRotation, BlockPos blockPos) {
         new PlaceComponentC2SPacket(pos, blockPos, component, placementRotation).send();
         ComponentState placementState = component.getPlacementState(this, pos, placementRotation);
         setComponentState(pos, placementState, Component.NOTIFY_ALL);
     }
 
     public void breakComponentState(ComponentPos pos, BlockPos blockPos) {
-        this.placeComponentState(pos, Components.AIR, Direction.NORTH, blockPos);
+        this.placeComponentState(pos, Components.AIR, FlatDirection.NORTH, blockPos);
     }
 
     @Override

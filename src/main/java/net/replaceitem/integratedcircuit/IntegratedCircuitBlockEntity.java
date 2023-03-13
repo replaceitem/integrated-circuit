@@ -8,9 +8,8 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Nameable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.replaceitem.integratedcircuit.circuit.Circuit;
 import net.replaceitem.integratedcircuit.circuit.ServerCircuit;
-import net.replaceitem.integratedcircuit.util.Direction;
+import net.replaceitem.integratedcircuit.util.FlatDirection;
 
 import java.util.UUID;
 
@@ -67,11 +66,11 @@ public class IntegratedCircuitBlockEntity extends BlockEntity implements Nameabl
         this.editor = editor;
     }
     
-    public void setOutputStrength(Direction direction, int power) {
+    public void setOutputStrength(FlatDirection direction, int power) {
         this.outputStrengths[direction.toInt()] = (byte) power;
     }
     
-    public int getOutputStrength(Direction direction) {
+    public int getOutputStrength(FlatDirection direction) {
         return this.outputStrengths[direction.toInt()];
     }
 

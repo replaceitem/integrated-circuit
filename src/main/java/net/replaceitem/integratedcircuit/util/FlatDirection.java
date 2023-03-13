@@ -2,7 +2,7 @@ package net.replaceitem.integratedcircuit.util;
 
 import net.minecraft.util.math.Vec3i;
 
-public enum Direction {
+public enum FlatDirection {
 
     NORTH(0, 0, -1, Axis.Y, net.minecraft.util.math.Direction.NORTH),
     EAST(1, 1, 0, Axis.X, net.minecraft.util.math.Direction.EAST),
@@ -14,9 +14,9 @@ public enum Direction {
     private final Axis axis;
     private final net.minecraft.util.math.Direction vanillaDirection;
 
-    public static final Direction[] VALUES = Direction.values();
+    public static final FlatDirection[] VALUES = FlatDirection.values();
 
-    Direction(int index, int dx, int dy, Axis axis, net.minecraft.util.math.Direction vanillaDirection) {
+    FlatDirection(int index, int dx, int dy, Axis axis, net.minecraft.util.math.Direction vanillaDirection) {
         this.index = index;
         this.offset = new Vec3i(dx, dy, 0);
         this.axis = axis;
@@ -31,7 +31,7 @@ public enum Direction {
         return offset;
     }
 
-    public Direction getOpposite() {
+    public FlatDirection getOpposite() {
         return this.rotated(2);
     }
     
@@ -43,11 +43,11 @@ public enum Direction {
         return vanillaDirection;
     }
 
-    public Direction rotated(int times) {
+    public FlatDirection rotated(int times) {
         return VALUES[Math.floorMod(this.toInt()+times,4)];
     }
     
-    public static Direction fromVanillaDirection(net.minecraft.util.math.Direction direction) {
+    public static FlatDirection fromVanillaDirection(net.minecraft.util.math.Direction direction) {
         return switch (direction) {
             case DOWN, UP -> null;
             case NORTH -> NORTH;

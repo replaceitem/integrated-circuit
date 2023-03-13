@@ -11,6 +11,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ColorHelper;
 import net.minecraft.util.math.Quaternion;
+import net.minecraft.util.math.RotationAxis;
 import net.minecraft.util.math.Vec3d;
 import net.replaceitem.integratedcircuit.circuit.*;
 import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
@@ -18,9 +19,9 @@ import net.replaceitem.integratedcircuit.circuit.state.PortComponentState;
 import net.replaceitem.integratedcircuit.circuit.state.RotatableComponentState;
 import net.replaceitem.integratedcircuit.mixin.RedstoneWireBlockAccessor;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
+import net.replaceitem.integratedcircuit.util.FlatDirection;
 import net.replaceitem.integratedcircuit.util.IntegratedCircuitIdentifier;
 import net.replaceitem.integratedcircuit.network.packet.FinishEditingC2SPacket;
-import net.replaceitem.integratedcircuit.util.Direction;
 import net.replaceitem.integratedcircuit.util.SignalStrengthAccessor;
 import org.lwjgl.glfw.GLFW;
 
@@ -53,7 +54,7 @@ public class IntegratedCircuitScreen extends Screen {
     protected final BlockPos pos;
 
     private int selectedComponentSlot = -1;
-    private Direction cursorRotation = Direction.NORTH;
+    private FlatDirection cursorRotation = FlatDirection.NORTH;
     private ComponentState cursorState = null;
 
 
@@ -100,7 +101,7 @@ public class IntegratedCircuitScreen extends Screen {
     @Override
     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
 
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShader(GameRenderer::getPositionTexProgram);
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
         RenderSystem.setShaderTexture(0, BACKGROUND_TEXTURE);
         this.drawTexture(matrices, x, y, 0, 0, BACKGROUND_WIDTH, BACKGROUND_HEIGHT);
@@ -142,7 +143,7 @@ public class IntegratedCircuitScreen extends Screen {
         for (int i = 0; i < PALETTE.length; i++) {
             Component component = PALETTE[i];
             int slotY = this.getPaletteSlotPosY(i);
-            RenderSystem.setShader(GameRenderer::getPositionTexShader);
+            RenderSystem.setShader(GameRenderer::getPositionTexProgram);
             RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
             RenderSystem.setShaderTexture(0, BACKGROUND_TEXTURE);
             this.drawTexture(matrices, this.x + PALETTE_X, slotY, selectedComponentSlot == i ? 14 : 0, BACKGROUND_HEIGHT, 14, 14);
@@ -201,8 +202,7 @@ public class IntegratedCircuitScreen extends Screen {
         prepareTextureRender(component, r, g, b, a);
         matrices.push();
         matrices.translate(x+8, y+8, 0);
-        Quaternion rotation = Quaternion.fromEulerXyz(0, 0, (float) (rot*Math.PI*0.5));
-        matrices.multiply(rotation);
+        matrices.multiply(RotationAxis.POSITIVE_Z.rotation((float) (rot*Math.PI*0.5)));
         matrices.translate(-8, -8, 0);
         drawTexture(matrices, u, v, u, v, w, h, 16, 16);
         matrices.pop();
@@ -217,8 +217,7 @@ public class IntegratedCircuitScreen extends Screen {
         prepareTextureRender(texture, r, g, b, a);
         matrices.push();
         matrices.translate(componentX+8, componentY+8, 0);
-        Quaternion rotation = Quaternion.fromEulerXyz(0, 0, (float) (rot*Math.PI*0.5));
-        matrices.multiply(rotation);
+        matrices.multiply(RotationAxis.POSITIVE_Z.rotation((float) (rot*Math.PI*0.5)));
         matrices.translate(-8, -8, 0);
         drawTexture(matrices, x, y, 0, 0, w, h, textureW, textureH);
         matrices.pop();
@@ -226,7 +225,7 @@ public class IntegratedCircuitScreen extends Screen {
     
     
     public static void prepareTextureRender(Identifier texture, float r, float g, float b, float a) {
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShader(GameRenderer::getPositionTexProgram);
         RenderSystem.setShaderTexture(0, texture);
         RenderSystem.setShaderColor(r, g, b, a);
         RenderSystem.enableBlend();
@@ -270,6 +269,7 @@ public class IntegratedCircuitScreen extends Screen {
         boolean isUse = this.client.options.useKey.matchesMouse(button);
         boolean isAttack = client.options.attackKey.matchesMouse(button);
         boolean isPick = client.options.pickItemKey.matchesMouse(button);
+
         if(isUse && mouseX >= this.x+PALETTE_X && mouseX < this.x+PALETTE_X+14) {
             int slot = getPaletteSlotAt((int) mouseY);
             if(slot >= 0 && slot < PALETTE.length) {

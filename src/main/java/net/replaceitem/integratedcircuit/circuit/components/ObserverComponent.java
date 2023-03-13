@@ -5,6 +5,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.random.Random;
+import net.replaceitem.integratedcircuit.util.FlatDirection;
 import net.replaceitem.integratedcircuit.util.IntegratedCircuitIdentifier;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
 import net.replaceitem.integratedcircuit.circuit.Component;
@@ -13,7 +14,6 @@ import net.replaceitem.integratedcircuit.circuit.ServerCircuit;
 import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
 import net.replaceitem.integratedcircuit.circuit.state.ObserverComponentState;
 import net.replaceitem.integratedcircuit.client.IntegratedCircuitScreen;
-import net.replaceitem.integratedcircuit.util.Direction;
 
 public class ObserverComponent extends Component {
     public ObserverComponent(int id) {
@@ -25,7 +25,7 @@ public class ObserverComponent extends Component {
 
     @Override
     public ComponentState getDefaultState() {
-        return new ObserverComponentState(Direction.SOUTH, false);
+        return new ObserverComponentState(FlatDirection.SOUTH, false);
     }
 
     @Override
@@ -57,7 +57,7 @@ public class ObserverComponent extends Component {
     }
 
     @Override
-    public ComponentState getStateForNeighborUpdate(ComponentState state, Direction direction, ComponentState neighborState, Circuit circuit, ComponentPos pos, ComponentPos neighborPos) {
+    public ComponentState getStateForNeighborUpdate(ComponentState state, FlatDirection direction, ComponentState neighborState, Circuit circuit, ComponentPos pos, ComponentPos neighborPos) {
         if(!(state instanceof ObserverComponentState observerComponentState)) throw new IllegalStateException("Invalid component state for component");
         if (observerComponentState.getRotation() == direction && !observerComponentState.isPowered()) {
             this.scheduleTick(circuit, pos);
@@ -73,7 +73,7 @@ public class ObserverComponent extends Component {
 
     protected void updateNeighbors(Circuit world, ComponentPos pos, ComponentState state) {
         if(!(state instanceof ObserverComponentState observerComponentState)) throw new IllegalStateException("Invalid component state for component");
-        Direction direction = observerComponentState.getRotation();
+        FlatDirection direction = observerComponentState.getRotation();
         ComponentPos blockPos = pos.offset(direction.getOpposite());
         world.updateNeighbor(blockPos, this, pos);
         world.updateNeighborsExcept(blockPos, this, direction);
@@ -85,12 +85,12 @@ public class ObserverComponent extends Component {
     }
 
     @Override
-    public int getStrongRedstonePower(ComponentState state, Circuit circuit, ComponentPos pos, Direction direction) {
+    public int getStrongRedstonePower(ComponentState state, Circuit circuit, ComponentPos pos, FlatDirection direction) {
         return state.getWeakRedstonePower(circuit, pos, direction);
     }
 
     @Override
-    public int getWeakRedstonePower(ComponentState state, Circuit circuit, ComponentPos pos, Direction direction) {
+    public int getWeakRedstonePower(ComponentState state, Circuit circuit, ComponentPos pos, FlatDirection direction) {
         if(!(state instanceof ObserverComponentState observerComponentState)) throw new IllegalStateException("Invalid component state for component");
         if (observerComponentState.isPowered() && observerComponentState.getRotation() == direction) {
             return 15;
@@ -123,7 +123,7 @@ public class ObserverComponent extends Component {
     }
 
     @Override
-    public ComponentState getPlacementState(Circuit circuit, ComponentPos pos, Direction rotation) {
+    public ComponentState getPlacementState(Circuit circuit, ComponentPos pos, FlatDirection rotation) {
         return new ObserverComponentState(rotation, false);
     }
 
@@ -133,7 +133,7 @@ public class ObserverComponent extends Component {
     }
 
     @Override
-    public boolean isSideSolidFullSquare(Circuit circuit, ComponentPos blockPos, Direction direction) {
+    public boolean isSideSolidFullSquare(Circuit circuit, ComponentPos blockPos, FlatDirection direction) {
         return true;
     }
 }

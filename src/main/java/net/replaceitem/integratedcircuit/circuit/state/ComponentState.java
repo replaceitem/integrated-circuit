@@ -9,7 +9,9 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import net.replaceitem.integratedcircuit.circuit.*;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
-import net.replaceitem.integratedcircuit.util.Direction;
+import net.replaceitem.integratedcircuit.circuit.Components;
+import net.replaceitem.integratedcircuit.circuit.ServerCircuit;
+import net.replaceitem.integratedcircuit.util.FlatDirection;
 
 public class ComponentState {
 
@@ -59,7 +61,7 @@ public class ComponentState {
     /**
      * {@link AbstractBlock.AbstractBlockState#getStateForNeighborUpdate(net.minecraft.util.math.Direction, BlockState, WorldAccess, BlockPos, BlockPos)} 
      */
-    public ComponentState getStateForNeighborUpdate(Direction direction, ComponentState neighborState, Circuit circuit, ComponentPos pos, ComponentPos neighborPos) {
+    public ComponentState getStateForNeighborUpdate(FlatDirection direction, ComponentState neighborState, Circuit circuit, ComponentPos pos, ComponentPos neighborPos) {
         return this.component.getStateForNeighborUpdate(this, direction, neighborState, circuit, pos, neighborPos);
     }
 
@@ -75,7 +77,7 @@ public class ComponentState {
     }
 
     public void updateNeighbors(CircuitAccess circuit, ComponentPos pos, int flags, int maxUpdateDepth) {
-        for (Direction direction : Component.DIRECTIONS) {
+        for (FlatDirection direction : Component.DIRECTIONS) {
             ComponentPos offsetPos = pos.offset(direction);
             circuit.replaceWithStateForNeighborUpdate(direction.getOpposite(), this, offsetPos, pos, flags, maxUpdateDepth);
         }
@@ -105,11 +107,11 @@ public class ComponentState {
         return this.component == component;
     }
 
-    public int getWeakRedstonePower(Circuit circuit, ComponentPos pos, Direction direction) {
+    public int getWeakRedstonePower(Circuit circuit, ComponentPos pos, FlatDirection direction) {
         return this.component.getWeakRedstonePower(this, circuit, pos, direction);
     }
 
-    public int getStrongRedstonePower(Circuit circuit, ComponentPos pos, Direction direction) {
+    public int getStrongRedstonePower(Circuit circuit, ComponentPos pos, FlatDirection direction) {
         return this.component.getStrongRedstonePower(this, circuit, pos, direction);
     }
 
