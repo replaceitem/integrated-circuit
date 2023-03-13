@@ -47,7 +47,7 @@ public class ServerPacketHandler {
             ServerWorld world = serverPlayerEntity.getWorld();
             if(world.getBlockState(packet.blockPos).isOf(IntegratedCircuit.INTEGRATED_CIRCUIT_BLOCK) && world.getBlockEntity(packet.blockPos) instanceof IntegratedCircuitBlockEntity integratedCircuitBlockEntity) {
                 if(!serverPlayerEntity.getUuid().equals(integratedCircuitBlockEntity.getEditor())) return;
-                integratedCircuitBlockEntity.getCircuit().cycleState(packet.pos);
+                integratedCircuitBlockEntity.getCircuit().useComponent(packet.pos, packet.blockPos);
             }
         });
     }

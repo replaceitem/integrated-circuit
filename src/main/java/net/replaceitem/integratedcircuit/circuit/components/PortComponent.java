@@ -6,15 +6,13 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
+import net.replaceitem.integratedcircuit.circuit.state.*;
 import net.replaceitem.integratedcircuit.util.IntegratedCircuitIdentifier;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
 import net.replaceitem.integratedcircuit.circuit.Component;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.circuit.Components;
 import net.replaceitem.integratedcircuit.circuit.ServerCircuit;
-import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
-import net.replaceitem.integratedcircuit.circuit.state.PortComponentState;
-import net.replaceitem.integratedcircuit.circuit.state.WireComponentState;
 import net.replaceitem.integratedcircuit.client.IntegratedCircuitScreen;
 import net.replaceitem.integratedcircuit.mixin.RedstoneWireBlockAccessor;
 import net.replaceitem.integratedcircuit.util.Direction;
@@ -66,19 +64,19 @@ public class PortComponent extends Component {
 
 
     @Override
-    public void neighborUpdate(ComponentState state, ServerCircuit circuit, ComponentPos pos, Component sourceBlock, ComponentPos sourcePos, boolean notify) {
+    public void neighborUpdate(ComponentState state, Circuit circuit, ComponentPos pos, Component sourceBlock, ComponentPos sourcePos, boolean notify) {
         if(!(state instanceof PortComponentState portComponentState)) throw new IllegalStateException("Invalid component state for component");
         
         if(portComponentState.isOutput()) {
             int power = getReceivedRedstonePower(circuit, pos);
             if (power != portComponentState.getPower()) {
-                circuit.setPortComponentState(pos, ((PortComponentState) state.copy()).setPower(power), Block.NOTIFY_ALL);
+                circuit.setComponentState(pos, ((PortComponentState) state.copy()).setPower(power), Block.NOTIFY_ALL);
             }
         }
     }
 
     @Override
-    public void onStateReplaced(ComponentState state, ServerCircuit circuit, ComponentPos pos, ComponentState newState) {
+    public void onStateReplaced(ComponentState state, Circuit circuit, ComponentPos pos, ComponentState newState) {
         if (state.isOf(newState.getComponent())) {
             return;
         }
@@ -90,17 +88,26 @@ public class PortComponent extends Component {
     }
 
     @Override
-    public void onBlockAdded(ComponentState state, ServerCircuit circuit, ComponentPos pos, ComponentState oldState) {
+    public void onBlockAdded(ComponentState state, Circuit circuit, ComponentPos pos, ComponentState oldState) {
         this.updateOffsetNeighbors(circuit, pos);
     }
 
-    private void updateOffsetNeighbors(ServerCircuit circuit, ComponentPos pos) {
+    @Override
+    public void onUse(ComponentState state, Circuit circuit, ComponentPos pos) {
+        if(!(state instanceof PortComponentState portComponentState)) throw new IllegalStateException("Invalid component state for component");
+        PortComponentState newState = (PortComponentState) state.copy();
+        newState.setRotation(portComponentState.getRotation().getOpposite());
+        newState.setOutput(!portComponentState.isOutput());
+        circuit.setComponentState(pos, newState, Block.NOTIFY_LISTENERS);
+    }
+
+    private void updateOffsetNeighbors(Circuit circuit, ComponentPos pos) {
         for (Direction direction : Direction.VALUES) {
             this.updateNeighbors(circuit, pos.offset(direction));
         }
     }
 
-    private void updateNeighbors(ServerCircuit circuit, ComponentPos pos) {
+    private void updateNeighbors(Circuit circuit, ComponentPos pos) {
         ComponentState componentState = circuit.getComponentState(pos);
         if (!(componentState.isOf(this) || componentState.isOf(Components.WIRE))) {
             return;
@@ -111,7 +118,7 @@ public class PortComponent extends Component {
         }
     }
 
-    private int getReceivedRedstonePower(ServerCircuit world, ComponentPos pos) {
+    private int getReceivedRedstonePower(Circuit world, ComponentPos pos) {
         Components.WIRE.wiresGivePower = false;
         int i = world.getReceivedRedstonePower(pos);
         Components.WIRE.wiresGivePower = true;
@@ -140,7 +147,7 @@ public class PortComponent extends Component {
             if (circuit.getComponentState(pos).equals(state)) {
                 PortComponentState newState = (PortComponentState) state.copy();
                 newState.setPower(newPower);
-                circuit.setPortComponentState(pos, newState, Component.NOTIFY_LISTENERS);
+                circuit.setComponentState(pos, newState, Component.NOTIFY_LISTENERS);
             }
             HashSet<ComponentPos> set = Sets.newHashSet();
             set.add(pos);
@@ -164,12 +171,12 @@ public class PortComponent extends Component {
     }
 
     @Override
-    public int getStrongRedstonePower(ComponentState state, ServerCircuit circuit, ComponentPos pos, Direction direction) {
+    public int getStrongRedstonePower(ComponentState state, Circuit circuit, ComponentPos pos, Direction direction) {
         return state.getWeakRedstonePower(circuit, pos, direction);
     }
 
     @Override
-    public int getWeakRedstonePower(ComponentState state, ServerCircuit circuit, ComponentPos pos, Direction direction) {
+    public int getWeakRedstonePower(ComponentState state, Circuit circuit, ComponentPos pos, Direction direction) {
         if(!(state instanceof PortComponentState portComponentState)) throw new IllegalStateException("Invalid component state for component");
         if(!Components.WIRE.wiresGivePower) return 0;
         return portComponentState.getRotation().getOpposite() == direction ? portComponentState.getPower() : 0;

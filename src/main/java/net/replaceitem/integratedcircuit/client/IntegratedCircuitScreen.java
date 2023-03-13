@@ -10,7 +10,6 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ColorHelper;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Quaternion;
 import net.minecraft.util.math.Vec3d;
 import net.replaceitem.integratedcircuit.circuit.*;
@@ -18,7 +17,6 @@ import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
 import net.replaceitem.integratedcircuit.circuit.state.PortComponentState;
 import net.replaceitem.integratedcircuit.circuit.state.RotatableComponentState;
 import net.replaceitem.integratedcircuit.mixin.RedstoneWireBlockAccessor;
-import net.replaceitem.integratedcircuit.network.packet.EditIntegratedCircuitS2CPacket;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.IntegratedCircuitIdentifier;
 import net.replaceitem.integratedcircuit.network.packet.FinishEditingC2SPacket;
@@ -70,10 +68,10 @@ public class IntegratedCircuitScreen extends Screen {
             Components.REDSTONE_BLOCK
     };
 
-    public IntegratedCircuitScreen(EditIntegratedCircuitS2CPacket packet) {
-        super(packet.name);
-        this.pos = packet.pos;
-        this.circuit = packet.getClientCircuit();
+    public IntegratedCircuitScreen(ClientCircuit circuit, Text name, BlockPos pos) {
+        super(name);
+        this.pos = pos;
+        this.circuit = circuit;
     }
 
     @Override
@@ -272,10 +270,6 @@ public class IntegratedCircuitScreen extends Screen {
         boolean isUse = this.client.options.useKey.matchesMouse(button);
         boolean isAttack = client.options.attackKey.matchesMouse(button);
         boolean isPick = client.options.pickItemKey.matchesMouse(button);
-        if(isUse && circuit.isPort(clickedPos)) {
-            circuit.cycleState(clickedPos, this.pos);
-            return true;
-        }
         if(isUse && mouseX >= this.x+PALETTE_X && mouseX < this.x+PALETTE_X+14) {
             int slot = getPaletteSlotAt((int) mouseY);
             if(slot >= 0 && slot < PALETTE.length) {
@@ -287,7 +281,12 @@ public class IntegratedCircuitScreen extends Screen {
                 return true;
             }
         }
-        
+
+        if(isUse && circuit.isPort(clickedPos)) {
+            circuit.useComponent(clickedPos, this.pos);
+            return true;
+        }
+
         if(circuit.isInside(clickedPos) && this.client != null) {
             if(isUse) {
                 ComponentState state = circuit.getComponentState(clickedPos);
@@ -296,7 +295,7 @@ public class IntegratedCircuitScreen extends Screen {
                     circuit.placeComponentState(clickedPos, this.cursorState.getComponent(), this.cursorRotation, this.pos);
                     return true;
                 }
-                circuit.cycleState(clickedPos, this.pos);
+                circuit.useComponent(clickedPos, this.pos);
                 return true;
             }
             if(isAttack) {

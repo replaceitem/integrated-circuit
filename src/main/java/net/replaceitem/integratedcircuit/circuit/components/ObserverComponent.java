@@ -57,7 +57,7 @@ public class ObserverComponent extends Component {
     }
 
     @Override
-    public ComponentState getStateForNeighborUpdate(ComponentState state, Direction direction, ComponentState neighborState, ServerCircuit circuit, ComponentPos pos, ComponentPos neighborPos) {
+    public ComponentState getStateForNeighborUpdate(ComponentState state, Direction direction, ComponentState neighborState, Circuit circuit, ComponentPos pos, ComponentPos neighborPos) {
         if(!(state instanceof ObserverComponentState observerComponentState)) throw new IllegalStateException("Invalid component state for component");
         if (observerComponentState.getRotation() == direction && !observerComponentState.isPowered()) {
             this.scheduleTick(circuit, pos);
@@ -65,13 +65,13 @@ public class ObserverComponent extends Component {
         return super.getStateForNeighborUpdate(state, direction, neighborState, circuit, pos, neighborPos);
     }
 
-    private void scheduleTick(ServerCircuit world, ComponentPos pos) {
+    private void scheduleTick(Circuit world, ComponentPos pos) {
         if (!world.getCircuitTickScheduler().isQueued(pos, this)) {
             world.createAndScheduleBlockTick(pos, this, 2);
         }
     }
 
-    protected void updateNeighbors(ServerCircuit world, ComponentPos pos, ComponentState state) {
+    protected void updateNeighbors(Circuit world, ComponentPos pos, ComponentState state) {
         if(!(state instanceof ObserverComponentState observerComponentState)) throw new IllegalStateException("Invalid component state for component");
         Direction direction = observerComponentState.getRotation();
         ComponentPos blockPos = pos.offset(direction.getOpposite());
@@ -85,12 +85,12 @@ public class ObserverComponent extends Component {
     }
 
     @Override
-    public int getStrongRedstonePower(ComponentState state, ServerCircuit circuit, ComponentPos pos, Direction direction) {
+    public int getStrongRedstonePower(ComponentState state, Circuit circuit, ComponentPos pos, Direction direction) {
         return state.getWeakRedstonePower(circuit, pos, direction);
     }
 
     @Override
-    public int getWeakRedstonePower(ComponentState state, ServerCircuit circuit, ComponentPos pos, Direction direction) {
+    public int getWeakRedstonePower(ComponentState state, Circuit circuit, ComponentPos pos, Direction direction) {
         if(!(state instanceof ObserverComponentState observerComponentState)) throw new IllegalStateException("Invalid component state for component");
         if (observerComponentState.isPowered() && observerComponentState.getRotation() == direction) {
             return 15;
@@ -99,7 +99,7 @@ public class ObserverComponent extends Component {
     }
 
     @Override
-    public void onBlockAdded(ComponentState state, ServerCircuit circuit, ComponentPos pos, ComponentState oldState) {
+    public void onBlockAdded(ComponentState state, Circuit circuit, ComponentPos pos, ComponentState oldState) {
         if(!(state instanceof ObserverComponentState observerComponentState)) throw new IllegalStateException("Invalid component state for component");
         if (state.isOf(oldState.getComponent())) {
             return;
@@ -112,7 +112,7 @@ public class ObserverComponent extends Component {
     }
 
     @Override
-    public void onStateReplaced(ComponentState state, ServerCircuit circuit, ComponentPos pos, ComponentState newState) {
+    public void onStateReplaced(ComponentState state, Circuit circuit, ComponentPos pos, ComponentState newState) {
         if(!(state instanceof ObserverComponentState observerComponentState)) throw new IllegalStateException("Invalid component state for component");
         if (state.isOf(newState.getComponent())) {
             return;
@@ -123,7 +123,7 @@ public class ObserverComponent extends Component {
     }
 
     @Override
-    public ComponentState getPlacementState(ServerCircuit circuit, ComponentPos pos, Direction rotation) {
+    public ComponentState getPlacementState(Circuit circuit, ComponentPos pos, Direction rotation) {
         return new ObserverComponentState(rotation, false);
     }
 

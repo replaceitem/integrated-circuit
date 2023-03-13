@@ -51,7 +51,7 @@ public abstract class Component {
     }
 
     public abstract ComponentState getDefaultState();
-    public ComponentState getPlacementState(ServerCircuit circuit, ComponentPos pos, Direction rotation) {
+    public ComponentState getPlacementState(Circuit circuit, ComponentPos pos, Direction rotation) {
         ComponentState defaultState = getDefaultState();
         if(defaultState instanceof RotatableComponentState rotatableComponentState) rotatableComponentState.setRotation(rotation);
         return defaultState;
@@ -61,28 +61,34 @@ public abstract class Component {
 
 
     public static void replace(ComponentState state, ComponentState newState, Circuit world, ComponentPos pos, int flags) {
-        if (!newState.equals(state)) { // IN MC THIS IS == (but something I can't seem to track down makes == not work, leading to a StackOverflowError, lets home this doesn't haunt me later ...)
+        replace(state, newState, world, pos, flags, 512);
+    }
+
+    public static void replace(ComponentState state, ComponentState newState, Circuit world, ComponentPos pos, int flags, int maxUpdateDepth) {
+        if (!newState.equals(state)) {
             if (newState.isAir()) {
-                world.breakBlock(pos);
+                if(!world.isClient) {
+                    world.breakBlock(pos, maxUpdateDepth);
+                }
             } else {
-                world.setComponentState(pos, newState, flags & ~SKIP_DROPS);
+                world.setComponentState(pos, newState, flags & ~SKIP_DROPS, maxUpdateDepth);
             }
         }
     }
 
-    public void neighborUpdate(ComponentState state, ServerCircuit circuit, ComponentPos pos, Component sourceBlock, ComponentPos sourcePos, boolean notify) {
+    public void neighborUpdate(ComponentState state, Circuit circuit, ComponentPos pos, Component sourceBlock, ComponentPos sourcePos, boolean notify) {
         
     }
 
-    public void onBlockAdded(ComponentState state, ServerCircuit circuit, ComponentPos pos, ComponentState oldState) {
+    public void onBlockAdded(ComponentState state, Circuit circuit, ComponentPos pos, ComponentState oldState) {
         
     }
     
-    public void onStateReplaced(ComponentState state, ServerCircuit circuit, ComponentPos pos, ComponentState newState) {
+    public void onStateReplaced(ComponentState state, Circuit circuit, ComponentPos pos, ComponentState newState) {
         
     }
     
-    public void onUse(ComponentState state, ServerCircuit circuit, ComponentPos pos) {
+    public void onUse(ComponentState state, Circuit circuit, ComponentPos pos) {
         
     }
     
@@ -94,11 +100,11 @@ public abstract class Component {
         
     }
 
-    public ComponentState getStateForNeighborUpdate(ComponentState state, Direction direction, ComponentState neighborState, ServerCircuit circuit, ComponentPos pos, ComponentPos neighborPos) {
+    public ComponentState getStateForNeighborUpdate(ComponentState state, Direction direction, ComponentState neighborState, Circuit circuit, ComponentPos pos, ComponentPos neighborPos) {
         return state;
     }
 
-    public void prepare(ComponentState state, ServerCircuit circuit, ComponentPos pos, int flags) {}
+    public void prepare(ComponentState state, CircuitAccess circuit, ComponentPos pos, int flags, int maxUpdateDepth) {}
 
     public abstract boolean isSolidBlock(Circuit circuit, ComponentPos pos);
 
@@ -106,11 +112,11 @@ public abstract class Component {
         return isSolidBlock(circuit, blockPos);
     }
 
-    public int getWeakRedstonePower(ComponentState state, ServerCircuit circuit, ComponentPos pos, Direction direction) {
+    public int getWeakRedstonePower(ComponentState state, Circuit circuit, ComponentPos pos, Direction direction) {
         return 0;
     }
 
-    public int getStrongRedstonePower(ComponentState state, ServerCircuit circuit, ComponentPos pos, Direction direction) {
+    public int getStrongRedstonePower(ComponentState state, Circuit circuit, ComponentPos pos, Direction direction) {
         return 0;
     }
 

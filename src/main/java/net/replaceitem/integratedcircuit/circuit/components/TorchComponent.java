@@ -43,7 +43,7 @@ public class TorchComponent extends Component {
     }
 
     @Override
-    public ComponentState getPlacementState(ServerCircuit circuit, ComponentPos pos, Direction rotation) {
+    public ComponentState getPlacementState(Circuit circuit, ComponentPos pos, Direction rotation) {
         TorchComponentState componentState = (TorchComponentState) ((TorchComponentState) this.getDefaultState()).setRotation(rotation);
         if (!componentState.canPlaceAt(circuit, pos)) {
             return null;
@@ -64,7 +64,7 @@ public class TorchComponent extends Component {
     }
 
     @Override
-    public ComponentState getStateForNeighborUpdate(ComponentState state, Direction direction, ComponentState neighborState, ServerCircuit circuit, ComponentPos pos, ComponentPos neighborPos) {
+    public ComponentState getStateForNeighborUpdate(ComponentState state, Direction direction, ComponentState neighborState, Circuit circuit, ComponentPos pos, ComponentPos neighborPos) {
         if(!(state instanceof TorchComponentState torchComponentState)) throw new IllegalStateException("Invalid component state for component");
         if (direction.getOpposite() == torchComponentState.getRotation() && !canPlaceAt(torchComponentState, circuit, pos)) {
             return Components.AIR.getDefaultState();
@@ -82,14 +82,14 @@ public class TorchComponent extends Component {
     }
     
     @Override
-    public void onBlockAdded(ComponentState state, ServerCircuit circuit, ComponentPos pos, ComponentState oldState) {
+    public void onBlockAdded(ComponentState state, Circuit circuit, ComponentPos pos, ComponentState oldState) {
         for (Direction direction : Direction.VALUES) {
             circuit.updateNeighborsAlways(pos.offset(direction), this);
         }
     }
 
     @Override
-    public void onStateReplaced(ComponentState state, ServerCircuit circuit, ComponentPos pos, ComponentState newState) {
+    public void onStateReplaced(ComponentState state, Circuit circuit, ComponentPos pos, ComponentState newState) {
         for (Direction direction : Direction.VALUES) {
             circuit.updateNeighborsAlways(pos.offset(direction), this);
         }
@@ -116,7 +116,7 @@ public class TorchComponent extends Component {
     }
 
     @Override
-    public void neighborUpdate(ComponentState state, ServerCircuit circuit, ComponentPos pos, Component sourceBlock, ComponentPos sourcePos, boolean notify) {
+    public void neighborUpdate(ComponentState state, Circuit circuit, ComponentPos pos, Component sourceBlock, ComponentPos sourcePos, boolean notify) {
         if(!(state instanceof TorchComponentState torchComponentState)) throw new IllegalStateException("Invalid component state for component");
         if (torchComponentState.isLit() == this.shouldUnpower(circuit, pos, state) && !circuit.getCircuitTickScheduler().isTicking(pos, this)) {
             circuit.createAndScheduleBlockTick(pos, this, 2);
@@ -124,7 +124,7 @@ public class TorchComponent extends Component {
     }
 
     @Override
-    public int getWeakRedstonePower(ComponentState state, ServerCircuit circuit, ComponentPos pos, Direction direction) {
+    public int getWeakRedstonePower(ComponentState state, Circuit circuit, ComponentPos pos, Direction direction) {
         if(!(state instanceof TorchComponentState torchComponentState)) throw new IllegalStateException("Invalid component state for component");
         return torchComponentState.isLit() ? 15 : 0;
     }
@@ -134,7 +134,7 @@ public class TorchComponent extends Component {
         return false;
     }
     
-    protected boolean shouldUnpower(ServerCircuit circuit, ComponentPos pos, ComponentState state) {
+    protected boolean shouldUnpower(Circuit circuit, ComponentPos pos, ComponentState state) {
         if(!(state instanceof TorchComponentState torchComponentState)) throw new IllegalStateException("Invalid component state for component");
         Direction direction = torchComponentState.getRotation().getOpposite();
         return circuit.isEmittingRedstonePower(pos.offset(direction), direction);

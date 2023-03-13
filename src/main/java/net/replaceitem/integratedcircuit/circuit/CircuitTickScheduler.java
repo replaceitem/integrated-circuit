@@ -14,6 +14,27 @@ import java.util.function.BiConsumer;
 
 public class CircuitTickScheduler {
 
+
+    private static final CircuitTickScheduler EMPTY_SCHEDULER = new CircuitTickScheduler() {
+        @Override
+        public void scheduleTick(OrderedCircuitTick orderedTick) {}
+
+        @Override
+        public boolean isQueued(ComponentPos pos, Component component) {
+            return false;
+        }
+
+        @Override
+        public boolean isTicking(ComponentPos pos, Component component) {
+            return false;
+        }
+    };
+
+    public static CircuitTickScheduler getClientTickScheduler() {
+        return EMPTY_SCHEDULER;
+    }
+
+
     private final Set<OrderedCircuitTick> queuedTicks = new ObjectOpenCustomHashSet<>(OrderedCircuitTick.HASH_STRATEGY);
     private final Queue<OrderedCircuitTick> tickQueue = new PriorityQueue<>(OrderedCircuitTick.TRIGGER_TICK_COMPARATOR);
     

@@ -7,7 +7,6 @@ import net.minecraft.util.Identifier;
 import net.replaceitem.integratedcircuit.util.IntegratedCircuitIdentifier;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
-import net.replaceitem.integratedcircuit.circuit.ServerCircuit;
 import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
 import net.replaceitem.integratedcircuit.circuit.state.RepeaterComponentState;
 import net.replaceitem.integratedcircuit.client.IntegratedCircuitScreen;
@@ -31,7 +30,6 @@ public class RepeaterComponent extends AbstractRedstoneGateComponent {
     @Override
     public void render(MatrixStack matrices, int x, int y, float a, ComponentState state) {
         if(!(state instanceof RepeaterComponentState repeaterComponentState)) throw new IllegalStateException("Invalid component state for component");
-        final int size = IntegratedCircuitScreen.COMPONENT_SIZE;
         Direction renderedRotation = repeaterComponentState.getRotation().getOpposite();
 
         Identifier baseTexture = repeaterComponentState.isPowered() ? TEXTURE_ON : TEXTURE_OFF;
@@ -55,7 +53,7 @@ public class RepeaterComponent extends AbstractRedstoneGateComponent {
     }
 
     @Override
-    public void onUse(ComponentState state, ServerCircuit circuit, ComponentPos pos) {
+    public void onUse(ComponentState state, Circuit circuit, ComponentPos pos) {
         if(!(state instanceof RepeaterComponentState repeaterComponentState)) throw new IllegalStateException("Invalid component state for component");
         circuit.setComponentState(pos, ((RepeaterComponentState) repeaterComponentState.copy()).cycleDelay(), Block.NOTIFY_ALL);
     }
@@ -67,13 +65,13 @@ public class RepeaterComponent extends AbstractRedstoneGateComponent {
     }
 
     @Override
-    public ComponentState getPlacementState(ServerCircuit circuit, ComponentPos pos, Direction rotation) {
+    public ComponentState getPlacementState(Circuit circuit, ComponentPos pos, Direction rotation) {
         RepeaterComponentState state = ((RepeaterComponentState) super.getPlacementState(circuit, pos, rotation));
         return state.setLocked(this.isLocked(circuit, pos, state));
     }
 
     @Override
-    public ComponentState getStateForNeighborUpdate(ComponentState state, Direction direction, ComponentState neighborState, ServerCircuit circuit, ComponentPos pos, ComponentPos neighborPos) {
+    public ComponentState getStateForNeighborUpdate(ComponentState state, Direction direction, ComponentState neighborState, Circuit circuit, ComponentPos pos, ComponentPos neighborPos) {
         if(!(state instanceof RepeaterComponentState repeaterComponentState)) throw new IllegalStateException("Invalid component state for component");
         if (direction.getAxis() != repeaterComponentState.getRotation().getAxis()) {
             return ((RepeaterComponentState) state.copy()).setLocked(this.isLocked(circuit, pos, state));
@@ -82,7 +80,7 @@ public class RepeaterComponent extends AbstractRedstoneGateComponent {
     }
 
     @Override
-    public boolean isLocked(ServerCircuit circuit, ComponentPos pos, ComponentState state) {
+    public boolean isLocked(Circuit circuit, ComponentPos pos, ComponentState state) {
         if(!(state instanceof RepeaterComponentState repeaterComponentState)) throw new IllegalStateException("Invalid component state for component");
         return this.getMaxInputLevelSides(circuit, pos, repeaterComponentState) > 0;
     }

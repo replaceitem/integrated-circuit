@@ -66,12 +66,12 @@ public class ComparatorComponent extends AbstractRedstoneGateComponent {
     }
 
     @Override
-    protected int getOutputLevel(ServerCircuit circuit, ComponentPos pos, ComponentState state) {
+    protected int getOutputLevel(Circuit circuit, ComponentPos pos, ComponentState state) {
         if(!(state instanceof ComparatorComponentState comparatorComponentState)) throw new IllegalStateException("Invalid component state for component");
         return comparatorComponentState.getOutputSignal();
     }
 
-    private int calculateOutputSignal(ServerCircuit world, ComponentPos pos, ComparatorComponentState state) {
+    private int calculateOutputSignal(Circuit world, ComponentPos pos, ComparatorComponentState state) {
         int i = this.getPower(world, pos, state);
         if (i == 0) {
             return 0;
@@ -87,7 +87,7 @@ public class ComparatorComponent extends AbstractRedstoneGateComponent {
     }
 
     @Override
-    protected boolean hasPower(ServerCircuit circuit, ComponentPos pos, AbstractRedstoneGateComponentState state) {
+    protected boolean hasPower(Circuit circuit, ComponentPos pos, AbstractRedstoneGateComponentState state) {
         if(!(state instanceof ComparatorComponentState comparatorComponentState)) throw new IllegalStateException("Invalid component state for component");
         int i = this.getPower(circuit, pos, state);
         if (i == 0) {
@@ -102,13 +102,13 @@ public class ComparatorComponent extends AbstractRedstoneGateComponent {
 
 
     @Override
-    protected int getPower(ServerCircuit circuit, ComponentPos pos, AbstractRedstoneGateComponentState state) {
+    protected int getPower(Circuit circuit, ComponentPos pos, AbstractRedstoneGateComponentState state) {
         // overriding is unnecessary, but when blocks get added that have a comparator power level, this needs to be changed
         return super.getPower(circuit, pos, state);
     }
 
     @Override
-    public void onUse(ComponentState state, ServerCircuit circuit, ComponentPos pos) {
+    public void onUse(ComponentState state, Circuit circuit, ComponentPos pos) {
         if(!(state instanceof ComparatorComponentState comparatorComponentState)) throw new IllegalStateException("Invalid component state for component");
         comparatorComponentState = ((ComparatorComponentState) state.copy()).setSubtractMode(!comparatorComponentState.isSubtractMode());
         circuit.setComponentState(pos, comparatorComponentState, Block.NOTIFY_LISTENERS);
@@ -116,23 +116,22 @@ public class ComparatorComponent extends AbstractRedstoneGateComponent {
     }
 
     @Override
-    protected void updatePowered(ServerCircuit world, ComponentPos pos, AbstractRedstoneGateComponentState state) {
+    protected void updatePowered(Circuit circuit, ComponentPos pos, AbstractRedstoneGateComponentState state) {
         if(!(state instanceof ComparatorComponentState comparatorComponentState)) throw new IllegalStateException("Invalid component state for component");
-        if (world.getCircuitTickScheduler().isTicking(pos, this)) {
+        if (circuit.getCircuitTickScheduler().isTicking(pos, this)) {
             return;
         }
-        int calculatedOutputSignal = this.calculateOutputSignal(world, pos, comparatorComponentState);
+        int calculatedOutputSignal = this.calculateOutputSignal(circuit, pos, comparatorComponentState);
         int outputSignal = comparatorComponentState.getOutputSignal();
-        if (calculatedOutputSignal != outputSignal || state.isPowered() != this.hasPower(world, pos, state)) {
-            TickPriority tickPriority = this.isTargetNotAligned(world, pos, state) ? TickPriority.HIGH : TickPriority.NORMAL;
-            world.createAndScheduleBlockTick(pos, this, 2, tickPriority);
+        if (calculatedOutputSignal != outputSignal || state.isPowered() != this.hasPower(circuit, pos, state)) {
+            TickPriority tickPriority = this.isTargetNotAligned(circuit, pos, state) ? TickPriority.HIGH : TickPriority.NORMAL;
+            circuit.createAndScheduleBlockTick(pos, this, 2, tickPriority);
         }
     }
 
-    private void update(ServerCircuit world, ComponentPos pos, ComparatorComponentState state) {
+    private void update(Circuit world, ComponentPos pos, ComparatorComponentState state) {
         int i = this.calculateOutputSignal(world, pos, state);
-        int j = 0;
-        j = state.getOutputSignal();
+        int j = state.getOutputSignal();
         state.setOutputSignal(i);
         if (j != i || !state.isSubtractMode()) {
             boolean hasPower = this.hasPower(world, pos, state);

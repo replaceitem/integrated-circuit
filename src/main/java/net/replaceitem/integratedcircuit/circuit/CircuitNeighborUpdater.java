@@ -14,9 +14,9 @@ public class CircuitNeighborUpdater {
     
     public static final Direction[] UPDATE_ORDER = new Direction[]{Direction.WEST, Direction.EAST, Direction.NORTH, Direction.SOUTH};
     
-    protected final ServerCircuit circuit;
+    protected final Circuit circuit;
     
-    public CircuitNeighborUpdater(ServerCircuit circuit) {
+    public CircuitNeighborUpdater(Circuit circuit) {
         this.circuit = circuit;
     }
 
@@ -24,10 +24,10 @@ public class CircuitNeighborUpdater {
         CircuitNeighborUpdater.replaceWithStateForNeighborUpdate(this.circuit, direction, neighborState, pos, neighborPos, flags);
     }
     
-    public static void replaceWithStateForNeighborUpdate(ServerCircuit world, Direction direction, ComponentState neighborState, ComponentPos pos, ComponentPos neighborPos, int flags) {
-        ComponentState blockState = world.getComponentState(pos);
-        ComponentState blockState2 = blockState.getStateForNeighborUpdate(direction, neighborState, world, pos, neighborPos);
-        Component.replace(blockState, blockState2, world, pos, flags);
+    public static void replaceWithStateForNeighborUpdate(Circuit world, Direction direction, ComponentState neighborState, ComponentPos pos, ComponentPos neighborPos, int flags) {
+        ComponentState componentState = world.getComponentState(pos);
+        ComponentState componentState2 = componentState.getStateForNeighborUpdate(direction, neighborState, world, pos, neighborPos);
+        Component.replace(componentState, componentState2, world, pos, flags);
     }
 
     public void updateNeighbor(ComponentPos pos, Component sourceBlock, ComponentPos sourcePos) {
@@ -46,7 +46,7 @@ public class CircuitNeighborUpdater {
         }
     }
 
-    public static void tryNeighborUpdate(ServerCircuit world, ComponentState state, ComponentPos pos, Component sourceBlock, ComponentPos sourcePos, boolean notify) {
+    public static void tryNeighborUpdate(Circuit world, ComponentState state, ComponentPos pos, Component sourceBlock, ComponentPos sourcePos, boolean notify) {
         state.neighborUpdate(world, pos, sourceBlock, sourcePos, notify);
     }
 }

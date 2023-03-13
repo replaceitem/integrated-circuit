@@ -14,7 +14,7 @@ import net.replaceitem.integratedcircuit.network.packet.EditIntegratedCircuitS2C
 public class ClientPacketHandler {
     public static void receiveEditIntegratedCircuitPacket(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
         EditIntegratedCircuitS2CPacket packet = new EditIntegratedCircuitS2CPacket(buf);
-        client.executeSync(() -> client.setScreen(new IntegratedCircuitScreen(packet)));
+        client.executeSync(() -> client.setScreen(new IntegratedCircuitScreen(packet.getClientCircuit(handler.getWorld()), packet.name, packet.pos)));
     }
 
     public static void receiveComponentUpdatePacket(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
