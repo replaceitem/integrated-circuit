@@ -172,50 +172,50 @@ public abstract class Circuit implements CircuitAccess {
     protected abstract void updateListeners(ComponentPos pos, ComponentState oldState, ComponentState state, int flags);
 
     @Override
-    public void replaceWithStateForNeighborUpdate(Direction direction, ComponentState neighborState, ComponentPos pos, ComponentPos neighborPos, int flags, int maxUpdateDepth) {
-        this.neighborUpdater.replaceWithStateForNeighborUpdate(direction, neighborState, pos, neighborPos, flags);
+    public void replaceWithStateForNeighborUpdate(FlatDirection FlatDirection, ComponentState neighborState, ComponentPos pos, ComponentPos neighborPos, int flags, int maxUpdateDepth) {
+        this.neighborUpdater.replaceWithStateForNeighborUpdate(FlatDirection, neighborState, pos, neighborPos, flags);
     }
 
 
-    public int getEmittedRedstonePower(ComponentPos pos, Direction direction) {
+    public int getEmittedRedstonePower(ComponentPos pos, FlatDirection FlatDirection) {
         ComponentState blockState = this.getComponentState(pos);
-        int i = blockState.getWeakRedstonePower(this, pos, direction);
+        int i = blockState.getWeakRedstonePower(this, pos, FlatDirection);
         if (blockState.isSolidBlock(this, pos)) {
             return Math.max(i, this.getReceivedStrongRedstonePower(pos));
         }
         return i;
     }
 
-    public boolean isEmittingRedstonePower(ComponentPos pos, Direction direction) {
-        return this.getEmittedRedstonePower(pos, direction) > 0;
+    public boolean isEmittingRedstonePower(ComponentPos pos, FlatDirection FlatDirection) {
+        return this.getEmittedRedstonePower(pos, FlatDirection) > 0;
     }
 
 
     private int getReceivedStrongRedstonePower(ComponentPos pos) {
         int i = 0;
-        if ((i = Math.max(i, this.getStrongRedstonePower(pos.north(), Direction.NORTH))) >= 15) {
+        if ((i = Math.max(i, this.getStrongRedstonePower(pos.north(), FlatDirection.NORTH))) >= 15) {
             return i;
         }
-        if ((i = Math.max(i, this.getStrongRedstonePower(pos.south(), Direction.SOUTH))) >= 15) {
+        if ((i = Math.max(i, this.getStrongRedstonePower(pos.south(), FlatDirection.SOUTH))) >= 15) {
             return i;
         }
-        if ((i = Math.max(i, this.getStrongRedstonePower(pos.west(), Direction.WEST))) >= 15) {
+        if ((i = Math.max(i, this.getStrongRedstonePower(pos.west(), FlatDirection.WEST))) >= 15) {
             return i;
         }
-        if ((i = Math.max(i, this.getStrongRedstonePower(pos.east(), Direction.EAST))) >= 15) {
+        if ((i = Math.max(i, this.getStrongRedstonePower(pos.east(), FlatDirection.EAST))) >= 15) {
             return i;
         }
         return i;
     }
 
-    public int getStrongRedstonePower(ComponentPos pos, Direction direction) {
-        return this.getComponentState(pos).getStrongRedstonePower(this, pos, direction);
+    public int getStrongRedstonePower(ComponentPos pos, FlatDirection FlatDirection) {
+        return this.getComponentState(pos).getStrongRedstonePower(this, pos, FlatDirection);
     }
 
     public int getReceivedRedstonePower(ComponentPos pos) {
         int i = 0;
-        for (Direction direction : Direction.VALUES) {
-            int j = this.getEmittedRedstonePower(pos.offset(direction), direction);
+        for (FlatDirection FlatDirection : FlatDirection.VALUES) {
+            int j = this.getEmittedRedstonePower(pos.offset(FlatDirection), FlatDirection);
             if (j >= 15) {
                 return 15;
             }
@@ -226,16 +226,16 @@ public abstract class Circuit implements CircuitAccess {
     }
 
     public boolean isReceivingRedstonePower(ComponentPos pos) {
-        if (this.getEmittedRedstonePower(pos.north(), Direction.NORTH) > 0) {
+        if (this.getEmittedRedstonePower(pos.north(), FlatDirection.NORTH) > 0) {
             return true;
         }
-        if (this.getEmittedRedstonePower(pos.south(), Direction.SOUTH) > 0) {
+        if (this.getEmittedRedstonePower(pos.south(), FlatDirection.SOUTH) > 0) {
             return true;
         }
-        if (this.getEmittedRedstonePower(pos.west(), Direction.WEST) > 0) {
+        if (this.getEmittedRedstonePower(pos.west(), FlatDirection.WEST) > 0) {
             return true;
         }
-        return this.getEmittedRedstonePower(pos.east(), Direction.EAST) > 0;
+        return this.getEmittedRedstonePower(pos.east(), FlatDirection.EAST) > 0;
     }
 
     public void useComponent(ComponentPos pos, BlockPos blockPos) {

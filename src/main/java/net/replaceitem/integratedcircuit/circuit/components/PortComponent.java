@@ -101,7 +101,7 @@ public class PortComponent extends Component {
         circuit.setComponentState(pos, newState, Block.NOTIFY_LISTENERS);
     }
 
-    private void updateOffsetNeighbors(ServerCircuit circuit, ComponentPos pos) {
+    private void updateOffsetNeighbors(Circuit circuit, ComponentPos pos) {
         for (FlatDirection direction : FlatDirection.VALUES) {
             this.updateNeighbors(circuit, pos.offset(direction));
         }

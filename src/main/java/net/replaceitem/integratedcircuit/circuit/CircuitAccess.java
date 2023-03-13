@@ -1,9 +1,9 @@
 package net.replaceitem.integratedcircuit.circuit;
 
-import net.minecraft.world.TickPriority;
+import net.minecraft.world.tick.TickPriority;
 import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
-import net.replaceitem.integratedcircuit.util.Direction;
+import net.replaceitem.integratedcircuit.util.FlatDirection;
 
 /**
  * @see net.minecraft.world.WorldAccess
@@ -35,9 +35,9 @@ public interface CircuitAccess {
 
 
     default void updateNeighbors(ComponentPos pos, Component component) {}
-    default void updateNeighborsExcept(ComponentPos pos, Component sourceComponent, Direction direction) {}
+    default void updateNeighborsExcept(ComponentPos pos, Component sourceComponent, FlatDirection direction) {}
     default void updateNeighborsAlways(ComponentPos pos, Component sourceComponent) {}
     default void updateNeighbor(ComponentPos pos, Component sourceComponent, ComponentPos sourcePos) {}
     default void updateNeighbor(ComponentState state, ComponentPos pos, Component sourceComponent, ComponentPos sourcePos, boolean notify) {}
-    default void replaceWithStateForNeighborUpdate(Direction direction, ComponentState neighborState, ComponentPos pos, ComponentPos neighborPos, int flags, int maxUpdateDepth) {}
+    default void replaceWithStateForNeighborUpdate(FlatDirection direction, ComponentState neighborState, ComponentPos pos, ComponentPos neighborPos, int flags, int maxUpdateDepth) {}
 }

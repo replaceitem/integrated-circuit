@@ -6,16 +6,16 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
-import net.replaceitem.integratedcircuit.util.FlatDirection;
-import net.replaceitem.integratedcircuit.util.IntegratedCircuitIdentifier;
-import net.replaceitem.integratedcircuit.util.ComponentPos;
-import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
-import net.replaceitem.integratedcircuit.circuit.state.ObserverComponentState;
-import net.replaceitem.integratedcircuit.circuit.state.PortComponentState;
-import net.replaceitem.integratedcircuit.circuit.state.RepeaterComponentState;
-import net.replaceitem.integratedcircuit.circuit.state.WireComponentState;
+import net.replaceitem.integratedcircuit.circuit.Circuit;
+import net.replaceitem.integratedcircuit.circuit.CircuitAccess;
+import net.replaceitem.integratedcircuit.circuit.Component;
+import net.replaceitem.integratedcircuit.circuit.Components;
+import net.replaceitem.integratedcircuit.circuit.state.*;
 import net.replaceitem.integratedcircuit.client.IntegratedCircuitScreen;
 import net.replaceitem.integratedcircuit.mixin.RedstoneWireBlockAccessor;
+import net.replaceitem.integratedcircuit.util.ComponentPos;
+import net.replaceitem.integratedcircuit.util.FlatDirection;
+import net.replaceitem.integratedcircuit.util.IntegratedCircuitIdentifier;
 
 import java.util.HashSet;
 
