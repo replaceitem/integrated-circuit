@@ -61,7 +61,7 @@ public class IntegratedCircuitBlock extends HorizontalFacingBlock implements Blo
 
     @Override
     public BlockState getPlacementState(ItemPlacementContext ctx) {
-        return this.getDefaultState().with(Properties.HORIZONTAL_FACING, ctx.getPlayerLookDirection());
+        return this.getDefaultState().with(Properties.HORIZONTAL_FACING, ctx.getHorizontalPlayerFacing());
     }
 
     @Override
