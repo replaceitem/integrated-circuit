@@ -66,7 +66,7 @@ public class PortComponent extends Component {
     @Override
     public void neighborUpdate(ComponentState state, Circuit circuit, ComponentPos pos, Component sourceBlock, ComponentPos sourcePos, boolean notify) {
         if(!(state instanceof PortComponentState portComponentState)) throw new IllegalStateException("Invalid component state for component");
-        
+        if(circuit.isClient) return;
         if(portComponentState.isOutput()) {
             int power = getReceivedRedstonePower(circuit, pos);
             if (power != portComponentState.getPower()) {
@@ -81,6 +81,7 @@ public class PortComponent extends Component {
             return;
         }
         super.onStateReplaced(state, circuit, pos, newState);
+        if(circuit.isClient) return;
         for (FlatDirection direction : FlatDirection.VALUES) {
             circuit.updateNeighborsAlways(pos.offset(direction), this);
         }

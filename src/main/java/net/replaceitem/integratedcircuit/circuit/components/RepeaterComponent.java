@@ -73,7 +73,7 @@ public class RepeaterComponent extends AbstractRedstoneGateComponent {
     @Override
     public ComponentState getStateForNeighborUpdate(ComponentState state, FlatDirection direction, ComponentState neighborState, Circuit circuit, ComponentPos pos, ComponentPos neighborPos) {
         if(!(state instanceof RepeaterComponentState repeaterComponentState)) throw new IllegalStateException("Invalid component state for component");
-        if (direction.getAxis() != repeaterComponentState.getRotation().getAxis()) {
+        if (!circuit.isClient && direction.getAxis() != repeaterComponentState.getRotation().getAxis()) {
             return ((RepeaterComponentState) state.copy()).setLocked(this.isLocked(circuit, pos, state));
         }
         return super.getStateForNeighborUpdate(state, direction, neighborState, circuit, pos, neighborPos);

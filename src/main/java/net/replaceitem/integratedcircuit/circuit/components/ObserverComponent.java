@@ -65,9 +65,9 @@ public class ObserverComponent extends Component {
         return super.getStateForNeighborUpdate(state, direction, neighborState, circuit, pos, neighborPos);
     }
 
-    private void scheduleTick(Circuit world, ComponentPos pos) {
-        if (!world.getCircuitTickScheduler().isQueued(pos, this)) {
-            world.createAndScheduleBlockTick(pos, this, 2);
+    private void scheduleTick(Circuit circuit, ComponentPos pos) {
+        if (!circuit.isClient && !circuit.getCircuitTickScheduler().isQueued(pos, this)) {
+            circuit.createAndScheduleBlockTick(pos, this, 2);
         }
     }
 
@@ -104,7 +104,7 @@ public class ObserverComponent extends Component {
         if (state.isOf(oldState.getComponent())) {
             return;
         }
-        if (observerComponentState.isPowered() && !circuit.getCircuitTickScheduler().isQueued(pos, this)) {
+        if(!circuit.isClient && observerComponentState.isPowered() && !circuit.getCircuitTickScheduler().isQueued(pos, this)) {
             ComponentState blockState = ((ObserverComponentState) observerComponentState.copy()).setPowered(false);
             circuit.setComponentState(pos, blockState, Block.NOTIFY_LISTENERS | Block.FORCE_STATE);
             this.updateNeighbors(circuit, pos, blockState);
@@ -117,7 +117,7 @@ public class ObserverComponent extends Component {
         if (state.isOf(newState.getComponent())) {
             return;
         }
-        if (observerComponentState.isPowered() && circuit.getCircuitTickScheduler().isQueued(pos, this)) {
+        if (!circuit.isClient && observerComponentState.isPowered() && circuit.getCircuitTickScheduler().isQueued(pos, this)) {
             this.updateNeighbors(circuit, pos, ((ObserverComponentState) state.copy()).setPowered(false));
         }
     }

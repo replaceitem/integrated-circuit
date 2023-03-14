@@ -90,6 +90,7 @@ public class WireComponent extends Component {
 
     @Override
     public void neighborUpdate(ComponentState state, Circuit circuit, ComponentPos pos, Component sourceBlock, ComponentPos sourcePos, boolean notify) {
+        if(circuit.isClient) return;
         update(circuit, pos, state);
     }
 
@@ -132,6 +133,9 @@ public class WireComponent extends Component {
 
     @Override
     public void onBlockAdded(ComponentState state, Circuit circuit, ComponentPos pos, ComponentState oldState) {
+        if (oldState.getComponent() == state.getComponent() || circuit.isClient) {
+            return;
+        }
         this.update(circuit, pos, state);
         this.updateOffsetNeighbors(circuit, pos);
     }
@@ -154,6 +158,7 @@ public class WireComponent extends Component {
             return;
         }
         super.onStateReplaced(state, circuit, pos, newState);
+        if(circuit.isClient) return;
         for (FlatDirection direction : FlatDirection.VALUES) {
             circuit.updateNeighborsAlways(pos.offset(direction), this);
         }
