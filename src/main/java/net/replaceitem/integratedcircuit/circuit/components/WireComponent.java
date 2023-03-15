@@ -1,6 +1,5 @@
 package net.replaceitem.integratedcircuit.circuit.components;
 
-import com.google.common.collect.Sets;
 import net.minecraft.block.Block;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
@@ -8,39 +7,31 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
 import net.replaceitem.integratedcircuit.circuit.CircuitAccess;
-import net.replaceitem.integratedcircuit.circuit.Component;
 import net.replaceitem.integratedcircuit.circuit.Components;
-import net.replaceitem.integratedcircuit.circuit.state.*;
+import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
+import net.replaceitem.integratedcircuit.circuit.state.ObserverComponentState;
+import net.replaceitem.integratedcircuit.circuit.state.RepeaterComponentState;
+import net.replaceitem.integratedcircuit.circuit.state.WireComponentState;
 import net.replaceitem.integratedcircuit.client.IntegratedCircuitScreen;
 import net.replaceitem.integratedcircuit.mixin.RedstoneWireBlockAccessor;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
 import net.replaceitem.integratedcircuit.util.IntegratedCircuitIdentifier;
 
-import java.util.HashSet;
-
-public class WireComponent extends Component {
+public class WireComponent extends AbstractWireComponent {
     public WireComponent(int id) {
         super(id, Text.translatable("component.integrated_circuit.wire"));
     }
 
     private static final Identifier ITEM_TEXTURE = new Identifier("textures/item/redstone.png");
-
     private static final Identifier TEXTURE_DOT = new IntegratedCircuitIdentifier("textures/integrated_circuit/wire_dot.png");
-    private static final Identifier TEXTURE_X = new IntegratedCircuitIdentifier("textures/integrated_circuit/wire_x.png");
-    private static final Identifier TEXTURE_Y = new IntegratedCircuitIdentifier("textures/integrated_circuit/wire_y.png");
-
-
-    boolean wiresGivePower = true;
-    
-    
-    // these seem to be swapped in yarn mappings?!?!
     
     @Override
     public ComponentState getDefaultState() {
         return new WireComponentState((byte) 0b0000, (byte) 0);
     }
 
+    // yes, this name is confusing, since it returns the cross state, but for some reason RedstoneWireBlock.dotState (yarn) seems to be the same
     private ComponentState getDotState() {
         return new WireComponentState((byte) 0b1111, (byte) 0);
     }
@@ -86,60 +77,6 @@ public class WireComponent extends Component {
         }
     }
 
-
-
-    @Override
-    public void neighborUpdate(ComponentState state, Circuit circuit, ComponentPos pos, Component sourceBlock, ComponentPos sourcePos, boolean notify) {
-        if(circuit.isClient) return;
-        update(circuit, pos, state);
-    }
-
-    private void update(Circuit circuit, ComponentPos pos, ComponentState state) {
-        if(!(state instanceof WireComponentState wireComponentState)) throw new IllegalStateException("Invalid component state for component");
-        int i = getReceivedRedstonePower(circuit, pos);
-        if (wireComponentState.getPower() != i) {
-            if (circuit.getComponentState(pos).equals(state)) {
-                WireComponentState newState = (WireComponentState) state.copy();
-                newState.setPower(i);
-                circuit.setComponentState(pos, newState, Component.NOTIFY_LISTENERS);
-            }
-            HashSet<ComponentPos> set = Sets.newHashSet();
-            set.add(pos);
-            for (FlatDirection direction : FlatDirection.VALUES) {
-                set.add(pos.offset(direction));
-            }
-            for (ComponentPos blockPos : set) {
-                circuit.updateNeighborsAlways(blockPos, this);
-            }
-        }
-    }
-
-    private void updateOffsetNeighbors(Circuit circuit, ComponentPos pos) {
-        for (FlatDirection direction : FlatDirection.VALUES) {
-            this.updateNeighbors(circuit, pos.offset(direction));
-        }
-    }
-
-    private void updateNeighbors(Circuit circuit, ComponentPos pos) {
-        ComponentState componentState = circuit.getComponentState(pos);
-        if (!(componentState.isOf(this) || componentState.isOf(Components.PORT))) {
-            return;
-        }
-        circuit.updateNeighborsAlways(pos, this);
-        for (FlatDirection direction : FlatDirection.VALUES) {
-            circuit.updateNeighborsAlways(pos.offset(direction), this);
-        }
-    }
-
-    @Override
-    public void onBlockAdded(ComponentState state, Circuit circuit, ComponentPos pos, ComponentState oldState) {
-        if (oldState.getComponent() == state.getComponent() || circuit.isClient) {
-            return;
-        }
-        this.update(circuit, pos, state);
-        this.updateOffsetNeighbors(circuit, pos);
-    }
-
     @Override
     public ComponentState getStateForNeighborUpdate(ComponentState state, FlatDirection direction, ComponentState neighborState, Circuit circuit, ComponentPos pos, ComponentPos neighborPos) {
         if(!(state instanceof WireComponentState wireComponentState)) throw new IllegalStateException("Invalid component state for component");
@@ -152,19 +89,6 @@ public class WireComponent extends Component {
         return this.getPlacementState(circuit, ((WireComponentState)this.getDotState()).setPower(wireComponentState.getPower()).setConnected(direction, wireConnection), pos);
     }
 
-    @Override
-    public void onStateReplaced(ComponentState state, Circuit circuit, ComponentPos pos, ComponentState newState) {
-        if (state.isOf(newState.getComponent())) {
-            return;
-        }
-        super.onStateReplaced(state, circuit, pos, newState);
-        if(circuit.isClient) return;
-        for (FlatDirection direction : FlatDirection.VALUES) {
-            circuit.updateNeighborsAlways(pos.offset(direction), this);
-        }
-        this.update(circuit, pos, state);
-        this.updateOffsetNeighbors(circuit, pos);
-    }
 
     @Override
     public void onUse(ComponentState state, Circuit circuit, ComponentPos pos) {
@@ -203,11 +127,6 @@ public class WireComponent extends Component {
             Vec3i blockPos2 = mutable.offset(direction.getOpposite());
             circuit.replaceWithStateForNeighborUpdate(direction.getOpposite(), circuit.getComponentState((BlockPos)blockPos2), mutable, (BlockPos)blockPos2, flags);
         }*/
-    }
-
-    @Override
-    public boolean isSolidBlock(Circuit circuit, ComponentPos pos) {
-        return false;
     }
 
     private ComponentState getPlacementState(Circuit circuit, ComponentState state, ComponentPos pos) {
@@ -278,31 +197,10 @@ public class WireComponent extends Component {
         return state.emitsRedstonePower() && direction != null;
     }
 
-    // maybe broke because major changes from RedstoneWireBlock#getReceivedRedstonePower
-    private int getReceivedRedstonePower(Circuit world, ComponentPos pos) {
-        this.wiresGivePower = false;
-        int i = world.getReceivedRedstonePower(pos);
-        this.wiresGivePower = true;
-        int j = 0;
-        if (i < 15) {
-            for (FlatDirection direction : FlatDirection.VALUES) {
-                ComponentPos blockPos = pos.offset(direction);
-                ComponentState blockState = world.getComponentState(blockPos);
-                j = Math.max(j, increasePower(blockState));
-            }
-        }
-        return Math.max(i, j - 1);
-    }
-
-    @Override
-    public boolean emitsRedstonePower(ComponentState state) {
-        return true;
-    }
-
     @Override
     public int getWeakRedstonePower(ComponentState state, Circuit circuit, ComponentPos pos, FlatDirection direction) {
         if(!(state instanceof WireComponentState wireComponentState)) throw new IllegalStateException("Invalid component state for component");
-        if (!this.wiresGivePower) {
+        if (!wiresGivePower) {
             return 0;
         }
         int i = wireComponentState.getPower();
@@ -313,16 +211,5 @@ public class WireComponent extends Component {
             return i;
         }
         return 0;
-    }
-
-    @Override
-    public int getStrongRedstonePower(ComponentState state, Circuit circuit, ComponentPos pos, FlatDirection direction) {
-        return this.getWeakRedstonePower(state, circuit, pos, direction);
-    }
-
-    // name doesn't make sense, but RedstoneWireBlock has the same
-    private int increasePower(ComponentState blockState) {
-        if(blockState instanceof PortComponentState portComponentState) return portComponentState.getPower();
-        return blockState instanceof WireComponentState wireComponentState ? wireComponentState.getPower() : 0;
     }
 }

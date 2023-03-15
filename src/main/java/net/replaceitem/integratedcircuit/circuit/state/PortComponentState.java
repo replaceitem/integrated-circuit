@@ -1,15 +1,14 @@
 package net.replaceitem.integratedcircuit.circuit.state;
 
-import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.circuit.Components;
 import net.replaceitem.integratedcircuit.circuit.ServerCircuit;
 import net.replaceitem.integratedcircuit.circuit.components.PortComponent;
+import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
-import net.replaceitem.integratedcircuit.util.SignalStrengthAccessor;
 
-public class PortComponentState extends RotatableComponentState implements SignalStrengthAccessor {
-    
-    private byte power;
+public class PortComponentState extends RotatableComponentState implements AbstractWireComponentState {
+
+    protected byte power;
     private boolean isOutput;
 
     public PortComponentState(FlatDirection direction, byte power, boolean isOutput) {
@@ -27,20 +26,6 @@ public class PortComponentState extends RotatableComponentState implements Signa
     @Override
     public byte encodeStateData() {
         return (byte) (super.encodeStateData() | ((this.getPower() & 0b1111) << 3) | (this.isOutput() ? (1 << 7) : 0));
-    }
-
-    public byte getPower() {
-        return power;
-    }
-
-    public PortComponentState setPower(byte power) {
-        this.power = power;
-        return this;
-    }
-
-    public PortComponentState setPower(int power) {
-        setPower((byte) power);
-        return this;
     }
 
     public boolean isOutput() {
@@ -61,8 +46,12 @@ public class PortComponentState extends RotatableComponentState implements Signa
         return ((PortComponent) this.component).getInternalPower(circuit, pos, this);
     }
 
-    @Override
-    public int getSignalStrength() {
+    public int getPower() {
         return power;
+    }
+
+    public PortComponentState setPower(int power) {
+        this.power = (byte) power;
+        return this;
     }
 }

@@ -2,13 +2,11 @@ package net.replaceitem.integratedcircuit.circuit.state;
 
 import net.replaceitem.integratedcircuit.circuit.Components;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
-import net.replaceitem.integratedcircuit.util.SignalStrengthAccessor;
 
 
-public class WireComponentState extends ComponentState implements SignalStrengthAccessor {
+public class WireComponentState extends ComponentState implements AbstractWireComponentState {
     private byte connections;
-    private byte power;
-
+    protected byte power;
     public WireComponentState(byte connections, byte power) {
         super(Components.WIRE);
         this.connections = connections;
@@ -36,25 +34,16 @@ public class WireComponentState extends ComponentState implements SignalStrength
         return this;
     }
 
-    public int getPower() {
-        return power;
-    }
-
-    public WireComponentState setPower(byte power) {
-        this.power = power;
-        return this;
-    }
-
-    public WireComponentState setPower(int power) {
-        return setPower((byte) power);
-    }
-
     public byte getConnections() {
         return connections;
     }
 
-    @Override
-    public int getSignalStrength() {
+    public int getPower() {
         return power;
+    }
+
+    public WireComponentState setPower(int power) {
+        this.power = (byte) power;
+        return this;
     }
 }
