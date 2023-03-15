@@ -52,11 +52,11 @@ public class ComparatorComponent extends AbstractRedstoneGateComponent {
         
         Identifier torchTexture = powered ? TEXTURE_TORCH_ON : TEXTURE_TORCH_OFF;
 
-        IntegratedCircuitScreen.renderComponentPart(matrices, torchTexture, x, y, 3, 10, 4, 4, comparatorComponentState.getRotation().getOpposite().toInt(), 1, 1, 1, a);
-        IntegratedCircuitScreen.renderComponentPart(matrices, torchTexture, x, y, 9, 10, 4, 4, comparatorComponentState.getRotation().getOpposite().toInt(), 1, 1, 1, a);
+        IntegratedCircuitScreen.renderPartialTexture(matrices, torchTexture, x, y, 3, 10, 4, 4, comparatorComponentState.getRotation().getOpposite().toInt(), 1, 1, 1, a);
+        IntegratedCircuitScreen.renderPartialTexture(matrices, torchTexture, x, y, 9, 10, 4, 4, comparatorComponentState.getRotation().getOpposite().toInt(), 1, 1, 1, a);
 
         Identifier modeTorchTexture = comparatorComponentState.isSubtractMode() ? TEXTURE_TORCH_ON : TEXTURE_TORCH_OFF;
-        IntegratedCircuitScreen.renderComponentPart(matrices, modeTorchTexture, x, y, 6, 1, 4, 4, comparatorComponentState.getRotation().getOpposite().toInt(), 1, 1, 1, a);
+        IntegratedCircuitScreen.renderPartialTexture(matrices, modeTorchTexture, x, y, 6, 1, 4, 4, comparatorComponentState.getRotation().getOpposite().toInt(), 1, 1, 1, a);
     }
 
 

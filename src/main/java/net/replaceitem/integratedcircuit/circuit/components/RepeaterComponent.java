@@ -38,15 +38,15 @@ public class RepeaterComponent extends AbstractRedstoneGateComponent {
 
         Identifier torchTexture = repeaterComponentState.isPowered() ? TEXTURE_TORCH_ON : TEXTURE_TORCH_OFF;
         
-        IntegratedCircuitScreen.renderComponentPart(matrices, torchTexture, x, y, 6, 1, 4, 4, renderedRotation.toInt(),  1, 1, 1, a);
+        IntegratedCircuitScreen.renderPartialTexture(matrices, torchTexture, x, y, 6, 1, 4, 4, renderedRotation.toInt(),  1, 1, 1, a);
 
         boolean locked = repeaterComponentState.isLocked();
         Identifier knobTexture = locked ? TEXTURE_BAR : torchTexture;
         int knobOffsetAmount = repeaterComponentState.getDelay() * 2;
         if(locked) {
-            IntegratedCircuitScreen.renderComponentPart(matrices, knobTexture, x, y, 2, 6 + knobOffsetAmount, 12, 2, renderedRotation.toInt(),  1, 1, 1, a);
+            IntegratedCircuitScreen.renderPartialTexture(matrices, knobTexture, x, y, 2, 6 + knobOffsetAmount, 12, 2, renderedRotation.toInt(),  1, 1, 1, a);
         } else {
-            IntegratedCircuitScreen.renderComponentPart(matrices, knobTexture, x, y, 6, 5 + knobOffsetAmount, 4, 4, renderedRotation.toInt(),  1, 1, 1, a);
+            IntegratedCircuitScreen.renderPartialTexture(matrices, knobTexture, x, y, 6, 5 + knobOffsetAmount, 4, 4, renderedRotation.toInt(),  1, 1, 1, a);
         }
         
 

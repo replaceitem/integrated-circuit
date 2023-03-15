@@ -4,7 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.render.GameRenderer;
+import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -132,12 +132,13 @@ public class IntegratedCircuitScreen extends Screen {
     private void renderCursorState(MatrixStack matrices, int mouseX, int mouseY) {
         ComponentPos pos = getComponentPosAt(mouseX, mouseY);
         boolean validSpot = circuit.getComponentState(pos).isAir();
-        float a = validSpot?0.7f:0.2f;
-        if(this.cursorState != null) {
+        float a = validSpot?0.5f:0.2f;
+        if(this.cursorState != null && circuit.isInside(pos)) {
             matrices.push();
-            matrices.translate(mouseX, mouseY, 0);
+            matrices.translate(getGridPosX(0), getGridPosY(0), 0);
             matrices.scale(RENDER_SCALE, RENDER_SCALE, 1);
-            renderComponentState(matrices, this.cursorState, -HALF_COMPONENT_SIZE, -HALF_COMPONENT_SIZE, a);
+            renderComponentStateInGrid(matrices, this.cursorState, pos.getX(), pos.getY(), a);
+            matrices.pop();
         }
     }
 
@@ -164,19 +165,17 @@ public class IntegratedCircuitScreen extends Screen {
         matrices.translate(getGridPosX(0), getGridPosY(0), 0);
         
         matrices.scale(RENDER_SCALE, RENDER_SCALE, 1);
-
-        //matrices.translate(-getGridPosX(0), -getGridPosY(0), 0);
         
         for (int i = 0; i < circuit.ports.length; i++) {
             PortComponentState port = circuit.ports[i];
             ComponentPos pos = Circuit.PORTS_GRID_POS[i];
-            renderComponentStateInGrid(matrices, port, pos.getX(), pos.getY());
+            renderComponentStateInGrid(matrices, port, pos.getX(), pos.getY(), 1);
         }
         for (int i = 0; i < circuit.components.length; i++) {
             ComponentState[] row = circuit.components[i];
             for (int j = 0; j < row.length; j++) {
                 ComponentState componentState = row[j];
-                renderComponentStateInGrid(matrices, componentState, i, j);
+                renderComponentStateInGrid(matrices, componentState, i, j, 1);
             }
         }
         
@@ -187,8 +186,8 @@ public class IntegratedCircuitScreen extends Screen {
         state.getComponent().render(matrices, x, y, a, state);
     }
 
-    protected void renderComponentStateInGrid(MatrixStack matrices, ComponentState state, int x, int y) {
-        renderComponentState(matrices, state, x * COMPONENT_SIZE, y * COMPONENT_SIZE, 1);
+    protected void renderComponentStateInGrid(MatrixStack matrices, ComponentState state, int x, int y, float a) {
+        renderComponentState(matrices, state, x * COMPONENT_SIZE, y * COMPONENT_SIZE, a);
     }
 
 
@@ -201,27 +200,21 @@ public class IntegratedCircuitScreen extends Screen {
     }
 
     public static void renderComponentTexture(MatrixStack matrices, Identifier component, int x, int y, int rot, float r, float g, float b, float a, int u, int v, int w, int h) {
-        prepareTextureRender(component, r, g, b, a);
-        matrices.push();
-        matrices.translate(x+8, y+8, 0);
-        matrices.multiply(RotationAxis.POSITIVE_Z.rotation((float) (rot*Math.PI*0.5)));
-        matrices.translate(-8, -8, 0);
-        drawTexture(matrices, u, v, u, v, w, h, 16, 16);
-        matrices.pop();
+        renderPartialTexture(matrices, component, x, y, u, v, 16, 16, rot, r, g, b, a, u, v, w, h);
     }
 
 
-    public static void renderComponentPart(MatrixStack matrices, Identifier texture, int componentX, int componentY, int x, int y, int textureW, int textureH, int rot, float r, float g, float b, float a) {
-        renderComponentPart(matrices, texture, componentX, componentY, x, y, textureW, textureH, rot, r, g, b, a, 0, 0, textureW, textureH);
+    public static void renderPartialTexture(MatrixStack matrices, Identifier texture, int componentX, int componentY, int x, int y, int textureW, int textureH, int rot, float r, float g, float b, float a) {
+        renderPartialTexture(matrices, texture, componentX, componentY, x, y, textureW, textureH, rot, r, g, b, a, 0, 0, textureW, textureH);
     }
     
-    public static void renderComponentPart(MatrixStack matrices, Identifier texture, int componentX, int componentY, int x, int y, int textureW, int textureH, int rot, float r, float g, float b, float a, int u, int v, int w, int h) {
+    public static void renderPartialTexture(MatrixStack matrices, Identifier texture, int componentX, int componentY, int x, int y, int textureW, int textureH, int rot, float r, float g, float b, float a, int u, int v, int w, int h) {
         prepareTextureRender(texture, r, g, b, a);
         matrices.push();
         matrices.translate(componentX+8, componentY+8, 0);
         matrices.multiply(RotationAxis.POSITIVE_Z.rotation((float) (rot*Math.PI*0.5)));
         matrices.translate(-8, -8, 0);
-        drawTexture(matrices, x, y, 0, 0, w, h, textureW, textureH);
+        drawTexture(matrices, x, y, u, v, w, h, textureW, textureH);
         matrices.pop();
     }
     
@@ -383,6 +376,13 @@ public class IntegratedCircuitScreen extends Screen {
 
     protected int getGridYAt(int pixelY) {
         return Math.floorDiv(pixelY-this.y-GRID_Y, RENDER_COMPONENT_SIZE);
+    }
+
+    protected int getGridPosX(ComponentPos pos) {
+        return getGridPosX(pos.getX());
+    }
+    protected int getGridPosY(ComponentPos pos) {
+        return getGridPosY(pos.getY());
     }
 
     protected ComponentPos getComponentPosAt(int pixelX, int pixelY) {
