@@ -5,13 +5,10 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.random.Random;
+import net.replaceitem.integratedcircuit.circuit.*;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
 import net.replaceitem.integratedcircuit.util.IntegratedCircuitIdentifier;
-import net.replaceitem.integratedcircuit.circuit.Circuit;
-import net.replaceitem.integratedcircuit.circuit.Component;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
-import net.replaceitem.integratedcircuit.circuit.Components;
-import net.replaceitem.integratedcircuit.circuit.ServerCircuit;
 import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
 import net.replaceitem.integratedcircuit.circuit.state.TorchComponentState;
 import net.replaceitem.integratedcircuit.client.IntegratedCircuitScreen;
@@ -46,6 +43,10 @@ public class TorchComponent extends Component {
     public ComponentState getPlacementState(Circuit circuit, ComponentPos pos, FlatDirection rotation) {
         TorchComponentState componentState = (TorchComponentState) ((TorchComponentState) this.getDefaultState()).setRotation(rotation);
         if (!componentState.canPlaceAt(circuit, pos)) {
+            for (FlatDirection value : CircuitNeighborUpdater.UPDATE_ORDER) {
+                componentState.setRotation(value);
+                if(componentState.canPlaceAt(circuit, pos)) return componentState;
+            }
             return null;
         }
         return componentState;
