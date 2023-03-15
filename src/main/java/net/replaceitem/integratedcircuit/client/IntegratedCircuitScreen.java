@@ -12,15 +12,18 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ColorHelper;
 import net.minecraft.util.math.RotationAxis;
 import net.minecraft.util.math.Vec3d;
-import net.replaceitem.integratedcircuit.circuit.*;
+import net.replaceitem.integratedcircuit.circuit.Circuit;
+import net.replaceitem.integratedcircuit.circuit.ClientCircuit;
+import net.replaceitem.integratedcircuit.circuit.Component;
+import net.replaceitem.integratedcircuit.circuit.Components;
 import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
 import net.replaceitem.integratedcircuit.circuit.state.PortComponentState;
 import net.replaceitem.integratedcircuit.circuit.state.RotatableComponentState;
 import net.replaceitem.integratedcircuit.mixin.RedstoneWireBlockAccessor;
+import net.replaceitem.integratedcircuit.network.packet.FinishEditingC2SPacket;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
 import net.replaceitem.integratedcircuit.util.IntegratedCircuitIdentifier;
-import net.replaceitem.integratedcircuit.network.packet.FinishEditingC2SPacket;
 import net.replaceitem.integratedcircuit.util.SignalStrengthAccessor;
 import org.lwjgl.glfw.GLFW;
 
@@ -103,7 +106,7 @@ public class IntegratedCircuitScreen extends Screen {
         RenderSystem.setShader(GameRenderer::getPositionTexProgram);
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
         RenderSystem.setShaderTexture(0, BACKGROUND_TEXTURE);
-        this.drawTexture(matrices, x, y, 0, 0, BACKGROUND_WIDTH, BACKGROUND_HEIGHT);
+        drawTexture(matrices, x, y, 0, 0, BACKGROUND_WIDTH, BACKGROUND_HEIGHT);
 
         this.textRenderer.draw(matrices, this.title, this.titleX, this.titleY, 0x404040);
         
@@ -145,7 +148,7 @@ public class IntegratedCircuitScreen extends Screen {
             RenderSystem.setShader(GameRenderer::getPositionTexProgram);
             RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
             RenderSystem.setShaderTexture(0, BACKGROUND_TEXTURE);
-            this.drawTexture(matrices, this.x + PALETTE_X, slotY, selectedComponentSlot == i ? 14 : 0, BACKGROUND_HEIGHT, 14, 14);
+            drawTexture(matrices, this.x + PALETTE_X, slotY, selectedComponentSlot == i ? 14 : 0, BACKGROUND_HEIGHT, 14, 14);
             Identifier itemTexture = component.getItemTexture();
             if(itemTexture != null) renderPaletteItem(matrices, itemTexture, this.x+PALETTE_X+1, slotY+1);
         }
@@ -286,29 +289,64 @@ public class IntegratedCircuitScreen extends Screen {
             return true;
         }
 
-        if(circuit.isInside(clickedPos) && this.client != null) {
+        startedDraggingInside = circuit.isInside(clickedPos);
+
+        if(startedDraggingInside && this.client != null) {
             if(isUse) {
                 ComponentState state = circuit.getComponentState(clickedPos);
                 if(state.isAir()) {
-                    if(this.cursorState == null) return false;
-                    circuit.placeComponentState(clickedPos, this.cursorState.getComponent(), this.cursorRotation, this.pos);
-                    return true;
+                    placeComponent(clickedPos);
+                } else {
+                    circuit.useComponent(clickedPos, this.pos);
                 }
-                circuit.useComponent(clickedPos, this.pos);
                 return true;
             }
             if(isAttack) {
-                circuit.breakComponentState(clickedPos, this.pos);
+                breakComponent(clickedPos);
                 return true;
             }
             if(isPick) {
                 ComponentState state = circuit.getComponentState(clickedPos);
                 Component component = state.getComponent();
                 pickPalette(component);
+                return true;
             }
         }
 
         return super.mouseClicked(mouseX, mouseY, button);
+    }
+
+    private boolean startedDraggingInside = false;
+
+    private void breakComponent(ComponentPos pos) {
+        circuit.breakComponentState(pos, this.pos);
+    }
+
+    private void placeComponent(ComponentPos pos) {
+        ComponentState state = circuit.getComponentState(pos);
+        if(state.isAir() && this.cursorState != null) {
+            circuit.placeComponentState(pos, this.cursorState.getComponent(), this.cursorRotation, this.pos);
+        }
+    }
+
+    @Override
+    public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
+        if(startedDraggingInside && this.client != null) {
+            ComponentPos mousePos = getComponentPosAt((int) mouseX, (int) mouseY);
+            if(circuit.isInside(mousePos)) {
+                boolean isUse = this.client.options.useKey.matchesMouse(button);
+                boolean isAttack = client.options.attackKey.matchesMouse(button);
+                if(isUse && isAttack) return true;
+                if(isUse) {
+                    placeComponent(mousePos);
+                } else if (isAttack) {
+                    breakComponent(mousePos);
+                }
+                return true;
+            }
+        }
+
+        return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
     }
 
     @Override
