@@ -41,6 +41,16 @@ public class CrossoverComponent extends AbstractConductingComponent {
     }
 
     @Override
+    public Text getHoverInfoText(ComponentState state) {
+        if(!(state instanceof CrossoverComponentState crossoverComponentState)) throw new IllegalStateException("Invalid component state for component");
+
+        return Text.literal("─ ")
+                .append(IntegratedCircuitScreen.getSignalStrengthText(crossoverComponentState.getPowerX()))
+                .append("   │ ")
+                .append(IntegratedCircuitScreen.getSignalStrengthText(crossoverComponentState.getPowerY()));
+    }
+
+    @Override
     public void render(MatrixStack matrices, int x, int y, float a, ComponentState state) {
         if(!(state instanceof CrossoverComponentState crossoverComponentState)) throw new IllegalStateException("Invalid component state for component");
 

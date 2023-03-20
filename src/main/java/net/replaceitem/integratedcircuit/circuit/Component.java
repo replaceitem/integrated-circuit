@@ -133,4 +133,8 @@ public abstract class Component {
     public boolean emitsRedstonePower(ComponentState state) {
         return false;
     }
+
+    public Text getHoverInfoText(ComponentState state) {
+        return Text.empty();
+    }
 }

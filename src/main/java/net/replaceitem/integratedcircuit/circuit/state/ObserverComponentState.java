@@ -2,9 +2,8 @@ package net.replaceitem.integratedcircuit.circuit.state;
 
 import net.replaceitem.integratedcircuit.circuit.Components;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
-import net.replaceitem.integratedcircuit.util.SignalStrengthAccessor;
 
-public class ObserverComponentState extends RotatableComponentState implements SignalStrengthAccessor {
+public class ObserverComponentState extends RotatableComponentState {
     
     private boolean powered;
 
@@ -30,10 +29,5 @@ public class ObserverComponentState extends RotatableComponentState implements S
     public ObserverComponentState setPowered(boolean powered) {
         this.powered = powered;
         return this;
-    }
-
-    @Override
-    public int getSignalStrength() {
-        return powered ? 15 : 0;
     }
 }

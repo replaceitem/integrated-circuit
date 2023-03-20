@@ -58,6 +58,12 @@ public class TorchComponent extends Component {
     }
 
     @Override
+    public Text getHoverInfoText(ComponentState state) {
+        if(!(state instanceof TorchComponentState torchComponentState)) throw new IllegalStateException("Invalid component state for component");
+        return IntegratedCircuitScreen.getSignalStrengthText(torchComponentState.isLit() ? 15 : 0);
+    }
+
+    @Override
     public void render(MatrixStack matrices, int x, int y, float a, ComponentState state) {
         if(!(state instanceof TorchComponentState torchComponentState)) throw new IllegalStateException("Invalid component state for component");
         Identifier texture = torchComponentState.isLit()?TEXTURE:TEXTURE_OFF;

@@ -6,6 +6,7 @@ import net.replaceitem.integratedcircuit.circuit.Circuit;
 import net.replaceitem.integratedcircuit.circuit.Component;
 import net.replaceitem.integratedcircuit.circuit.state.AbstractWireComponentState;
 import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
+import net.replaceitem.integratedcircuit.client.IntegratedCircuitScreen;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
 
@@ -16,7 +17,12 @@ public abstract class AbstractWireComponent extends AbstractConductingComponent 
         super(id, name);
     }
 
-
+    @Override
+    public Text getHoverInfoText(ComponentState state) {
+        if(!(state instanceof AbstractWireComponentState wireComponentState)) throw new IllegalStateException("Invalid component state for component");
+        int signalStrength = wireComponentState.getPower();
+        return IntegratedCircuitScreen.getSignalStrengthText(signalStrength);
+    }
 
     @Override
     public void onBlockAdded(ComponentState state, Circuit circuit, ComponentPos pos, ComponentState oldState) {

@@ -4,7 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.render.*;
+import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -24,7 +24,6 @@ import net.replaceitem.integratedcircuit.network.packet.FinishEditingC2SPacket;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
 import net.replaceitem.integratedcircuit.util.IntegratedCircuitIdentifier;
-import net.replaceitem.integratedcircuit.util.SignalStrengthAccessor;
 import org.lwjgl.glfw.GLFW;
 
 
@@ -110,24 +109,28 @@ public class IntegratedCircuitScreen extends Screen {
         drawTexture(matrices, x, y, 0, 0, BACKGROUND_WIDTH, BACKGROUND_HEIGHT);
 
         this.textRenderer.draw(matrices, this.title, this.titleX, this.titleY, 0x404040);
-        
-        ComponentPos pos = getComponentPosAt(mouseX, mouseY);
-        ComponentState componentState = circuit.getComponentState(pos);
-        if(componentState instanceof SignalStrengthAccessor signalStrengthAccessor) {
-            int signalStrength = signalStrengthAccessor.getSignalStrength();
-            String signalStrengthString = String.valueOf(signalStrength);
-            int signalStrengthStringLength = textRenderer.getWidth(signalStrengthString);
-            Vec3d colorVec = RedstoneWireBlockAccessor.getCOLORS()[signalStrength].multiply(255);
-            int color = ColorHelper.Argb.getArgb(0xFF, (int) colorVec.x, (int) colorVec.y, (int) colorVec.z);
-            this.textRenderer.draw(matrices, Text.literal(signalStrengthString), this.x + BACKGROUND_WIDTH - 6 - signalStrengthStringLength,this.titleY, color);
-        }
 
+        this.renderHoverInfo(matrices, mouseX, mouseY);
         this.renderContent(matrices);
         this.renderPalette(matrices);
         this.renderCursorState(matrices, mouseX, mouseY);
         
 
         super.render(matrices, mouseX, mouseY, delta);
+    }
+
+    private void renderHoverInfo(MatrixStack matrices, int mouseX, int mouseY) {
+        ComponentPos pos = getComponentPosAt(mouseX, mouseY);
+        ComponentState componentState = circuit.getComponentState(pos);
+        Text text = componentState.getHoverInfoText();
+        int textWidth = textRenderer.getWidth(text);
+        this.textRenderer.draw(matrices, text, this.x + BACKGROUND_WIDTH - 6 - textWidth,this.titleY, 0x404040);
+    }
+
+    public static Text getSignalStrengthText(int signalStrength) {
+        Vec3d colorVec = RedstoneWireBlockAccessor.getCOLORS()[signalStrength].multiply(255);
+        int color = ColorHelper.Argb.getArgb(0xFF, (int) colorVec.x, (int) colorVec.y, (int) colorVec.z);
+        return Text.literal(String.valueOf(signalStrength)).styled(style -> style.withColor(color));
     }
 
     private void renderCursorState(MatrixStack matrices, int mouseX, int mouseY) {

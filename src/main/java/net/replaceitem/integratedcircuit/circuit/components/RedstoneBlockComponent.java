@@ -3,14 +3,14 @@ package net.replaceitem.integratedcircuit.circuit.components;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import net.replaceitem.integratedcircuit.util.IntegratedCircuitIdentifier;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
 import net.replaceitem.integratedcircuit.circuit.Component;
-import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
 import net.replaceitem.integratedcircuit.circuit.state.RedstoneBlockComponentState;
 import net.replaceitem.integratedcircuit.client.IntegratedCircuitScreen;
+import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
+import net.replaceitem.integratedcircuit.util.IntegratedCircuitIdentifier;
 
 public class RedstoneBlockComponent extends Component {
     public RedstoneBlockComponent(int id) {
@@ -27,6 +27,11 @@ public class RedstoneBlockComponent extends Component {
     @Override
     public Identifier getItemTexture() {
         return TEXTURE;
+    }
+
+    @Override
+    public Text getHoverInfoText(ComponentState state) {
+        return IntegratedCircuitScreen.getSignalStrengthText(15);
     }
 
     @Override

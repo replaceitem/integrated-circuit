@@ -4,13 +4,13 @@ import net.minecraft.block.Block;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import net.replaceitem.integratedcircuit.util.IntegratedCircuitIdentifier;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
-import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
 import net.replaceitem.integratedcircuit.circuit.state.RepeaterComponentState;
 import net.replaceitem.integratedcircuit.client.IntegratedCircuitScreen;
+import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
+import net.replaceitem.integratedcircuit.util.IntegratedCircuitIdentifier;
 
 public class RepeaterComponent extends AbstractRedstoneGateComponent {
     public RepeaterComponent(int id) {
@@ -26,6 +26,12 @@ public class RepeaterComponent extends AbstractRedstoneGateComponent {
     public static final Identifier TEXTURE_TORCH_ON = new IntegratedCircuitIdentifier("textures/integrated_circuit/torch_top_on.png");
     public static final Identifier TEXTURE_BAR = new IntegratedCircuitIdentifier("textures/integrated_circuit/repeater_bar.png");
 
+
+    @Override
+    public Text getHoverInfoText(ComponentState state) {
+        if(!(state instanceof RepeaterComponentState repeaterComponentState)) throw new IllegalStateException("Invalid component state for component");
+        return IntegratedCircuitScreen.getSignalStrengthText(repeaterComponentState.isPowered() ? 15 : 0);
+    }
 
     @Override
     public void render(MatrixStack matrices, int x, int y, float a, ComponentState state) {

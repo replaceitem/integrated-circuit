@@ -3,6 +3,7 @@ package net.replaceitem.integratedcircuit.circuit.state;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
@@ -121,5 +122,9 @@ public class ComponentState {
 
     public boolean canPlaceAt(Circuit circuit, ComponentPos pos) {
         return this.component.canPlaceAt(this, circuit, pos);
+    }
+
+    public Text getHoverInfoText() {
+        return this.component.getHoverInfoText(this);
     }
 }

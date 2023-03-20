@@ -6,14 +6,14 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.tick.TickPriority;
-import net.replaceitem.integratedcircuit.util.IntegratedCircuitIdentifier;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
-import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.circuit.ServerCircuit;
 import net.replaceitem.integratedcircuit.circuit.state.AbstractRedstoneGateComponentState;
 import net.replaceitem.integratedcircuit.circuit.state.ComparatorComponentState;
 import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
 import net.replaceitem.integratedcircuit.client.IntegratedCircuitScreen;
+import net.replaceitem.integratedcircuit.util.ComponentPos;
+import net.replaceitem.integratedcircuit.util.IntegratedCircuitIdentifier;
 
 public class ComparatorComponent extends AbstractRedstoneGateComponent {
     public ComparatorComponent(int id) {
@@ -41,6 +41,13 @@ public class ComparatorComponent extends AbstractRedstoneGateComponent {
     @Override
     public Identifier getItemTexture() {
         return ITEM_TEXTURE;
+    }
+
+    @Override
+    public Text getHoverInfoText(ComponentState state) {
+        if(!(state instanceof ComparatorComponentState comparatorComponentState)) throw new IllegalStateException("Invalid component state for component");
+        int signalStrength = comparatorComponentState.getOutputSignal();
+        return IntegratedCircuitScreen.getSignalStrengthText(signalStrength);
     }
 
     @Override

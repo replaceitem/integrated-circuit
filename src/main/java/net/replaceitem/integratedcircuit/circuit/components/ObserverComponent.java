@@ -39,6 +39,12 @@ public class ObserverComponent extends Component {
     }
 
     @Override
+    public Text getHoverInfoText(ComponentState state) {
+        if(!(state instanceof ObserverComponentState observerComponentState)) throw new IllegalStateException("Invalid component state for component");
+        return IntegratedCircuitScreen.getSignalStrengthText(observerComponentState.isPowered() ? 15 : 0);
+    }
+
+    @Override
     public void render(MatrixStack matrices, int x, int y, float a, ComponentState state) {
         if(!(state instanceof ObserverComponentState observerComponentState)) throw new IllegalStateException("Invalid component state for component");
         IntegratedCircuitScreen.renderComponentTexture(matrices, observerComponentState.isPowered() ? TEXTURE_ON : TEXTURE, x, y, observerComponentState.getRotation().getOpposite().toInt(), 1, 1, 1, a);

@@ -2,9 +2,8 @@ package net.replaceitem.integratedcircuit.circuit.state;
 
 import net.replaceitem.integratedcircuit.circuit.Components;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
-import net.replaceitem.integratedcircuit.util.SignalStrengthAccessor;
 
-public class TorchComponentState extends RotatableComponentState implements SignalStrengthAccessor {
+public class TorchComponentState extends RotatableComponentState {
 
     private boolean lit;
     
@@ -30,10 +29,5 @@ public class TorchComponentState extends RotatableComponentState implements Sign
     public TorchComponentState setLit(boolean lit) {
         this.lit = lit;
         return this;
-    }
-
-    @Override
-    public int getSignalStrength() {
-        return lit ? 15 : 0;
     }
 }
