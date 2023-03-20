@@ -63,6 +63,7 @@ public class IntegratedCircuitScreen extends Screen {
     private static final Component[] PALETTE = new Component[]{
             Components.BLOCK,
             Components.WIRE,
+            Components.CROSSOVER,
             Components.TORCH,
             Components.REPEATER,
             Components.COMPARATOR,

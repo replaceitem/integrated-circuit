@@ -214,8 +214,8 @@ public abstract class Circuit implements CircuitAccess {
 
     public int getReceivedRedstonePower(ComponentPos pos) {
         int i = 0;
-        for (FlatDirection FlatDirection : FlatDirection.VALUES) {
-            int j = this.getEmittedRedstonePower(pos.offset(FlatDirection), FlatDirection);
+        for (FlatDirection direction : FlatDirection.VALUES) {
+            int j = this.getEmittedRedstonePower(pos.offset(direction), direction);
             if (j >= 15) {
                 return 15;
             }

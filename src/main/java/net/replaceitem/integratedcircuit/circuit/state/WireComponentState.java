@@ -7,10 +7,10 @@ import net.replaceitem.integratedcircuit.util.FlatDirection;
 public class WireComponentState extends ComponentState implements AbstractWireComponentState {
     private byte connections;
     protected byte power;
-    public WireComponentState(byte connections, byte power) {
+    public WireComponentState(int connections, int power) {
         super(Components.WIRE);
-        this.connections = connections;
-        this.power = power;
+        this.connections = (byte) connections;
+        this.power = (byte) power;
     }
     
     public WireComponentState(byte data) {
