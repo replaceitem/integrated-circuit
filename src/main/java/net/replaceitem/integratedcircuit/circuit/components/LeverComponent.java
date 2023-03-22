@@ -56,6 +56,16 @@ public class LeverComponent extends Component {
         if(!(state instanceof LeverComponentState leverComponentState)) throw new IllegalStateException("Invalid component state for component");
         leverComponentState = ((LeverComponentState) state.copy()).setPowered(!leverComponentState.isPowered());
         circuit.setComponentState(pos, leverComponentState, Block.NOTIFY_ALL);
+        circuit.updateNeighborsAlways(pos, this);
+    }
+
+    @Override
+    public void onStateReplaced(ComponentState state, Circuit circuit, ComponentPos pos, ComponentState newState) {
+        if(!(state instanceof LeverComponentState leverComponentState)) throw new IllegalStateException("Invalid component state for component");
+        if(state.isOf(newState.getComponent())) return;
+        if(leverComponentState.isPowered()) {
+            circuit.updateNeighborsAlways(pos, this);
+        }
     }
 
     @Override

@@ -23,6 +23,8 @@ public class Components {
     public static final PortComponent PORT = register(new PortComponent(9));
     public static final CrossoverComponent CROSSOVER = register(new CrossoverComponent(10));
     public static final LeverComponent LEVER = register(new LeverComponent(11));
+    public static final ButtonComponent STONE_BUTTON = register(new ButtonComponent(12, false));
+    public static final ButtonComponent WOODEN_BUTTON = register(new ButtonComponent(13, true));
 
 
     public static final ComponentState AIR_DEFAULT_STATE = new ComponentState(Components.AIR);

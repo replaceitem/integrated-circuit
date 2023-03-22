@@ -132,7 +132,7 @@ public class ComparatorComponent extends AbstractRedstoneGateComponent {
         int outputSignal = comparatorComponentState.getOutputSignal();
         if (calculatedOutputSignal != outputSignal || state.isPowered() != this.hasPower(circuit, pos, state)) {
             TickPriority tickPriority = this.isTargetNotAligned(circuit, pos, state) ? TickPriority.HIGH : TickPriority.NORMAL;
-            circuit.createAndScheduleBlockTick(pos, this, 2, tickPriority);
+            circuit.scheduleBlockTick(pos, this, 2, tickPriority);
         }
     }
 

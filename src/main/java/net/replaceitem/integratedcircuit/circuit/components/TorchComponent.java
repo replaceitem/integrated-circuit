@@ -114,7 +114,7 @@ public class TorchComponent extends Component {
             if (shouldUnpower) {
                 circuit.setComponentState(pos, ((TorchComponentState) torchComponentState.copy()).setLit(false), Component.NOTIFY_ALL);
                 if (isBurnedOut(circuit, pos, true)) {
-                    circuit.createAndScheduleBlockTick(pos, circuit.getComponentState(pos).getComponent(), 160);
+                    circuit.scheduleBlockTick(pos, circuit.getComponentState(pos).getComponent(), 160);
                 }
             }
         } else if (!shouldUnpower && !isBurnedOut(circuit, pos, false)) {
@@ -126,7 +126,7 @@ public class TorchComponent extends Component {
     public void neighborUpdate(ComponentState state, Circuit circuit, ComponentPos pos, Component sourceBlock, ComponentPos sourcePos, boolean notify) {
         if(!(state instanceof TorchComponentState torchComponentState)) throw new IllegalStateException("Invalid component state for component");
         if (torchComponentState.isLit() == this.shouldUnpower(circuit, pos, state) && !circuit.getCircuitTickScheduler().isTicking(pos, this)) {
-            circuit.createAndScheduleBlockTick(pos, this, 2);
+            circuit.scheduleBlockTick(pos, this, 2);
         }
     }
 

@@ -57,7 +57,7 @@ public class ObserverComponent extends Component {
             circuit.setComponentState(pos, ((ObserverComponentState) state.copy()).setPowered(false), Block.NOTIFY_LISTENERS);
         } else {
             circuit.setComponentState(pos, ((ObserverComponentState) state.copy()).setPowered(true), Block.NOTIFY_LISTENERS);
-            circuit.createAndScheduleBlockTick(pos, this, 2);
+            circuit.scheduleBlockTick(pos, this, 2);
         }
         this.updateNeighbors(circuit, pos, state);
     }
@@ -73,7 +73,7 @@ public class ObserverComponent extends Component {
 
     private void scheduleTick(Circuit circuit, ComponentPos pos) {
         if (!circuit.isClient && !circuit.getCircuitTickScheduler().isQueued(pos, this)) {
-            circuit.createAndScheduleBlockTick(pos, this, 2);
+            circuit.scheduleBlockTick(pos, this, 2);
         }
     }
 

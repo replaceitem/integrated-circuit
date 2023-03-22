@@ -69,7 +69,9 @@ public class IntegratedCircuitScreen extends Screen {
             Components.OBSERVER,
             Components.TARGET,
             Components.REDSTONE_BLOCK,
-            Components.LEVER
+            Components.LEVER,
+            Components.STONE_BUTTON,
+            Components.WOODEN_BUTTON
     };
 
     public IntegratedCircuitScreen(ClientCircuit circuit, Text name, BlockPos pos) {

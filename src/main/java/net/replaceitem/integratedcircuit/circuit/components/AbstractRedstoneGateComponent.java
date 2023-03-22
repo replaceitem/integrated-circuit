@@ -35,7 +35,7 @@ public abstract class AbstractRedstoneGateComponent extends Component {
         } else if (!powered) {
             circuit.setComponentState(pos, ((AbstractRedstoneGateComponentState) state.copy()).setPowered(true), Block.NOTIFY_LISTENERS);
             if (!hasPower) {
-                circuit.createAndScheduleBlockTick(pos, this, this.getUpdateDelayInternal(state), TickPriority.VERY_HIGH);
+                circuit.scheduleBlockTick(pos, this, this.getUpdateDelayInternal(state), TickPriority.VERY_HIGH);
             }
         }
     }
@@ -82,7 +82,7 @@ public abstract class AbstractRedstoneGateComponent extends Component {
             } else if (isPowered) {
                 tickPriority = TickPriority.VERY_HIGH;
             }
-            circuit.createAndScheduleBlockTick(pos, this, this.getUpdateDelayInternal(state), tickPriority);
+            circuit.scheduleBlockTick(pos, this, this.getUpdateDelayInternal(state), tickPriority);
         }
     }
 
@@ -140,7 +140,7 @@ public abstract class AbstractRedstoneGateComponent extends Component {
     public void onPlaced(ServerCircuit circuit, ComponentPos pos, ComponentState state) {
         if(!(state instanceof AbstractRedstoneGateComponentState abstractRedstoneGateComponentState)) throw new IllegalStateException("Invalid component state for component");
         if (this.hasPower(circuit, pos, abstractRedstoneGateComponentState)) {
-            circuit.createAndScheduleBlockTick(pos, this, 1);
+            circuit.scheduleBlockTick(pos, this, 1);
         }
     }
 

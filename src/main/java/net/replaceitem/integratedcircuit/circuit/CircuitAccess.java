@@ -15,11 +15,11 @@ public interface CircuitAccess {
     long getTime();
     long getTickOrder();
 
-    default void createAndScheduleBlockTick(ComponentPos pos, Component component, int delay, TickPriority priority) {
+    default void scheduleBlockTick(ComponentPos pos, Component component, int delay, TickPriority priority) {
         this.getCircuitTickScheduler().scheduleTick(this.createOrderedTick(pos, component, delay, priority));
     }
 
-    default void createAndScheduleBlockTick(ComponentPos pos, Component component, int delay) {
+    default void scheduleBlockTick(ComponentPos pos, Component component, int delay) {
         this.getCircuitTickScheduler().scheduleTick(this.createOrderedTick(pos, component, delay));
     }
 
