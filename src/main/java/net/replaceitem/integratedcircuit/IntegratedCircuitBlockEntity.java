@@ -4,6 +4,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Nameable;
 import net.minecraft.util.math.BlockPos;
@@ -11,11 +12,12 @@ import net.minecraft.world.World;
 import net.replaceitem.integratedcircuit.circuit.ServerCircuit;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
 
-import java.util.UUID;
+import java.util.Set;
+import java.util.WeakHashMap;
 
 public class IntegratedCircuitBlockEntity extends BlockEntity implements Nameable {
 
-    protected UUID editor;
+    protected WeakHashMap<ServerPlayerEntity, Object> editors;
 
     protected Text customName;
     protected ServerCircuit circuit;
@@ -25,6 +27,7 @@ public class IntegratedCircuitBlockEntity extends BlockEntity implements Nameabl
     public IntegratedCircuitBlockEntity(BlockPos pos, BlockState state) {
         super(IntegratedCircuit.INTEGRATED_CIRCUIT_BLOCK_ENTITY, pos, state);
         this.circuit = new ServerCircuit(this);
+        this.editors = new WeakHashMap<>();
     }
 
     @Override
@@ -60,18 +63,34 @@ public class IntegratedCircuitBlockEntity extends BlockEntity implements Nameabl
         return IntegratedCircuit.INTEGRATED_CIRCUIT_BLOCK.getName();
     }
 
-    public UUID getEditor() {
-        return this.editor;
+
+
+    private static final Object DUMMY = new Object();
+
+    public Set<ServerPlayerEntity> getEditingPlayers() {
+        return editors.keySet();
     }
 
-    public void setEditor(UUID editor) {
-        this.editor = editor;
+    public boolean isEditing(ServerPlayerEntity player) {
+        return this.editors.containsKey(player);
     }
-    
+
+    public void addEditor(ServerPlayerEntity player) {
+        // clean up to at least keep duplicate players away (removed players can be left over in the map, but as long as one player has no duplicates here, should be fine)
+        for (ServerPlayerEntity serverPlayerEntity : this.editors.keySet()) {
+            if(serverPlayerEntity.getRemovalReason() != null) this.editors.remove(serverPlayerEntity);
+        }
+        this.editors.put(player, DUMMY);
+    }
+
+    public void removeEditor(ServerPlayerEntity player) {
+        this.editors.remove(player);
+    }
+
     public void setOutputStrength(FlatDirection direction, int power) {
         this.outputStrengths[direction.toInt()] = (byte) power;
     }
-    
+
     public int getOutputStrength(FlatDirection direction) {
         return this.outputStrengths[direction.toInt()];
     }

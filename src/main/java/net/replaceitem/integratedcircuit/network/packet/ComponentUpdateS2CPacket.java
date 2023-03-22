@@ -5,10 +5,12 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
-import net.replaceitem.integratedcircuit.util.IntegratedCircuitIdentifier;
-import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.circuit.Components;
 import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
+import net.replaceitem.integratedcircuit.util.ComponentPos;
+import net.replaceitem.integratedcircuit.util.IntegratedCircuitIdentifier;
+
+import java.util.Collection;
 
 public class ComponentUpdateS2CPacket {
     public static final Identifier ID = new IntegratedCircuitIdentifier("component_update_s2c_packet");
@@ -38,5 +40,12 @@ public class ComponentUpdateS2CPacket {
 
     public void send(ServerPlayerEntity serverPlayerEntity) {
         ServerPlayNetworking.send(serverPlayerEntity, ID, this.getBuffer());
+    }
+
+    public void send(Collection<ServerPlayerEntity> players) {
+        PacketByteBuf buffer = this.getBuffer();
+        for (ServerPlayerEntity player : players) {
+            ServerPlayNetworking.send(player, ID, buffer);
+        }
     }
 }

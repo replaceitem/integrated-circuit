@@ -5,6 +5,8 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -15,7 +17,7 @@ import net.replaceitem.integratedcircuit.network.packet.ComponentUpdateS2CPacket
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
 
-import java.util.UUID;
+import java.util.Set;
 
 public class ServerCircuit extends Circuit {
 
@@ -124,11 +126,14 @@ public class ServerCircuit extends Circuit {
     }
 
     private void updateClient(ComponentPos pos, ComponentState state) {
-        UUID editorUUID = this.blockEntity.getEditor();
-        if(editorUUID == null) return;
-        ServerPlayerEntity editor = this.blockEntity.getWorld().getServer().getPlayerManager().getPlayer(this.blockEntity.getEditor());
-        if(editor == null) return;
-        new ComponentUpdateS2CPacket(pos, state).send(editor);
+        World world = this.blockEntity.getWorld();
+        if(world == null) return;
+        MinecraftServer minecraftServer = world.getServer();
+        if(minecraftServer == null) return;
+        PlayerManager playerManager = minecraftServer.getPlayerManager();
+        if(playerManager == null) return;
+        Set<ServerPlayerEntity> editors = this.blockEntity.getEditingPlayers();
+        new ComponentUpdateS2CPacket(pos, state).send(editors);
     }
 
     @Override
