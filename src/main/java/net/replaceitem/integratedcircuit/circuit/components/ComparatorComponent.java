@@ -8,14 +8,18 @@ import net.minecraft.util.math.random.Random;
 import net.minecraft.world.tick.TickPriority;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
 import net.replaceitem.integratedcircuit.circuit.ServerCircuit;
-import net.replaceitem.integratedcircuit.circuit.state.AbstractRedstoneGateComponentState;
-import net.replaceitem.integratedcircuit.circuit.state.ComparatorComponentState;
-import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
+import net.replaceitem.integratedcircuit.circuit.state.*;
+import net.replaceitem.integratedcircuit.circuit.state.property.BooleanComponentProperty;
+import net.replaceitem.integratedcircuit.circuit.state.property.IntComponentProperty;
 import net.replaceitem.integratedcircuit.client.IntegratedCircuitScreen;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.IntegratedCircuitIdentifier;
 
 public class ComparatorComponent extends AbstractRedstoneGateComponent {
+
+    private static final BooleanComponentProperty SUBTRACT_MODE = new BooleanComponentProperty("subtract_mode", 3);
+    private static final IntComponentProperty OUTPUT_POWER = new IntComponentProperty("output_power", 4, 4);
+
     public ComparatorComponent(int id) {
         super(id, Text.translatable("component.integrated_circuit.comparator"));
     }
@@ -27,16 +31,6 @@ public class ComparatorComponent extends AbstractRedstoneGateComponent {
 
     public static final Identifier TEXTURE_TORCH_OFF = new IntegratedCircuitIdentifier("textures/integrated_circuit/torch_top_off.png");
     public static final Identifier TEXTURE_TORCH_ON = new IntegratedCircuitIdentifier("textures/integrated_circuit/torch_top_on.png");
-    
-    @Override
-    public ComponentState getDefaultState() {
-        return getState((byte) 0);
-    }
-
-    @Override
-    public ComponentState getState(byte data) {
-        return new ComparatorComponentState(data);
-    }
 
     @Override
     public Identifier getItemTexture() {
@@ -45,25 +39,23 @@ public class ComparatorComponent extends AbstractRedstoneGateComponent {
 
     @Override
     public Text getHoverInfoText(ComponentState state) {
-        if(!(state instanceof ComparatorComponentState comparatorComponentState)) throw new IllegalStateException("Invalid component state for component");
-        int signalStrength = comparatorComponentState.getOutputSignal();
+        int signalStrength = state.get(OUTPUT_POWER);
         return IntegratedCircuitScreen.getSignalStrengthText(signalStrength);
     }
 
     @Override
     public void render(MatrixStack matrices, int x, int y, float a, ComponentState state) {
-        if(!(state instanceof ComparatorComponentState comparatorComponentState)) throw new IllegalStateException("Invalid component state for component");
-        
-        boolean powered = comparatorComponentState.isPowered();
-        IntegratedCircuitScreen.renderComponentTexture(matrices, powered ? TEXTURE_ON : TEXTURE, x, y, comparatorComponentState.getRotation().getOpposite().toInt(), 1, 1, 1, a);
+        boolean powered = state.get(POWERED);
+        int rot = state.get(FACING).getOpposite().toInt();
+        IntegratedCircuitScreen.renderComponentTexture(matrices, powered ? TEXTURE_ON : TEXTURE, x, y, rot, 1, 1, 1, a);
         
         Identifier torchTexture = powered ? TEXTURE_TORCH_ON : TEXTURE_TORCH_OFF;
 
-        IntegratedCircuitScreen.renderPartialTexture(matrices, torchTexture, x, y, 3, 10, 4, 4, comparatorComponentState.getRotation().getOpposite().toInt(), 1, 1, 1, a);
-        IntegratedCircuitScreen.renderPartialTexture(matrices, torchTexture, x, y, 9, 10, 4, 4, comparatorComponentState.getRotation().getOpposite().toInt(), 1, 1, 1, a);
+        IntegratedCircuitScreen.renderPartialTexture(matrices, torchTexture, x, y, 3, 10, 4, 4, rot, 1, 1, 1, a);
+        IntegratedCircuitScreen.renderPartialTexture(matrices, torchTexture, x, y, 9, 10, 4, 4, rot, 1, 1, 1, a);
 
-        Identifier modeTorchTexture = comparatorComponentState.isSubtractMode() ? TEXTURE_TORCH_ON : TEXTURE_TORCH_OFF;
-        IntegratedCircuitScreen.renderPartialTexture(matrices, modeTorchTexture, x, y, 6, 1, 4, 4, comparatorComponentState.getRotation().getOpposite().toInt(), 1, 1, 1, a);
+        Identifier modeTorchTexture = state.get(SUBTRACT_MODE) ? TEXTURE_TORCH_ON : TEXTURE_TORCH_OFF;
+        IntegratedCircuitScreen.renderPartialTexture(matrices, modeTorchTexture, x, y, 6, 1, 4, 4, rot, 1, 1, 1, a);
     }
 
 
@@ -74,11 +66,10 @@ public class ComparatorComponent extends AbstractRedstoneGateComponent {
 
     @Override
     protected int getOutputLevel(Circuit circuit, ComponentPos pos, ComponentState state) {
-        if(!(state instanceof ComparatorComponentState comparatorComponentState)) throw new IllegalStateException("Invalid component state for component");
-        return comparatorComponentState.getOutputSignal();
+        return state.get(OUTPUT_POWER);
     }
 
-    private int calculateOutputSignal(Circuit world, ComponentPos pos, ComparatorComponentState state) {
+    private int calculateOutputSignal(Circuit world, ComponentPos pos, ComponentState state) {
         int i = this.getPower(world, pos, state);
         if (i == 0) {
             return 0;
@@ -87,15 +78,14 @@ public class ComparatorComponent extends AbstractRedstoneGateComponent {
         if (j > i) {
             return 0;
         }
-        if (state.isSubtractMode()) {
+        if (state.get(SUBTRACT_MODE)) {
             return i - j;
         }
         return i;
     }
 
     @Override
-    protected boolean hasPower(Circuit circuit, ComponentPos pos, AbstractRedstoneGateComponentState state) {
-        if(!(state instanceof ComparatorComponentState comparatorComponentState)) throw new IllegalStateException("Invalid component state for component");
+    protected boolean hasPower(Circuit circuit, ComponentPos pos, ComponentState state) {
         int i = this.getPower(circuit, pos, state);
         if (i == 0) {
             return false;
@@ -104,49 +94,49 @@ public class ComparatorComponent extends AbstractRedstoneGateComponent {
         if (i > j) {
             return true;
         }
-        return i == j && !comparatorComponentState.isSubtractMode();
+        return i == j && !state.get(SUBTRACT_MODE);
     }
 
 
     @Override
-    protected int getPower(Circuit circuit, ComponentPos pos, AbstractRedstoneGateComponentState state) {
+    protected int getPower(Circuit circuit, ComponentPos pos, ComponentState state) {
         // overriding is unnecessary, but when blocks get added that have a comparator power level, this needs to be changed
         return super.getPower(circuit, pos, state);
     }
 
     @Override
     public void onUse(ComponentState state, Circuit circuit, ComponentPos pos) {
-        if(!(state instanceof ComparatorComponentState comparatorComponentState)) throw new IllegalStateException("Invalid component state for component");
-        comparatorComponentState = ((ComparatorComponentState) state.copy()).setSubtractMode(!comparatorComponentState.isSubtractMode());
-        circuit.setComponentState(pos, comparatorComponentState, Block.NOTIFY_LISTENERS);
-        this.update(circuit, pos, comparatorComponentState);
+        state = state.cycle(SUBTRACT_MODE);
+        circuit.setComponentState(pos, state, Block.NOTIFY_LISTENERS);
+        this.update(circuit, pos, state);
     }
 
     @Override
-    protected void updatePowered(Circuit circuit, ComponentPos pos, AbstractRedstoneGateComponentState state) {
-        if(!(state instanceof ComparatorComponentState comparatorComponentState)) throw new IllegalStateException("Invalid component state for component");
+    protected void updatePowered(Circuit circuit, ComponentPos pos, ComponentState state) {
         if (circuit.getCircuitTickScheduler().isTicking(pos, this)) {
             return;
         }
-        int calculatedOutputSignal = this.calculateOutputSignal(circuit, pos, comparatorComponentState);
-        int outputSignal = comparatorComponentState.getOutputSignal();
-        if (calculatedOutputSignal != outputSignal || state.isPowered() != this.hasPower(circuit, pos, state)) {
+        int calculatedOutputSignal = this.calculateOutputSignal(circuit, pos, state);
+        int outputSignal = state.get(OUTPUT_POWER);
+        if (calculatedOutputSignal != outputSignal || state.get(POWERED) != this.hasPower(circuit, pos, state)) {
             TickPriority tickPriority = this.isTargetNotAligned(circuit, pos, state) ? TickPriority.HIGH : TickPriority.NORMAL;
             circuit.scheduleBlockTick(pos, this, 2, tickPriority);
         }
     }
 
-    private void update(Circuit world, ComponentPos pos, ComparatorComponentState state) {
+    private void update(Circuit world, ComponentPos pos, ComponentState state) {
         int i = this.calculateOutputSignal(world, pos, state);
-        int j = state.getOutputSignal();
-        state.setOutputSignal(i);
-        if (j != i || !state.isSubtractMode()) {
+        int j = state.get(OUTPUT_POWER);
+        state = state.with(OUTPUT_POWER, i); // this is done in a BE in vanilla, so in this case we need to re-place the state, which is done below
+        if (j != i || !state.get(SUBTRACT_MODE)) {
             boolean hasPower = this.hasPower(world, pos, state);
-            boolean powered = state.isPowered();
+            boolean powered = state.get(POWERED);
             if (powered && !hasPower) {
-                world.setComponentState(pos, ((ComparatorComponentState) state.copy()).setPowered(false), Block.NOTIFY_LISTENERS);
+                world.setComponentState(pos, state.with(POWERED, false), NOTIFY_LISTENERS);
             } else if (!powered && hasPower) {
-                world.setComponentState(pos, ((ComparatorComponentState) state.copy()).setPowered(true), Block.NOTIFY_LISTENERS);
+                world.setComponentState(pos, state.with(POWERED, true), NOTIFY_LISTENERS);
+            } else if (j != i) {
+                world.setComponentState(pos, state, NOTIFY_LISTENERS); // if SS changed and we haven't already placed the state above
             }
             this.updateTarget(world, pos, state);
         }
@@ -154,12 +144,18 @@ public class ComparatorComponent extends AbstractRedstoneGateComponent {
 
     @Override
     public void scheduledTick(ComponentState state, ServerCircuit circuit, ComponentPos pos, Random random) {
-        if(!(state instanceof ComparatorComponentState comparatorComponentState)) throw new IllegalStateException("Invalid component state for component");
-        this.update(circuit, pos, comparatorComponentState);
+        this.update(circuit, pos, state);
     }
 
     @Override
     public boolean isSolidBlock(Circuit circuit, ComponentPos pos) {
         return false;
+    }
+
+    @Override
+    public void appendProperties(ComponentState.PropertyBuilder builder) {
+        super.appendProperties(builder);
+        builder.append(SUBTRACT_MODE);
+        builder.append(OUTPUT_POWER);
     }
 }

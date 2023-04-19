@@ -3,13 +3,12 @@ package net.replaceitem.integratedcircuit.circuit.components;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import net.replaceitem.integratedcircuit.util.IntegratedCircuitIdentifier;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
 import net.replaceitem.integratedcircuit.circuit.Component;
-import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
-import net.replaceitem.integratedcircuit.circuit.state.TargetComponentState;
 import net.replaceitem.integratedcircuit.client.IntegratedCircuitScreen;
+import net.replaceitem.integratedcircuit.util.ComponentPos;
+import net.replaceitem.integratedcircuit.util.IntegratedCircuitIdentifier;
 
 public class TargetComponent extends Component {
     public TargetComponent(int id) {
@@ -17,11 +16,6 @@ public class TargetComponent extends Component {
     }
 
     public static final Identifier TEXTURE = new IntegratedCircuitIdentifier("textures/integrated_circuit/target.png");
-
-    @Override
-    public ComponentState getDefaultState() {
-        return new TargetComponentState();
-    }
 
     @Override
     public Identifier getItemTexture() {

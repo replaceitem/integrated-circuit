@@ -4,7 +4,7 @@ import com.google.common.collect.Sets;
 import net.minecraft.text.Text;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
 import net.replaceitem.integratedcircuit.circuit.Component;
-import net.replaceitem.integratedcircuit.circuit.state.AbstractWireComponentState;
+import net.replaceitem.integratedcircuit.circuit.state.property.ComponentProperty;
 import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
 import net.replaceitem.integratedcircuit.client.IntegratedCircuitScreen;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
@@ -19,8 +19,7 @@ public abstract class AbstractWireComponent extends AbstractConductingComponent 
 
     @Override
     public Text getHoverInfoText(ComponentState state) {
-        if(!(state instanceof AbstractWireComponentState wireComponentState)) throw new IllegalStateException("Invalid component state for component");
-        int signalStrength = wireComponentState.getPower();
+        int signalStrength = state.get(getPowerProperty());
         return IntegratedCircuitScreen.getSignalStrengthText(signalStrength);
     }
 
@@ -49,13 +48,10 @@ public abstract class AbstractWireComponent extends AbstractConductingComponent 
 
     @Override
     protected void update(Circuit circuit, ComponentPos pos, ComponentState state) {
-        if(!(state instanceof AbstractWireComponentState wireComponentState)) throw new IllegalStateException("Invalid component state for component");
         int i = getReceivedRedstonePower(circuit, pos);
-        if (wireComponentState.getPower() != i) {
-            if (circuit.getComponentState(pos).equals(state)) {
-                AbstractWireComponentState newState = (AbstractWireComponentState) state.copy();
-                newState.setPower(i);
-                circuit.setComponentState(pos, (ComponentState) newState, Component.NOTIFY_LISTENERS);
+        if (state.get(getPowerProperty()) != i) {
+            if (circuit.getComponentState(pos) == state) {
+                circuit.setComponentState(pos, state.with(getPowerProperty(), i), Component.NOTIFY_LISTENERS);
             }
             HashSet<ComponentPos> set = Sets.newHashSet();
             set.add(pos);
@@ -68,6 +64,10 @@ public abstract class AbstractWireComponent extends AbstractConductingComponent 
         }
     }
 
+    protected ComponentProperty<Integer> getPowerProperty() {
+        return WireComponent.POWER;
+    }
+
     protected int getReceivedRedstonePower(Circuit world, ComponentPos pos) {
         wiresGivePower = false;
         int i = world.getReceivedRedstonePower(pos);
@@ -77,7 +77,7 @@ public abstract class AbstractWireComponent extends AbstractConductingComponent 
             for (FlatDirection direction : FlatDirection.VALUES) {
                 ComponentPos blockPos = pos.offset(direction);
                 ComponentState blockState = world.getComponentState(blockPos);
-                j = Math.max(j, increasePower(blockState, direction.getOpposite()));
+                j = Math.max(j, blockState.increasePower(direction.getOpposite()));
             }
         }
         return Math.max(i, j - 1);

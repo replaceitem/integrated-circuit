@@ -27,7 +27,7 @@ public class Components {
     public static final ButtonComponent WOODEN_BUTTON = register(new ButtonComponent(13, true));
 
 
-    public static final ComponentState AIR_DEFAULT_STATE = new ComponentState(Components.AIR);
+    public static final ComponentState AIR_DEFAULT_STATE = AIR.getDefaultState();
 
     private static <C extends Component> C register(C component) {
         COMPONENTS.put(component.getId(), component);

@@ -6,7 +6,6 @@ import net.minecraft.util.Identifier;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
 import net.replaceitem.integratedcircuit.circuit.Component;
 import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
-import net.replaceitem.integratedcircuit.circuit.state.RedstoneBlockComponentState;
 import net.replaceitem.integratedcircuit.client.IntegratedCircuitScreen;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
@@ -18,11 +17,6 @@ public class RedstoneBlockComponent extends Component {
     }
 
     public static final Identifier TEXTURE = new IntegratedCircuitIdentifier("textures/integrated_circuit/redstone_block.png");
-
-    @Override
-    public ComponentState getDefaultState() {
-        return new RedstoneBlockComponentState();
-    }
 
     @Override
     public Identifier getItemTexture() {

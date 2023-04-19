@@ -8,7 +8,7 @@ import net.minecraft.util.math.Vec3d;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
 import net.replaceitem.integratedcircuit.circuit.Component;
 import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
-import net.replaceitem.integratedcircuit.circuit.state.CrossoverComponentState;
+import net.replaceitem.integratedcircuit.circuit.state.property.IntComponentProperty;
 import net.replaceitem.integratedcircuit.client.IntegratedCircuitScreen;
 import net.replaceitem.integratedcircuit.mixin.RedstoneWireBlockAccessor;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
@@ -18,6 +18,11 @@ import net.replaceitem.integratedcircuit.util.IntegratedCircuitIdentifier;
 import java.util.HashSet;
 
 public class CrossoverComponent extends AbstractConductingComponent {
+
+    private static final IntComponentProperty POWER_X = new IntComponentProperty("power_x", 0, 4);
+    private static final IntComponentProperty POWER_Y = new IntComponentProperty("power_y", 4, 4);
+
+
     public CrossoverComponent(int id) {
         super(id, Text.translatable("component.integrated_circuit.crossover"));
     }
@@ -26,50 +31,27 @@ public class CrossoverComponent extends AbstractConductingComponent {
     protected static final Identifier ITEM_TEXTURE = new IntegratedCircuitIdentifier("textures/integrated_circuit/crossover.png");
 
     @Override
-    public ComponentState getDefaultState() {
-        return new CrossoverComponentState(0, 0);
-    }
-
-    @Override
-    public ComponentState getState(byte data) {
-        return new CrossoverComponentState(data);
-    }
-
-    @Override
     public Identifier getItemTexture() {
         return ITEM_TEXTURE;
     }
 
     @Override
     public Text getHoverInfoText(ComponentState state) {
-        if(!(state instanceof CrossoverComponentState crossoverComponentState)) throw new IllegalStateException("Invalid component state for component");
-
         return Text.literal("─ ")
-                .append(IntegratedCircuitScreen.getSignalStrengthText(crossoverComponentState.getPowerX()))
+                .append(IntegratedCircuitScreen.getSignalStrengthText(state.get(POWER_X)))
                 .append("   │ ")
-                .append(IntegratedCircuitScreen.getSignalStrengthText(crossoverComponentState.getPowerY()));
+                .append(IntegratedCircuitScreen.getSignalStrengthText(state.get(POWER_Y)));
     }
 
     @Override
     public void render(MatrixStack matrices, int x, int y, float a, ComponentState state) {
-        if(!(state instanceof CrossoverComponentState crossoverComponentState)) throw new IllegalStateException("Invalid component state for component");
-
-        Vec3d colorX = RedstoneWireBlockAccessor.getCOLORS()[crossoverComponentState.getPowerX()];
-        Vec3d colorY = RedstoneWireBlockAccessor.getCOLORS()[crossoverComponentState.getPowerY()];
+        Vec3d colorX = RedstoneWireBlockAccessor.getCOLORS()[state.get(POWER_X)];
+        Vec3d colorY = RedstoneWireBlockAccessor.getCOLORS()[state.get(POWER_Y)];
 
         IntegratedCircuitScreen.renderComponentTexture(matrices, TEXTURE_X, x, y, 0, (float) colorX.x, (float) colorX.y, (float) colorX.z, a);
         IntegratedCircuitScreen.renderComponentTexture(matrices, TEXTURE_BRIDGE, x, y, 0, 1, 1, 1, a);
         IntegratedCircuitScreen.renderComponentTexture(matrices, TEXTURE_Y, x, y, 0, (float) colorY.x, (float) colorY.y, (float) colorY.z, a);
     }
-
-
-
-
-
-
-
-
-
 
 
     @Override
@@ -95,15 +77,11 @@ public class CrossoverComponent extends AbstractConductingComponent {
 
     @Override
     protected void update(Circuit circuit, ComponentPos pos, ComponentState state) {
-        if(!(state instanceof CrossoverComponentState crossoverComponentState)) throw new IllegalStateException("Invalid component state for component");
         int powerX = getReceivedRedstonePower(circuit, pos, FlatDirection.Axis.X);
         int powerY = getReceivedRedstonePower(circuit, pos, FlatDirection.Axis.Y);
-        if (crossoverComponentState.getPowerX() != powerX || crossoverComponentState.getPowerY() != powerY) {
-            if (circuit.getComponentState(pos).equals(state)) {
-                CrossoverComponentState newState = (CrossoverComponentState) state.copy();
-                newState.setPowerX(powerX);
-                newState.setPowerY(powerY);
-                circuit.setComponentState(pos, newState, Component.NOTIFY_LISTENERS);
+        if (state.get(POWER_X) != powerX || state.get(POWER_Y) != powerY) {
+            if (circuit.getComponentState(pos) == state) {
+                circuit.setComponentState(pos, state.with(POWER_X, powerX).with(POWER_Y, powerY), Component.NOTIFY_LISTENERS);
             }
             HashSet<ComponentPos> set = Sets.newHashSet();
             set.add(pos);
@@ -132,7 +110,7 @@ public class CrossoverComponent extends AbstractConductingComponent {
             for (FlatDirection direction : FlatDirection.forAxis(axis)) {
                 ComponentPos blockPos = pos.offset(direction);
                 ComponentState blockState = circuit.getComponentState(blockPos);
-                j = Math.max(j, increasePower(blockState, direction.getOpposite()));
+                j = Math.max(j, blockState.increasePower(direction.getOpposite()));
             }
         }
         return Math.max(i, j - 1);
@@ -141,10 +119,21 @@ public class CrossoverComponent extends AbstractConductingComponent {
 
     @Override
     public int getWeakRedstonePower(ComponentState state, Circuit circuit, ComponentPos pos, FlatDirection direction) {
-        if(!(state instanceof CrossoverComponentState crossoverComponentState)) throw new IllegalStateException("Invalid component state for component");
         if (!wiresGivePower) {
             return 0;
         }
-        return direction.getAxis() == FlatDirection.Axis.X ? crossoverComponentState.getPowerX() : crossoverComponentState.getPowerY();
+        return direction.getAxis() == FlatDirection.Axis.X ? state.get(POWER_X) : state.get(POWER_Y);
+    }
+
+    @Override
+    public int increasePower(ComponentState state, FlatDirection side) {
+        return side.getAxis() == FlatDirection.Axis.X ? state.get(POWER_X) : state.get(POWER_Y);
+    }
+
+    @Override
+    public void appendProperties(ComponentState.PropertyBuilder builder) {
+        super.appendProperties(builder);
+        builder.append(POWER_X);
+        builder.append(POWER_Y);
     }
 }

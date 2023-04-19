@@ -6,20 +6,24 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.random.Random;
 import net.replaceitem.integratedcircuit.circuit.*;
+import net.replaceitem.integratedcircuit.circuit.state.property.BooleanComponentProperty;
+import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
+import net.replaceitem.integratedcircuit.client.IntegratedCircuitScreen;
+import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
 import net.replaceitem.integratedcircuit.util.IntegratedCircuitIdentifier;
-import net.replaceitem.integratedcircuit.util.ComponentPos;
-import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
-import net.replaceitem.integratedcircuit.circuit.state.TorchComponentState;
-import net.replaceitem.integratedcircuit.client.IntegratedCircuitScreen;
 
 import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
 
-public class TorchComponent extends Component {
+public class TorchComponent extends FacingComponent {
+
+    private static final BooleanComponentProperty LIT = new BooleanComponentProperty("lit", 2);
+
     public TorchComponent(int id) {
         super(id, Text.translatable("component.integrated_circuit.torch"));
+        this.setDefaultState(this.getDefaultPropertyState().with(LIT, true));
     }
 
     private static final Identifier ITEM_TEXTURE = new Identifier("textures/block/redstone_torch.png");
@@ -30,21 +34,11 @@ public class TorchComponent extends Component {
     private static final Map<ServerCircuit, List<BurnoutEntry>> BURNOUT_MAP = new WeakHashMap<>();
 
     @Override
-    public ComponentState getDefaultState() {
-        return new TorchComponentState(FlatDirection.NORTH, true);
-    }
-
-    @Override
-    public ComponentState getState(byte data) {
-        return new TorchComponentState(data);
-    }
-
-    @Override
     public ComponentState getPlacementState(Circuit circuit, ComponentPos pos, FlatDirection rotation) {
-        TorchComponentState componentState = (TorchComponentState) ((TorchComponentState) this.getDefaultState()).setRotation(rotation);
+        ComponentState componentState = this.getDefaultState().with(FACING, rotation);
         if (!componentState.canPlaceAt(circuit, pos)) {
             for (FlatDirection value : CircuitNeighborUpdater.UPDATE_ORDER) {
-                componentState.setRotation(value);
+                componentState = componentState.with(FACING, value);
                 if(componentState.canPlaceAt(circuit, pos)) return componentState;
             }
             return null;
@@ -59,21 +53,18 @@ public class TorchComponent extends Component {
 
     @Override
     public Text getHoverInfoText(ComponentState state) {
-        if(!(state instanceof TorchComponentState torchComponentState)) throw new IllegalStateException("Invalid component state for component");
-        return IntegratedCircuitScreen.getSignalStrengthText(torchComponentState.isLit() ? 15 : 0);
+        return IntegratedCircuitScreen.getSignalStrengthText(state.get(LIT) ? 15 : 0);
     }
 
     @Override
     public void render(MatrixStack matrices, int x, int y, float a, ComponentState state) {
-        if(!(state instanceof TorchComponentState torchComponentState)) throw new IllegalStateException("Invalid component state for component");
-        Identifier texture = torchComponentState.isLit()?TEXTURE:TEXTURE_OFF;
-        IntegratedCircuitScreen.renderComponentTexture(matrices, texture, x, y, torchComponentState.getRotation().toInt(), 1, 1, 1, a);
+        Identifier texture = state.get(LIT)?TEXTURE:TEXTURE_OFF;
+        IntegratedCircuitScreen.renderComponentTexture(matrices, texture, x, y, state.get(FACING).toInt(), 1, 1, 1, a);
     }
 
     @Override
     public ComponentState getStateForNeighborUpdate(ComponentState state, FlatDirection direction, ComponentState neighborState, Circuit circuit, ComponentPos pos, ComponentPos neighborPos) {
-        if(!(state instanceof TorchComponentState torchComponentState)) throw new IllegalStateException("Invalid component state for component");
-        if (direction.getOpposite() == torchComponentState.getRotation() && !canPlaceAt(torchComponentState, circuit, pos)) {
+        if (direction.getOpposite() == state.get(FACING) && !canPlaceAt(state, circuit, pos)) {
             return Components.AIR.getDefaultState();
         }
         return state;
@@ -81,8 +72,7 @@ public class TorchComponent extends Component {
 
     @Override
     public boolean canPlaceAt(ComponentState state, Circuit circuit, ComponentPos pos) {
-        if(!(state instanceof TorchComponentState torchComponentState)) throw new IllegalStateException("Invalid component state for component");
-        FlatDirection direction = torchComponentState.getRotation();
+        FlatDirection direction = state.get(FACING);
         ComponentPos blockPos = pos.offset(direction.getOpposite());
         ComponentState blockState = circuit.getComponentState(blockPos);
         return blockState.getComponent().isSideSolidFullSquare(circuit, blockPos, direction);
@@ -104,36 +94,33 @@ public class TorchComponent extends Component {
 
     @Override
     public void scheduledTick(ComponentState state, ServerCircuit circuit, ComponentPos pos, Random random) {
-        if(!(state instanceof TorchComponentState torchComponentState)) throw new IllegalStateException("Invalid component state for component");
         boolean shouldUnpower = this.shouldUnpower(circuit, pos, state);
         List<BurnoutEntry> list = BURNOUT_MAP.get(circuit);
         while (list != null && !list.isEmpty() && circuit.getTime() - list.get(0).time > 60L) {
             list.remove(0);
         }
-        if (torchComponentState.isLit()) {
+        if (state.get(LIT)) {
             if (shouldUnpower) {
-                circuit.setComponentState(pos, ((TorchComponentState) torchComponentState.copy()).setLit(false), Component.NOTIFY_ALL);
+                circuit.setComponentState(pos, state.with(LIT, false), Component.NOTIFY_ALL);
                 if (isBurnedOut(circuit, pos, true)) {
                     circuit.scheduleBlockTick(pos, circuit.getComponentState(pos).getComponent(), 160);
                 }
             }
         } else if (!shouldUnpower && !isBurnedOut(circuit, pos, false)) {
-            circuit.setComponentState(pos, ((TorchComponentState) torchComponentState.copy()).setLit(true), Component.NOTIFY_ALL);
+            circuit.setComponentState(pos, state.with(LIT, true), Component.NOTIFY_ALL);
         }
     }
 
     @Override
     public void neighborUpdate(ComponentState state, Circuit circuit, ComponentPos pos, Component sourceBlock, ComponentPos sourcePos, boolean notify) {
-        if(!(state instanceof TorchComponentState torchComponentState)) throw new IllegalStateException("Invalid component state for component");
-        if (torchComponentState.isLit() == this.shouldUnpower(circuit, pos, state) && !circuit.getCircuitTickScheduler().isTicking(pos, this)) {
+        if (state.get(LIT) == this.shouldUnpower(circuit, pos, state) && !circuit.getCircuitTickScheduler().isTicking(pos, this)) {
             circuit.scheduleBlockTick(pos, this, 2);
         }
     }
 
     @Override
     public int getWeakRedstonePower(ComponentState state, Circuit circuit, ComponentPos pos, FlatDirection direction) {
-        if(!(state instanceof TorchComponentState torchComponentState)) throw new IllegalStateException("Invalid component state for component");
-        return torchComponentState.isLit() ? 15 : 0;
+        return state.get(LIT) ? 15 : 0;
     }
 
     @Override
@@ -142,8 +129,7 @@ public class TorchComponent extends Component {
     }
     
     protected boolean shouldUnpower(Circuit circuit, ComponentPos pos, ComponentState state) {
-        if(!(state instanceof TorchComponentState torchComponentState)) throw new IllegalStateException("Invalid component state for component");
-        FlatDirection direction = torchComponentState.getRotation().getOpposite();
+        FlatDirection direction = state.get(FACING).getOpposite();
         return circuit.isEmittingRedstonePower(pos.offset(direction), direction);
     }
 
@@ -174,5 +160,11 @@ public class TorchComponent extends Component {
             this.pos = pos;
             this.time = time;
         }
+    }
+
+    @Override
+    public void appendProperties(ComponentState.PropertyBuilder builder) {
+        super.appendProperties(builder);
+        builder.append(LIT);
     }
 }

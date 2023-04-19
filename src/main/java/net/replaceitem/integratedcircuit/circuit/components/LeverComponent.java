@@ -5,15 +5,18 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
-import net.replaceitem.integratedcircuit.circuit.Component;
+import net.replaceitem.integratedcircuit.circuit.state.property.BooleanComponentProperty;
 import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
-import net.replaceitem.integratedcircuit.circuit.state.LeverComponentState;
 import net.replaceitem.integratedcircuit.client.IntegratedCircuitScreen;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
 import net.replaceitem.integratedcircuit.util.IntegratedCircuitIdentifier;
 
-public class LeverComponent extends Component {
+public class LeverComponent extends FacingComponent {
+
+
+    private static final BooleanComponentProperty POWERED = new BooleanComponentProperty("powered", 3);
+
     public LeverComponent(int id) {
         super(id, Text.translatable("component.integrated_circuit.lever"));
     }
@@ -24,54 +27,38 @@ public class LeverComponent extends Component {
     public static final Identifier TEXTURE_ON = new IntegratedCircuitIdentifier("textures/integrated_circuit/lever_on.png");
 
     @Override
-    public ComponentState getDefaultState() {
-        return new LeverComponentState(FlatDirection.NORTH, false);
-    }
-
-    @Override
-    public ComponentState getState(byte data) {
-        return new LeverComponentState(data);
-    }
-
-    @Override
     public Identifier getItemTexture() {
         return ITEM_TEXTURE;
     }
 
     @Override
     public Text getHoverInfoText(ComponentState state) {
-        if(!(state instanceof LeverComponentState leverComponentState)) throw new IllegalStateException("Invalid component state for component");
-        return IntegratedCircuitScreen.getSignalStrengthText(leverComponentState.isPowered() ? 15 : 0);
+        return IntegratedCircuitScreen.getSignalStrengthText(state.get(POWERED) ? 15 : 0);
     }
 
     @Override
     public void render(MatrixStack matrices, int x, int y, float a, ComponentState state) {
-        if(!(state instanceof LeverComponentState leverComponentState)) throw new IllegalStateException("Invalid component state for component");
-        Identifier texture = leverComponentState.isPowered() ? TEXTURE_ON : TEXTURE_OFF;
-        IntegratedCircuitScreen.renderComponentTexture(matrices, texture, x, y, leverComponentState.getRotation().toInt(), 1, 1, 1, a);
+        Identifier texture = state.get(POWERED) ? TEXTURE_ON : TEXTURE_OFF;
+        IntegratedCircuitScreen.renderComponentTexture(matrices, texture, x, y, state.get(FACING).toInt(), 1, 1, 1, a);
     }
 
     @Override
     public void onUse(ComponentState state, Circuit circuit, ComponentPos pos) {
-        if(!(state instanceof LeverComponentState leverComponentState)) throw new IllegalStateException("Invalid component state for component");
-        leverComponentState = ((LeverComponentState) state.copy()).setPowered(!leverComponentState.isPowered());
-        circuit.setComponentState(pos, leverComponentState, Block.NOTIFY_ALL);
+        circuit.setComponentState(pos, state.cycle(POWERED), Block.NOTIFY_ALL);
         circuit.updateNeighborsAlways(pos, this);
     }
 
     @Override
     public void onStateReplaced(ComponentState state, Circuit circuit, ComponentPos pos, ComponentState newState) {
-        if(!(state instanceof LeverComponentState leverComponentState)) throw new IllegalStateException("Invalid component state for component");
         if(state.isOf(newState.getComponent())) return;
-        if(leverComponentState.isPowered()) {
+        if(state.get(POWERED)) {
             circuit.updateNeighborsAlways(pos, this);
         }
     }
 
     @Override
     public int getWeakRedstonePower(ComponentState state, Circuit circuit, ComponentPos pos, FlatDirection direction) {
-        if(!(state instanceof LeverComponentState leverComponentState)) throw new IllegalStateException("Invalid component state for component");
-        return leverComponentState.isPowered() ? 15 : 0;
+        return state.get(POWERED) ? 15 : 0;
     }
 
     @Override
@@ -82,5 +69,11 @@ public class LeverComponent extends Component {
     @Override
     public boolean emitsRedstonePower(ComponentState state) {
         return true;
+    }
+
+    @Override
+    public void appendProperties(ComponentState.PropertyBuilder builder) {
+        super.appendProperties(builder);
+        builder.append(POWERED);
     }
 }

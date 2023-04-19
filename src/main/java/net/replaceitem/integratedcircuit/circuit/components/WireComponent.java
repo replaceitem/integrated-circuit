@@ -1,49 +1,68 @@
 package net.replaceitem.integratedcircuit.circuit.components;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import net.minecraft.block.Block;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
-import net.replaceitem.integratedcircuit.circuit.CircuitAccess;
 import net.replaceitem.integratedcircuit.circuit.Components;
+import net.replaceitem.integratedcircuit.circuit.state.property.BooleanComponentProperty;
 import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
-import net.replaceitem.integratedcircuit.circuit.state.ObserverComponentState;
-import net.replaceitem.integratedcircuit.circuit.state.RepeaterComponentState;
-import net.replaceitem.integratedcircuit.circuit.state.WireComponentState;
+import net.replaceitem.integratedcircuit.circuit.state.property.IntComponentProperty;
 import net.replaceitem.integratedcircuit.client.IntegratedCircuitScreen;
 import net.replaceitem.integratedcircuit.mixin.RedstoneWireBlockAccessor;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
 import net.replaceitem.integratedcircuit.util.IntegratedCircuitIdentifier;
 
+import java.util.Map;
+
 public class WireComponent extends AbstractWireComponent {
+
+    private static final BooleanComponentProperty CONNECTED_NORTH = new BooleanComponentProperty("connected_north", 0);
+    private static final BooleanComponentProperty CONNECTED_EAST = new BooleanComponentProperty("connected_east", 1);
+    private static final BooleanComponentProperty CONNECTED_SOUTH = new BooleanComponentProperty("connected_south", 2);
+    private static final BooleanComponentProperty CONNECTED_WEST = new BooleanComponentProperty("connected_west", 3);
+
+    public static final IntComponentProperty POWER = new IntComponentProperty("power", 4, 4);
+
+
+    public static final Map<FlatDirection, BooleanComponentProperty> DIRECTION_TO_CONNECTION_PROPERTY = Maps.newEnumMap(ImmutableMap.of(
+            FlatDirection.NORTH, CONNECTED_NORTH,
+            FlatDirection.EAST, CONNECTED_EAST,
+            FlatDirection.SOUTH, CONNECTED_SOUTH,
+            FlatDirection.WEST, CONNECTED_WEST
+    ));
+
+    // yes, this name is confusing, since it returns the cross state, but for some reason RedstoneWireBlock.dotState (yarn) seems to be the same
+    private final ComponentState dotState;
+
     public WireComponent(int id) {
         super(id, Text.translatable("component.integrated_circuit.wire"));
+        this.setDefaultState(this.getDefaultPropertyState()
+                .with(CONNECTED_NORTH, false)
+                .with(CONNECTED_EAST, false)
+                .with(CONNECTED_SOUTH, false)
+                .with(CONNECTED_WEST, false)
+                .with(POWER, 0)
+        );
+        dotState = this.getDefaultPropertyState()
+                .with(CONNECTED_NORTH, true)
+                .with(CONNECTED_EAST, true)
+                .with(CONNECTED_SOUTH, true)
+                .with(CONNECTED_WEST, true)
+                .with(POWER, 0);
     }
 
     private static final Identifier ITEM_TEXTURE = new Identifier("textures/item/redstone.png");
     private static final Identifier TEXTURE_DOT = new IntegratedCircuitIdentifier("textures/integrated_circuit/wire_dot.png");
     
     @Override
-    public ComponentState getDefaultState() {
-        return new WireComponentState((byte) 0b0000, (byte) 0);
-    }
-
-    // yes, this name is confusing, since it returns the cross state, but for some reason RedstoneWireBlock.dotState (yarn) seems to be the same
-    private ComponentState getDotState() {
-        return new WireComponentState((byte) 0b1111, (byte) 0);
-    }
-    
-    @Override
     public ComponentState getPlacementState(Circuit circuit, ComponentPos pos, FlatDirection rotation) {
-        return this.getPlacementState(circuit, this.getDotState(), pos);
-    }
-
-    @Override
-    public ComponentState getState(byte data) {
-        return new WireComponentState(data);
+        return this.getPlacementState(circuit, dotState, pos);
     }
 
     @Override
@@ -53,128 +72,110 @@ public class WireComponent extends AbstractWireComponent {
 
     @Override
     public void render(MatrixStack matrices, int x, int y, float a, ComponentState state) {
-        if(!(state instanceof WireComponentState wireComponentState)) throw new IllegalStateException("Invalid component state for component");
-
         final int size = IntegratedCircuitScreen.COMPONENT_SIZE;
         final int halfSize = size/2;
 
-        Vec3d color = RedstoneWireBlockAccessor.getCOLORS()[wireComponentState.getPower()];
+        Vec3d color = RedstoneWireBlockAccessor.getCOLORS()[state.get(POWER)];
         float r = (float) color.x;
         float g = (float) color.y;
         float b = (float) color.z;
 
-        if(wireComponentState.isConnected(FlatDirection.NORTH)) IntegratedCircuitScreen.renderComponentTexture(matrices, TEXTURE_Y, x, y, 0, r, g, b, a, 0, 0, size, halfSize);
-        if(wireComponentState.isConnected(FlatDirection.EAST)) IntegratedCircuitScreen.renderComponentTexture(matrices, TEXTURE_X, x, y, 0, r, g, b, a, halfSize, 0, halfSize, size);
-        if(wireComponentState.isConnected(FlatDirection.SOUTH)) IntegratedCircuitScreen.renderComponentTexture(matrices, TEXTURE_Y, x, y, 0, r, g, b, a, 0, halfSize, size, halfSize);
-        if(wireComponentState.isConnected(FlatDirection.WEST)) IntegratedCircuitScreen.renderComponentTexture(matrices, TEXTURE_X, x, y, 0, r, g, b, a, 0, 0, halfSize, size);
+        if(state.get(CONNECTED_NORTH)) IntegratedCircuitScreen.renderComponentTexture(matrices, TEXTURE_Y, x, y, 0, r, g, b, a, 0, 0, size, halfSize);
+        if(state.get(CONNECTED_EAST)) IntegratedCircuitScreen.renderComponentTexture(matrices, TEXTURE_X, x, y, 0, r, g, b, a, halfSize, 0, halfSize, size);
+        if(state.get(CONNECTED_SOUTH)) IntegratedCircuitScreen.renderComponentTexture(matrices, TEXTURE_Y, x, y, 0, r, g, b, a, 0, halfSize, size, halfSize);
+        if(state.get(CONNECTED_WEST)) IntegratedCircuitScreen.renderComponentTexture(matrices, TEXTURE_X, x, y, 0, r, g, b, a, 0, 0, halfSize, size);
 
         int connections = 0;
-        for (FlatDirection direction : FlatDirection.VALUES) if(wireComponentState.isConnected(direction)) connections++;
+        for (FlatDirection direction : FlatDirection.VALUES) if(state.get(DIRECTION_TO_CONNECTION_PROPERTY.get(direction))) connections++;
         if(connections != 2) IntegratedCircuitScreen.renderComponentTexture(matrices, TEXTURE_DOT, x, y, 0, r, g, b, a, 0, 0, size, size);
         
-        if(!(wireComponentState.isConnected(FlatDirection.NORTH) && wireComponentState.isConnected(FlatDirection.SOUTH) || wireComponentState.isConnected(FlatDirection.EAST) && wireComponentState.isConnected(FlatDirection.WEST))) {
+        if(!(state.get(CONNECTED_NORTH) && state.get(CONNECTED_SOUTH) || state.get(CONNECTED_EAST) && state.get(CONNECTED_WEST))) {
             IntegratedCircuitScreen.renderComponentTexture(matrices, TEXTURE_DOT, x, y, 0, r, g, b, a, 0, 0, size, size);
         }
     }
 
     @Override
     public ComponentState getStateForNeighborUpdate(ComponentState state, FlatDirection direction, ComponentState neighborState, Circuit circuit, ComponentPos pos, ComponentPos neighborPos) {
-        if(!(state instanceof WireComponentState wireComponentState)) throw new IllegalStateException("Invalid component state for component");
         boolean wireConnection = this.getRenderConnectionType(circuit, pos, direction);
-        if (wireConnection == wireComponentState.isConnected(direction) && !isFullyConnected(state)) {
-            WireComponentState newState = (WireComponentState) state.copy();
-            newState.setConnected(direction, wireConnection);
-            return newState;
+        if (wireConnection == state.get(DIRECTION_TO_CONNECTION_PROPERTY.get(direction)) && !isFullyConnected(state)) {
+            return state.with(DIRECTION_TO_CONNECTION_PROPERTY.get(direction), wireConnection);
         }
-        return this.getPlacementState(circuit, ((WireComponentState)this.getDotState()).setPower(wireComponentState.getPower()).setConnected(direction, wireConnection), pos);
+        return this.getPlacementState(circuit, dotState.with(POWER, state.get(POWER)).with(DIRECTION_TO_CONNECTION_PROPERTY.get(direction), wireConnection), pos);
     }
 
 
     @Override
     public void onUse(ComponentState state, Circuit circuit, ComponentPos pos) {
-        if(!(state instanceof WireComponentState wireComponentState)) throw new IllegalStateException("Invalid component state for component");
         if (isFullyConnected(state) || isNotConnected(state)) {
-            WireComponentState newState = (WireComponentState) (isFullyConnected(state) ? this.getDefaultState() : this.getDotState());
-            newState.setPower(wireComponentState.getPower());
-            if (!(newState = (WireComponentState) this.getPlacementState(circuit, newState, pos)).equals(state)) {
+            ComponentState newState = isFullyConnected(state) ? this.getDefaultState() : dotState;
+            newState = newState.with(POWER, state.get(POWER));
+            if ((newState = this.getPlacementState(circuit, newState, pos)) != state) {
                 circuit.setComponentState(pos, newState, Block.NOTIFY_ALL);
-                this.updateForNewState(circuit, pos, wireComponentState, newState);
+                this.updateForNewState(circuit, pos, state, newState);
             }
         }
     }
 
-    private void updateForNewState(Circuit world, ComponentPos pos, WireComponentState oldState, WireComponentState newState) {
+    private void updateForNewState(Circuit world, ComponentPos pos, ComponentState oldState, ComponentState newState) {
         for (FlatDirection direction : FlatDirection.VALUES) {
             ComponentPos blockPos = pos.offset(direction);
-            if (oldState.isConnected(direction) == newState.isConnected(direction) || !world.getComponentState(blockPos).isSolidBlock(world, blockPos)) continue;
+            BooleanComponentProperty connectionProperty = DIRECTION_TO_CONNECTION_PROPERTY.get(direction);
+            if (oldState.get(connectionProperty) == newState.get(connectionProperty) || !world.getComponentState(blockPos).isSolidBlock(world, blockPos)) continue;
             world.updateNeighborsExcept(blockPos, newState.getComponent(), direction.getOpposite());
         }
     }
 
-    @Override
-    public void prepare(ComponentState state, CircuitAccess circuit, ComponentPos pos, int flags, int maxUpdateDepth) {
-        /* // I don't think this actually does anything in a 2D world
-        if(!(state instanceof WireComponentState wireComponentState)) throw new IllegalStateException("Invalid component state for component");
-        ComponentPos mutable;
-        for (Direction direction : Direction.VALUES) {
-            boolean wireConnection = wireComponentState.isConnected(direction);
-            mutable = pos.offset(direction);
-            if (!wireConnection || circuit.getComponentState(pos.offset(direction)).isOf(this)) continue;
-            // move(down)
-            mutable.set((Vec3i)pos, direction).move(net.minecraft.util.math.Direction.UP);
-            BlockState blockState2 = circuit.getBlockState(mutable);
-            if (!blockState2.isOf(this)) continue;
-            Vec3i blockPos2 = mutable.offset(direction.getOpposite());
-            circuit.replaceWithStateForNeighborUpdate(direction.getOpposite(), circuit.getComponentState((BlockPos)blockPos2), mutable, (BlockPos)blockPos2, flags);
-        }*/
-    }
-
     private ComponentState getPlacementState(Circuit circuit, ComponentState state, ComponentPos pos) {
-        if(!(state instanceof WireComponentState wireComponentState)) throw new IllegalStateException("Invalid component state for component");
-        boolean notConnected = isNotConnected(wireComponentState);
-        wireComponentState = this.getDefaultWireState(circuit, ((WireComponentState)this.getDefaultState()).setPower(wireComponentState.getPower()), pos);
-        if (notConnected && isNotConnected(wireComponentState)) {
-            return wireComponentState;
+        boolean notConnected = isNotConnected(state);
+        state = this.getDefaultWireState(circuit, getDefaultState().with(POWER, state.get(POWER)), pos);
+        if (notConnected && isNotConnected(state)) {
+            return state;
         }
-        boolean n = wireComponentState.isConnected(FlatDirection.NORTH);
-        boolean e = wireComponentState.isConnected(FlatDirection.SOUTH);
-        boolean s = wireComponentState.isConnected(FlatDirection.EAST);
-        boolean w = wireComponentState.isConnected(FlatDirection.WEST);
-        boolean ne = !n && !e;
-        boolean sw = !s && !w;
-        if (!w && ne) {
-            wireComponentState = ((WireComponentState) wireComponentState.copy()).setConnected(FlatDirection.WEST, true);
+        boolean n = state.get(CONNECTED_NORTH);
+        boolean s = state.get(CONNECTED_SOUTH);
+        boolean e = state.get(CONNECTED_EAST);
+        boolean w = state.get(CONNECTED_WEST);
+        boolean ns = !n && !s;
+        boolean ew = !e && !w;
+        if (!w && ns) {
+            state = state.with(CONNECTED_WEST, true);
         }
-        if (!s && ne) {
-            wireComponentState = ((WireComponentState) wireComponentState.copy()).setConnected(FlatDirection.EAST, true);
+        if (!e && ns) {
+            state = state.with(CONNECTED_EAST, true);
         }
-        if (!n && sw) {
-            wireComponentState = ((WireComponentState) wireComponentState.copy()).setConnected(FlatDirection.NORTH, true);
+        if (!n && ew) {
+            state = state.with(CONNECTED_NORTH, true);
         }
-        if (!e && sw) {
-            wireComponentState = ((WireComponentState) wireComponentState.copy()).setConnected(FlatDirection.SOUTH, true);
+        if (!s && ew) {
+            state = state.with(CONNECTED_SOUTH, true);
         }
-        return wireComponentState;
+        return state;
     }
     
-    private WireComponentState getDefaultWireState(Circuit circuit, ComponentState state, ComponentPos pos) {
-        if(!(state instanceof WireComponentState wireComponentState)) throw new IllegalStateException("Invalid component state for component");
+    private ComponentState getDefaultWireState(Circuit circuit, ComponentState state, ComponentPos pos) {
         for (FlatDirection direction : FlatDirection.VALUES) {
-            if (wireComponentState.isConnected(direction)) continue;
+            BooleanComponentProperty connectionProperty = DIRECTION_TO_CONNECTION_PROPERTY.get(direction);
+            if (state.get(connectionProperty)) continue;
             boolean wireConnection = this.getRenderConnectionType(circuit, pos, direction);
-            wireComponentState = ((WireComponentState) wireComponentState.copy()).setConnected(direction,wireConnection);
+            state = state.with(connectionProperty, wireConnection);
         }
-        return wireComponentState;
+        return state;
     }
 
     private static boolean isNotConnected(ComponentState state) {
-        if(!(state instanceof WireComponentState wireComponentState)) throw new IllegalStateException("Invalid component state for component");
-        return wireComponentState.getConnections() == 0b0000;
+        return !(
+                state.get(CONNECTED_NORTH)
+                || state.get(CONNECTED_EAST)
+                || state.get(CONNECTED_SOUTH)
+                || state.get(CONNECTED_WEST)
+        );
     }
 
     private static boolean isFullyConnected(ComponentState state) {
-        if(!(state instanceof WireComponentState wireComponentState)) throw new IllegalStateException("Invalid component state for component");
-        return wireComponentState.getConnections() == 0b1111;
+        return state.get(CONNECTED_NORTH)
+                        && state.get(CONNECTED_EAST)
+                        && state.get(CONNECTED_SOUTH)
+                        && state.get(CONNECTED_WEST);
     }
 
     private boolean getRenderConnectionType(Circuit circuit, ComponentPos pos, FlatDirection direction) {
@@ -187,29 +188,40 @@ public class WireComponent extends AbstractWireComponent {
         if (state.isOf(Components.WIRE)) {
             return true;
         }
-        if (state.isOf(Components.REPEATER) && state instanceof RepeaterComponentState repeaterComponentState) {
-            FlatDirection rotation = repeaterComponentState.getRotation();
+        if (state.isOf(Components.REPEATER)) {
+            FlatDirection rotation = state.get(FacingComponent.FACING);
             return rotation == direction || rotation.getOpposite() == direction;
         }
-        if (state.isOf(Components.OBSERVER) && state instanceof ObserverComponentState observerComponentState) {
-            return direction == observerComponentState.getRotation();
+        if (state.isOf(Components.OBSERVER)) {
+            return direction == state.get(FacingComponent.FACING);
         }
         return state.emitsRedstonePower() && direction != null;
     }
 
     @Override
     public int getWeakRedstonePower(ComponentState state, Circuit circuit, ComponentPos pos, FlatDirection direction) {
-        if(!(state instanceof WireComponentState wireComponentState)) throw new IllegalStateException("Invalid component state for component");
         if (!wiresGivePower) {
             return 0;
         }
-        int i = wireComponentState.getPower();
+        int i = state.get(POWER);
         if (i == 0) {
             return 0;
         }
-        if (((WireComponentState) this.getPlacementState(circuit, state, pos)).isConnected(direction.getOpposite())) {
+        if (this.getPlacementState(circuit, state, pos).get(DIRECTION_TO_CONNECTION_PROPERTY.get(direction.getOpposite()))) {
             return i;
         }
         return 0;
+    }
+
+    @Override
+    public int increasePower(ComponentState state, FlatDirection side) {
+        return state.get(POWER);
+    }
+
+    @Override
+    public void appendProperties(ComponentState.PropertyBuilder builder) {
+        super.appendProperties(builder);
+        builder.append(CONNECTED_NORTH, CONNECTED_EAST, CONNECTED_SOUTH, CONNECTED_WEST);
+        builder.append(POWER);
     }
 }

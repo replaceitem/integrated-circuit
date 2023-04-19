@@ -5,8 +5,8 @@ import net.minecraft.block.BlockState;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.replaceitem.integratedcircuit.circuit.components.PortComponent;
 import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
-import net.replaceitem.integratedcircuit.circuit.state.PortComponentState;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
 
@@ -23,7 +23,7 @@ public abstract class Circuit implements CircuitAccess {
     };
 
     public final ComponentState[][] components = new ComponentState[SIZE][SIZE];
-    public final PortComponentState[] ports = new PortComponentState[4];
+    public final ComponentState[] ports = new ComponentState[4];
 
 
 
@@ -41,7 +41,7 @@ public abstract class Circuit implements CircuitAccess {
             Arrays.fill(componentState, Components.AIR.getDefaultState());
         }
         for (int i = 0; i < ports.length; i++) {
-            ports[i] = new PortComponentState(FlatDirection.VALUES[i].getOpposite(), (byte) 0, false);
+            ports[i] = Components.PORT.getDefaultState().with(PortComponent.FACING, FlatDirection.VALUES[i].getOpposite());
         }
 
         this.neighborUpdater = new CircuitNeighborUpdater(this);
@@ -52,14 +52,14 @@ public abstract class Circuit implements CircuitAccess {
     }
 
     public boolean isValidPos(ComponentPos pos) {
-        return isInside(pos) || isPort(pos);
+        return isInside(pos) || isPortPos(pos);
     }
 
     public ComponentState getComponentState(ComponentPos componentPos) {
         if (isInside(componentPos)) {
             return this.components[componentPos.getX()][componentPos.getY()];
         }
-        if(isPort(componentPos)) {
+        if(isPortPos(componentPos)) {
             return ports[getPortNumber(componentPos)];
         }
         return Components.AIR.getDefaultState();
@@ -72,8 +72,9 @@ public abstract class Circuit implements CircuitAccess {
      */
     private ComponentState assignComponentState(ComponentPos pos, ComponentState state) {
         ComponentState oldState = getComponentState(pos);
-        if(isPort(pos) && state instanceof PortComponentState portComponentState) {
-            ports[getPortNumber(pos)] = portComponentState;
+        if(isPortPos(pos)) {
+            if(!state.isOf(Components.PORT)) throw new RuntimeException("Cannot place non-port component at a port location");
+            ports[getPortNumber(pos)] = state;
         } else {
             this.components[pos.getX()][pos.getY()] = state;
         }
@@ -93,7 +94,7 @@ public abstract class Circuit implements CircuitAccess {
 
         // WorldChunk.setBlockState enters here in World.setBlockState
         ComponentState oldState = assignComponentState(pos, state);
-        if(oldState.equals(state)) return false;
+        if(oldState == state) return false;
         if(!this.isClient) {
             oldState.onStateReplaced(this, pos, state);
         }
@@ -104,7 +105,7 @@ public abstract class Circuit implements CircuitAccess {
 
 
         ComponentState placedComponentState = this.getComponentState(pos);
-        if (placedComponentState.equals(state)) {
+        if (placedComponentState == state) {
             if ((flags & Block.NOTIFY_LISTENERS) != 0 && (!this.isClient || (flags & Block.NO_REDRAW) == 0)) {
                 this.updateListeners(pos, oldState, state, flags);
             }
@@ -123,12 +124,12 @@ public abstract class Circuit implements CircuitAccess {
 
     public int getPortNumber(ComponentPos pos) {
         for (int i = 0; i < 4; i++) {
-            if(PORTS_GRID_POS[i].equals(pos)) return i;
+            if(PORTS_GRID_POS[i] == pos) return i;
         }
         return -1;
     }
 
-    public boolean isPort(ComponentPos pos) {
+    public boolean isPortPos(ComponentPos pos) {
         return getPortNumber(pos) != -1;
     }
 
@@ -152,7 +153,7 @@ public abstract class Circuit implements CircuitAccess {
     public void readNbt(NbtCompound nbt) {
         byte[] portBytes = nbt.getByteArray("ports");
         for (int i = 0; i < portBytes.length; i++) {
-            ports[i] = (PortComponentState) Components.PORT.getState(portBytes[i]);
+            ports[i] = Components.PORT.getState(portBytes[i]);
         }
         int[] componentData = nbt.getIntArray("components");
         int componentDataSize = SIZE*SIZE;

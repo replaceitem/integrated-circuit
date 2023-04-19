@@ -42,7 +42,7 @@ public class ServerCircuit extends Circuit {
     public void tick(World world, BlockPos pos, BlockState state, BlockEntity blockEntity) {
         for (FlatDirection direction : FlatDirection.VALUES) {
             int newPower = ((IntegratedCircuitBlock) state.getBlock()).getInputPower(world, pos, direction);
-            this.ports[direction.toInt()].assignExternalPower(this, PORTS_GRID_POS[direction.toInt()], newPower);
+            Components.PORT.assignExternalPower(this, PORTS_GRID_POS[direction.toInt()], this.ports[direction.toInt()], newPower);
         }
         this.circuitTickScheduler.tick(this.getTime(), 65536, this::tickBlock);
 
@@ -50,7 +50,7 @@ public class ServerCircuit extends Circuit {
         boolean updateNeeded = false;
         for (FlatDirection direction : FlatDirection.VALUES) {
             int oldPower = integratedCircuitBlockEntity.getOutputStrength(direction);
-            int newPower = this.ports[direction.toInt()].getInternalPower(this, PORTS_GRID_POS[direction.toInt()]);
+            int newPower = Components.PORT.getInternalPower(this, PORTS_GRID_POS[direction.toInt()], this.ports[direction.toInt()]);
             integratedCircuitBlockEntity.setOutputStrength(direction, newPower);
             if(oldPower != newPower) updateNeeded = true;
         }

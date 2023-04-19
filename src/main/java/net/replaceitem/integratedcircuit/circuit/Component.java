@@ -1,13 +1,19 @@
 package net.replaceitem.integratedcircuit.circuit;
 
+import it.unimi.dsi.fastutil.bytes.Byte2ObjectMap;
+import it.unimi.dsi.fastutil.bytes.Byte2ObjectOpenHashMap;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.random.Random;
+import net.replaceitem.integratedcircuit.circuit.components.FacingComponent;
+import net.replaceitem.integratedcircuit.circuit.state.property.ComponentProperty;
 import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
-import net.replaceitem.integratedcircuit.circuit.state.RotatableComponentState;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
+
+import java.util.Set;
 
 public abstract class Component {
     
@@ -26,19 +32,43 @@ public abstract class Component {
     private final int id;
     private final Text name;
 
+    private ComponentState defaultState;
+
+    private final Set<ComponentProperty<?>> properties;
+    private final Byte2ObjectMap<ComponentState> stateMap = new Byte2ObjectOpenHashMap<>();
 
     public static final FlatDirection[] DIRECTIONS = new FlatDirection[]{FlatDirection.WEST, FlatDirection.EAST, FlatDirection.NORTH, FlatDirection.SOUTH};
 
     public Component(int id, Text name) {
         this.id = id;
         this.name = name;
+        ComponentState.PropertyBuilder builder = new ComponentState.PropertyBuilder();
+        this.appendProperties(builder);
+        this.properties = builder.getProperties();
+        createStateMap();
+        this.defaultState = stateMap.get((byte) 0);
     }
 
     public int getId() {
         return id;
     }
+
     public Text getName() {
         return name;
+    }
+    public void appendProperties(ComponentState.PropertyBuilder builder) {
+
+    }
+
+    public Set<ComponentProperty<?>> getProperties() {
+        return properties;
+    }
+
+    private void createStateMap() {
+        for (int i = 0; i <= 0xFF; i++) {
+            ComponentState state = new ComponentState(this, (byte) i);
+            stateMap.put(state.encodeStateData(), state);
+        }
     }
 
     @Override
@@ -46,14 +76,27 @@ public abstract class Component {
         return obj instanceof Component component && this.id == component.getId();
     }
 
-    public ComponentState getState(byte data) {
-        return getDefaultState();
+    public ComponentState getDefaultPropertyState() {
+        return getState((byte) 0);
     }
 
-    public abstract ComponentState getDefaultState();
+    public final ComponentState getState(byte data) {
+        ComponentState componentState = this.stateMap.get(data);
+        if(componentState == null) throw new RuntimeException("Invalid state data received: " + data);
+        return componentState;
+    }
+
+    public void setDefaultState(ComponentState defaultState) {
+        this.defaultState = defaultState;
+    }
+
+    public final ComponentState getDefaultState() {
+        return this.defaultState;
+    }
+    
     public ComponentState getPlacementState(Circuit circuit, ComponentPos pos, FlatDirection rotation) {
-        ComponentState defaultState = getDefaultState();
-        if(defaultState instanceof RotatableComponentState rotatableComponentState) rotatableComponentState.setRotation(rotation);
+        ComponentState defaultState = this.getDefaultState();
+        if(this.properties.contains(FacingComponent.FACING)) return defaultState.with(FacingComponent.FACING, rotation);
         return defaultState;
     }
     public abstract Identifier getItemTexture();
@@ -65,7 +108,7 @@ public abstract class Component {
     }
 
     public static void replace(ComponentState state, ComponentState newState, Circuit world, ComponentPos pos, int flags, int maxUpdateDepth) {
-        if (!newState.equals(state)) {
+        if (newState != state) {
             if (newState.isAir()) {
                 if(!world.isClient) {
                     world.breakBlock(pos, maxUpdateDepth);
@@ -119,6 +162,15 @@ public abstract class Component {
     public int getStrongRedstonePower(ComponentState state, Circuit circuit, ComponentPos pos, FlatDirection direction) {
         return 0;
     }
+
+    /**
+     * Works slightly different from {@link net.minecraft.block.RedstoneWireBlock#increasePower(BlockState)},
+     * in that it gets called from the component where the power is checked at, not where it's checked from.
+     * This is done so different behaviours can be used for wire/port/crossover, without several checks.
+     */
+    public int increasePower(ComponentState state, FlatDirection side) {
+        return 0;
+    };
 
     public boolean canPlaceAt(ComponentState state, Circuit circuit, ComponentPos pos) {
         return true;

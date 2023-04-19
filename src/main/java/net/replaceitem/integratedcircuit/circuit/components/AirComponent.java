@@ -5,19 +5,13 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
 import net.replaceitem.integratedcircuit.circuit.Component;
-import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
-import net.replaceitem.integratedcircuit.circuit.Components;
+import net.replaceitem.integratedcircuit.util.ComponentPos;
 
 public class AirComponent extends Component {
 
     public AirComponent(int id) {
         super(id, Text.translatable("component.integrated_circuit.air"));
-    }
-
-    @Override
-    public ComponentState getDefaultState() {
-        return Components.AIR_DEFAULT_STATE;
     }
 
     @Override

@@ -5,9 +5,7 @@ import net.minecraft.util.Identifier;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
 import net.replaceitem.integratedcircuit.circuit.Component;
 import net.replaceitem.integratedcircuit.circuit.Components;
-import net.replaceitem.integratedcircuit.circuit.state.AbstractWireComponentState;
 import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
-import net.replaceitem.integratedcircuit.circuit.state.CrossoverComponentState;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
 import net.replaceitem.integratedcircuit.util.IntegratedCircuitIdentifier;
@@ -34,14 +32,7 @@ public abstract class AbstractConductingComponent extends Component {
         return true;
     }
 
-    protected int increasePower(ComponentState blockState, FlatDirection side) {
-        if(blockState instanceof AbstractWireComponentState wireComponentState) return wireComponentState.getPower();
-        if(blockState instanceof CrossoverComponentState crossoverComponentState) return side.getAxis() == FlatDirection.Axis.X ? crossoverComponentState.getPowerX() : crossoverComponentState.getPowerY();
-        return 0;
-    }
-
     protected abstract void update(Circuit circuit, ComponentPos pos, ComponentState state);
-
 
     protected void updateNeighbors(Circuit circuit, ComponentPos pos) {
         ComponentState componentState = circuit.getComponentState(pos);

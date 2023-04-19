@@ -16,9 +16,8 @@ import net.replaceitem.integratedcircuit.circuit.Circuit;
 import net.replaceitem.integratedcircuit.circuit.ClientCircuit;
 import net.replaceitem.integratedcircuit.circuit.Component;
 import net.replaceitem.integratedcircuit.circuit.Components;
+import net.replaceitem.integratedcircuit.circuit.components.FacingComponent;
 import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
-import net.replaceitem.integratedcircuit.circuit.state.PortComponentState;
-import net.replaceitem.integratedcircuit.circuit.state.RotatableComponentState;
 import net.replaceitem.integratedcircuit.mixin.RedstoneWireBlockAccessor;
 import net.replaceitem.integratedcircuit.network.packet.FinishEditingC2SPacket;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
@@ -35,10 +34,8 @@ public class IntegratedCircuitScreen extends Screen {
     protected static final int BACKGROUND_HEIGHT = 230;
     
     public static final int COMPONENT_SIZE = 16;
-    private static final int HALF_COMPONENT_SIZE = COMPONENT_SIZE/2;
 
     public static final int RENDER_COMPONENT_SIZE = 12;
-    private static final int HALF_RENDER_COMPONENT_SIZE = RENDER_COMPONENT_SIZE/2;
     
     private static final float RENDER_SCALE = (((float)RENDER_COMPONENT_SIZE)/((float)COMPONENT_SIZE));
 
@@ -174,7 +171,7 @@ public class IntegratedCircuitScreen extends Screen {
         matrices.scale(RENDER_SCALE, RENDER_SCALE, 1);
         
         for (int i = 0; i < circuit.ports.length; i++) {
-            PortComponentState port = circuit.ports[i];
+            ComponentState port = circuit.ports[i];
             ComponentPos pos = Circuit.PORTS_GRID_POS[i];
             renderComponentStateInGrid(matrices, port, pos.getX(), pos.getY(), 1);
         }
@@ -237,9 +234,9 @@ public class IntegratedCircuitScreen extends Screen {
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
-        if(this.cursorState instanceof RotatableComponentState rotatableComponentState) {
+        if(this.cursorState.getComponent() instanceof FacingComponent) {
             this.cursorRotation = this.cursorRotation.rotated(-((int) amount));
-            rotatableComponentState.setRotation(this.cursorRotation);
+            this.cursorState = this.cursorState.with(FacingComponent.FACING, this.cursorRotation);
             return true;
         }
         return false;
@@ -249,7 +246,7 @@ public class IntegratedCircuitScreen extends Screen {
         if(slot < 0 || slot >= PALETTE.length) return;
         selectedComponentSlot = slot;
         this.cursorState = PALETTE[selectedComponentSlot].getDefaultState();
-        if(this.cursorState instanceof RotatableComponentState rotatableComponentState) rotatableComponentState.setRotation(this.cursorRotation);
+        if(this.cursorState.getComponent() instanceof FacingComponent) this.cursorState = this.cursorState.with(FacingComponent.FACING, this.cursorRotation);
     }
 
     private void deselectPalette() {
@@ -284,7 +281,7 @@ public class IntegratedCircuitScreen extends Screen {
             }
         }
 
-        if(isUse && circuit.isPort(clickedPos)) {
+        if(isUse && circuit.isPortPos(clickedPos)) {
             circuit.useComponent(clickedPos, this.pos);
             return true;
         }
