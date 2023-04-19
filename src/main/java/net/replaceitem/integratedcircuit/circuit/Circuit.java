@@ -70,7 +70,7 @@ public abstract class Circuit implements CircuitAccess {
      * Equivalent to {@link net.minecraft.world.chunk.ChunkSection#setBlockState(int, int, int, BlockState)}
      * @return The old component state before placement.
      */
-    private ComponentState assignComponentState(ComponentPos pos, ComponentState state) {
+    protected ComponentState assignComponentState(ComponentPos pos, ComponentState state) {
         ComponentState oldState = getComponentState(pos);
         if(isPortPos(pos)) {
             if(!state.isOf(Components.PORT)) throw new RuntimeException("Cannot place non-port component at a port location");
@@ -124,7 +124,7 @@ public abstract class Circuit implements CircuitAccess {
 
     public int getPortNumber(ComponentPos pos) {
         for (int i = 0; i < 4; i++) {
-            if(PORTS_GRID_POS[i] == pos) return i;
+            if(PORTS_GRID_POS[i].equals(pos)) return i;
         }
         return -1;
     }

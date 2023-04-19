@@ -50,6 +50,7 @@ public class IntegratedCircuitBlockEntity extends BlockEntity implements Nameabl
 
     public void setCustomName(Text name) {
         this.customName = name;
+        this.markDirty();
     }
 
     @Override
@@ -89,6 +90,7 @@ public class IntegratedCircuitBlockEntity extends BlockEntity implements Nameabl
 
     public void setOutputStrength(FlatDirection direction, int power) {
         this.outputStrengths[direction.toInt()] = (byte) power;
+        this.markDirty();
     }
 
     public int getOutputStrength(FlatDirection direction) {

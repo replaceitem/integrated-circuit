@@ -24,7 +24,7 @@ public class ServerCircuit extends Circuit {
     protected final CircuitTickScheduler circuitTickScheduler = new CircuitTickScheduler();
     
     protected final IntegratedCircuitBlockEntity blockEntity;
-    
+
     public ServerCircuit(IntegratedCircuitBlockEntity blockEntity) {
         super(false);
         this.blockEntity = blockEntity;
@@ -59,6 +59,9 @@ public class ServerCircuit extends Circuit {
             //world.setBlockState(pos, state, Block.NOTIFY_ALL);
             state.onBlockAdded(world, pos, state, true);
         }
+        // Doing this as the end of each tick, since markDirty is not that cheap, since it makes comparator updates.
+        // Having every block state change in the circuit trigger that would be a performance disadvantage.
+        this.blockEntity.markDirty();
     }
 
     public long getTime() {
