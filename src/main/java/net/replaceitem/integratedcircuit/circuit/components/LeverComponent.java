@@ -1,12 +1,15 @@
 package net.replaceitem.integratedcircuit.circuit.components;
 
-import net.minecraft.block.Block;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
-import net.replaceitem.integratedcircuit.circuit.state.property.BooleanComponentProperty;
+import net.replaceitem.integratedcircuit.circuit.Component;
 import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
+import net.replaceitem.integratedcircuit.circuit.state.property.BooleanComponentProperty;
 import net.replaceitem.integratedcircuit.client.IntegratedCircuitScreen;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
@@ -17,8 +20,8 @@ public class LeverComponent extends FacingComponent {
 
     private static final BooleanComponentProperty POWERED = new BooleanComponentProperty("powered", 3);
 
-    public LeverComponent(int id) {
-        super(id, Text.translatable("component.integrated_circuit.lever"));
+    public LeverComponent(int id, Settings settings) {
+        super(id, settings);
     }
 
     private static final Identifier ITEM_TEXTURE = new Identifier("textures/block/lever.png");
@@ -43,9 +46,20 @@ public class LeverComponent extends FacingComponent {
     }
 
     @Override
-    public void onUse(ComponentState state, Circuit circuit, ComponentPos pos) {
-        circuit.setComponentState(pos, state.cycle(POWERED), Block.NOTIFY_ALL);
+    public void onUse(ComponentState state, Circuit circuit, ComponentPos pos, PlayerEntity player) {
+        if(circuit.isClient) {
+            return;
+        }
+        state = this.togglePower(state, circuit, pos);
+        float f = state.get(POWERED) ? 0.6f : 0.5f;
+        circuit.playSound(null, SoundEvents.BLOCK_LEVER_CLICK, SoundCategory.BLOCKS, 0.3f, f);
+    }
+
+    public ComponentState togglePower(ComponentState state, Circuit circuit, ComponentPos pos) {
+        state = state.cycle(POWERED);
+        circuit.setComponentState(pos, state, Component.NOTIFY_ALL);
         circuit.updateNeighborsAlways(pos, this);
+        return state;
     }
 
     @Override

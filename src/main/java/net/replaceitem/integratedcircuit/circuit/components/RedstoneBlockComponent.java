@@ -12,8 +12,8 @@ import net.replaceitem.integratedcircuit.util.FlatDirection;
 import net.replaceitem.integratedcircuit.util.IntegratedCircuitIdentifier;
 
 public class RedstoneBlockComponent extends Component {
-    public RedstoneBlockComponent(int id) {
-        super(id, Text.translatable("component.integrated_circuit.redstone_block"));
+    public RedstoneBlockComponent(int id, Settings settings) {
+        super(id, settings);
     }
 
     public static final Identifier TEXTURE = new IntegratedCircuitIdentifier("textures/integrated_circuit/redstone_block.png");

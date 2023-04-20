@@ -23,8 +23,8 @@ public class CrossoverComponent extends AbstractConductingComponent {
     private static final IntComponentProperty POWER_Y = new IntComponentProperty("power_y", 4, 4);
 
 
-    public CrossoverComponent(int id) {
-        super(id, Text.translatable("component.integrated_circuit.crossover"));
+    public CrossoverComponent(int id, Settings settings) {
+        super(id, settings);
     }
 
     protected static final Identifier TEXTURE_BRIDGE = new IntegratedCircuitIdentifier("textures/integrated_circuit/wire_bridge.png");

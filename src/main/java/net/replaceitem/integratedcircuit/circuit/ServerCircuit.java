@@ -2,13 +2,19 @@ package net.replaceitem.integratedcircuit.circuit;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
+import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket;
+import net.minecraft.registry.Registries;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.replaceitem.integratedcircuit.IntegratedCircuitBlock;
 import net.replaceitem.integratedcircuit.IntegratedCircuitBlockEntity;
@@ -16,6 +22,7 @@ import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
 import net.replaceitem.integratedcircuit.network.packet.ComponentUpdateS2CPacket;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 
@@ -112,9 +119,9 @@ public class ServerCircuit extends Circuit {
         this.circuitTickScheduler.loadFromNbt(list, this.getTime());
     }
 
-    public void placeComponentFromClient(ComponentPos pos, Component component, FlatDirection rotation) {
-
-        ComponentState placementState = component.getPlacementState(this, pos, rotation);
+    @Override
+    public void placeComponentState(ComponentPos pos, Component component, FlatDirection placementRotation) {
+        ComponentState placementState = component.getPlacementState(this, pos, placementRotation);
         if(placementState == null) placementState = Components.AIR_DEFAULT_STATE;
         
         ComponentState beforeState = this.getComponentState(pos);
@@ -159,5 +166,16 @@ public class ServerCircuit extends Circuit {
 
     public void updateNeighbor(ComponentState state, ComponentPos pos, Component sourceComponent, ComponentPos sourcePos, boolean notify) {
         this.neighborUpdater.updateNeighbor(state, pos, sourceComponent, sourcePos, notify);
+    }
+
+    @Override
+    public void playSoundInWorld(@Nullable PlayerEntity except, SoundEvent sound, SoundCategory category, float volume, float pitch) {
+        if(this.blockEntity.getWorld() != null) {
+            for (ServerPlayerEntity editingPlayer : this.blockEntity.getEditingPlayers()) {
+                if(editingPlayer.equals(except)) continue;
+                Vec3d soundPos = this.blockEntity.getPos().toCenterPos();
+                editingPlayer.networkHandler.sendPacket(new PlaySoundS2CPacket(Registries.SOUND_EVENT.getEntry(sound), category, soundPos.x, soundPos.y, soundPos.z, volume, pitch, this.blockEntity.getWorld().random.nextLong()));
+            }
+        }
     }
 }

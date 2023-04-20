@@ -1,7 +1,6 @@
 package net.replaceitem.integratedcircuit.circuit.components;
 
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
 import net.replaceitem.integratedcircuit.circuit.Component;
@@ -10,8 +9,8 @@ import net.replaceitem.integratedcircuit.util.ComponentPos;
 
 public class AirComponent extends Component {
 
-    public AirComponent(int id) {
-        super(id, Text.translatable("component.integrated_circuit.air"));
+    public AirComponent(int id, Settings settings) {
+        super(id, settings);
     }
 
     @Override

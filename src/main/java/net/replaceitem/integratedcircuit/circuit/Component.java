@@ -4,6 +4,8 @@ import it.unimi.dsi.fastutil.bytes.Byte2ObjectMap;
 import it.unimi.dsi.fastutil.bytes.Byte2ObjectOpenHashMap;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.random.Random;
@@ -30,7 +32,7 @@ public abstract class Component {
     public static final int NOTIFY_ALL = 3;
     
     private final int id;
-    private final Text name;
+    private final Settings settings;
 
     private ComponentState defaultState;
 
@@ -39,9 +41,9 @@ public abstract class Component {
 
     public static final FlatDirection[] DIRECTIONS = new FlatDirection[]{FlatDirection.WEST, FlatDirection.EAST, FlatDirection.NORTH, FlatDirection.SOUTH};
 
-    public Component(int id, Text name) {
+    public Component(int id, Settings settings) {
         this.id = id;
-        this.name = name;
+        this.settings = settings;
         ComponentState.PropertyBuilder builder = new ComponentState.PropertyBuilder();
         this.appendProperties(builder);
         this.properties = builder.getProperties();
@@ -53,8 +55,12 @@ public abstract class Component {
         return id;
     }
 
+    public Settings getSettings() {
+        return settings;
+    }
+
     public Text getName() {
-        return name;
+        return this.settings.name;
     }
     public void appendProperties(ComponentState.PropertyBuilder builder) {
 
@@ -131,7 +137,7 @@ public abstract class Component {
         
     }
     
-    public void onUse(ComponentState state, Circuit circuit, ComponentPos pos) {
+    public void onUse(ComponentState state, Circuit circuit, ComponentPos pos, PlayerEntity player) {
         
     }
     
@@ -170,7 +176,7 @@ public abstract class Component {
      */
     public int increasePower(ComponentState state, FlatDirection side) {
         return 0;
-    };
+    }
 
     public boolean canPlaceAt(ComponentState state, Circuit circuit, ComponentPos pos) {
         return true;
@@ -179,7 +185,7 @@ public abstract class Component {
 
     @Override
     public String toString() {
-        return this.name.getString();
+        return this.settings.name.getString();
     }
 
     public boolean emitsRedstonePower(ComponentState state) {
@@ -188,5 +194,22 @@ public abstract class Component {
 
     public Text getHoverInfoText(ComponentState state) {
         return Text.empty();
+    }
+
+
+    public static class Settings {
+
+        public Settings(String key) {
+            this.name = Text.translatable(key);
+        }
+
+        public Settings sounds(BlockSoundGroup soundGroup) {
+            this.soundGroup = soundGroup;
+            return this;
+        }
+
+        public BlockSoundGroup soundGroup = BlockSoundGroup.STONE;
+
+        Text name;
     }
 }

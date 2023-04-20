@@ -2,6 +2,8 @@ package net.replaceitem.integratedcircuit.circuit.components;
 
 import com.google.common.collect.Lists;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.random.Random;
@@ -21,8 +23,8 @@ public class TorchComponent extends FacingComponent {
 
     private static final BooleanComponentProperty LIT = new BooleanComponentProperty("lit", 2);
 
-    public TorchComponent(int id) {
-        super(id, Text.translatable("component.integrated_circuit.torch"));
+    public TorchComponent(int id, Settings settings) {
+        super(id, settings);
         this.setDefaultState(this.getDefaultPropertyState().with(LIT, true));
     }
 
@@ -103,6 +105,7 @@ public class TorchComponent extends FacingComponent {
             if (shouldUnpower) {
                 circuit.setComponentState(pos, state.with(LIT, false), Component.NOTIFY_ALL);
                 if (isBurnedOut(circuit, pos, true)) {
+                    circuit.playSound(null, SoundEvents.BLOCK_REDSTONE_TORCH_BURNOUT, SoundCategory.BLOCKS, 0.5f, 2.6f + (random.nextFloat() - random.nextFloat()) * 0.8f);
                     circuit.scheduleBlockTick(pos, circuit.getComponentState(pos).getComponent(), 160);
                 }
             }

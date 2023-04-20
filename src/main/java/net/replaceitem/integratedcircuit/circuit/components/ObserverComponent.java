@@ -18,8 +18,8 @@ public class ObserverComponent extends FacingComponent {
 
     private static final BooleanComponentProperty POWERED = new BooleanComponentProperty("powered", 3);
 
-    public ObserverComponent(int id) {
-        super(id, Text.translatable("component.integrated_circuit.observer"));
+    public ObserverComponent(int id, Settings settings) {
+        super(id, settings);
     }
     
     public static final Identifier TEXTURE = new IntegratedCircuitIdentifier("textures/integrated_circuit/observer.png");

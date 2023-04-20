@@ -8,7 +8,6 @@ import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ColorHelper;
 import net.minecraft.util.math.RotationAxis;
 import net.minecraft.util.math.Vec3d;
@@ -49,7 +48,6 @@ public class IntegratedCircuitScreen extends Screen {
     protected int titleX, titleY;
 
     protected final ClientCircuit circuit;
-    protected final BlockPos pos;
 
     private int selectedComponentSlot = -1;
     private FlatDirection cursorRotation = FlatDirection.NORTH;
@@ -71,9 +69,8 @@ public class IntegratedCircuitScreen extends Screen {
             Components.WOODEN_BUTTON
     };
 
-    public IntegratedCircuitScreen(ClientCircuit circuit, Text name, BlockPos pos) {
+    public IntegratedCircuitScreen(ClientCircuit circuit, Text name) {
         super(name);
-        this.pos = pos;
         this.circuit = circuit;
     }
 
@@ -92,7 +89,7 @@ public class IntegratedCircuitScreen extends Screen {
 
     @Override
     public void close() {
-        new FinishEditingC2SPacket(this.pos).send();
+        new FinishEditingC2SPacket(this.circuit.getBlockPos()).send();
         super.close();
     }
 
@@ -282,7 +279,7 @@ public class IntegratedCircuitScreen extends Screen {
         }
 
         if(isUse && circuit.isPortPos(clickedPos)) {
-            circuit.useComponent(clickedPos, this.pos);
+            circuit.useComponent(clickedPos, this.client.player);
             return true;
         }
 
@@ -294,7 +291,7 @@ public class IntegratedCircuitScreen extends Screen {
                 if(state.isAir()) {
                     placeComponent(clickedPos);
                 } else {
-                    circuit.useComponent(clickedPos, this.pos);
+                    circuit.useComponent(clickedPos, this.client.player);
                 }
                 return true;
             }
@@ -316,13 +313,13 @@ public class IntegratedCircuitScreen extends Screen {
     private boolean startedDraggingInside = false;
 
     private void breakComponent(ComponentPos pos) {
-        circuit.breakComponentState(pos, this.pos);
+        circuit.breakComponentState(pos);
     }
 
     private void placeComponent(ComponentPos pos) {
         ComponentState state = circuit.getComponentState(pos);
         if(state.isAir() && this.cursorState != null) {
-            circuit.placeComponentState(pos, this.cursorState.getComponent(), this.cursorRotation, this.pos);
+            circuit.placeComponentState(pos, this.cursorState.getComponent(), this.cursorRotation);
         }
     }
 

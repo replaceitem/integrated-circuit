@@ -1,13 +1,13 @@
 package net.replaceitem.integratedcircuit.circuit.components;
 
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.Text;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
 import net.replaceitem.integratedcircuit.circuit.Component;
 import net.replaceitem.integratedcircuit.circuit.ServerCircuit;
-import net.replaceitem.integratedcircuit.circuit.state.*;
+import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
 import net.replaceitem.integratedcircuit.circuit.state.property.BooleanComponentProperty;
 import net.replaceitem.integratedcircuit.circuit.state.property.ComponentProperty;
 import net.replaceitem.integratedcircuit.circuit.state.property.FlatDirectionComponentProperty;
@@ -24,8 +24,8 @@ public class PortComponent extends AbstractWireComponent {
     public static final IntComponentProperty POWER = new IntComponentProperty("power", 3, 4);
     private static final BooleanComponentProperty IS_OUTPUT = new BooleanComponentProperty("is_output", 7);
 
-    public PortComponent(int id) {
-        super(id, Text.translatable("component.integrated_circuit.port"));
+    public PortComponent(int id, Settings settings) {
+        super(id, settings);
     }
 
     private static final Identifier TEXTURE_ARROW = new IntegratedCircuitIdentifier("textures/integrated_circuit/port.png");
@@ -57,7 +57,7 @@ public class PortComponent extends AbstractWireComponent {
     }
 
     @Override
-    public void onUse(ComponentState state, Circuit circuit, ComponentPos pos) {
+    public void onUse(ComponentState state, Circuit circuit, ComponentPos pos, PlayerEntity player) {
         state = state.with(FACING, state.get(FACING).getOpposite()).cycle(IS_OUTPUT);
         circuit.setComponentState(pos, state, Component.NOTIFY_ALL);
     }

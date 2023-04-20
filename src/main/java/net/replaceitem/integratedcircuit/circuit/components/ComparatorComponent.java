@@ -2,13 +2,16 @@ package net.replaceitem.integratedcircuit.circuit.components;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.tick.TickPriority;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
 import net.replaceitem.integratedcircuit.circuit.ServerCircuit;
-import net.replaceitem.integratedcircuit.circuit.state.*;
+import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
 import net.replaceitem.integratedcircuit.circuit.state.property.BooleanComponentProperty;
 import net.replaceitem.integratedcircuit.circuit.state.property.IntComponentProperty;
 import net.replaceitem.integratedcircuit.client.IntegratedCircuitScreen;
@@ -20,8 +23,8 @@ public class ComparatorComponent extends AbstractRedstoneGateComponent {
     private static final BooleanComponentProperty SUBTRACT_MODE = new BooleanComponentProperty("subtract_mode", 3);
     private static final IntComponentProperty OUTPUT_POWER = new IntComponentProperty("output_power", 4, 4);
 
-    public ComparatorComponent(int id) {
-        super(id, Text.translatable("component.integrated_circuit.comparator"));
+    public ComparatorComponent(int id, Settings settings) {
+        super(id, settings);
     }
 
     private static final Identifier ITEM_TEXTURE = new Identifier("textures/item/comparator.png");
@@ -105,10 +108,12 @@ public class ComparatorComponent extends AbstractRedstoneGateComponent {
     }
 
     @Override
-    public void onUse(ComponentState state, Circuit circuit, ComponentPos pos) {
+    public void onUse(ComponentState state, Circuit circuit, ComponentPos pos, PlayerEntity player) {
         state = state.cycle(SUBTRACT_MODE);
         circuit.setComponentState(pos, state, Block.NOTIFY_LISTENERS);
         this.update(circuit, pos, state);
+        float f = state.get(SUBTRACT_MODE) ? 0.55f : 0.5f;
+        circuit.playSound(player, SoundEvents.BLOCK_COMPARATOR_CLICK, SoundCategory.BLOCKS, 0.3f, f);
     }
 
     @Override

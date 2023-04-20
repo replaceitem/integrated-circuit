@@ -13,8 +13,8 @@ import net.replaceitem.integratedcircuit.util.FlatDirection;
 import java.util.HashSet;
 
 public abstract class AbstractWireComponent extends AbstractConductingComponent {
-    public AbstractWireComponent(int id, Text name) {
-        super(id, name);
+    public AbstractWireComponent(int id, Settings settings) {
+        super(id, settings);
     }
 
     @Override

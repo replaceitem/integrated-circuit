@@ -31,7 +31,7 @@ public class ServerPacketHandler {
             ServerWorld world = serverPlayerEntity.getWorld();
             if(world.getBlockState(packet.blockPos).isOf(IntegratedCircuit.INTEGRATED_CIRCUIT_BLOCK) && world.getBlockEntity(packet.blockPos) instanceof IntegratedCircuitBlockEntity integratedCircuitBlockEntity) {
                 if(!integratedCircuitBlockEntity.isEditing(serverPlayerEntity)) return;
-                integratedCircuitBlockEntity.getCircuit().placeComponentFromClient(packet.pos, packet.component, packet.rotation);
+                integratedCircuitBlockEntity.getCircuit().placeComponentState(packet.pos, packet.component, packet.rotation);
             }
         });
     }
@@ -42,7 +42,7 @@ public class ServerPacketHandler {
             ServerWorld world = serverPlayerEntity.getWorld();
             if(world.getBlockState(packet.blockPos).isOf(IntegratedCircuit.INTEGRATED_CIRCUIT_BLOCK) && world.getBlockEntity(packet.blockPos) instanceof IntegratedCircuitBlockEntity integratedCircuitBlockEntity) {
                 if(!integratedCircuitBlockEntity.isEditing(serverPlayerEntity)) return;
-                integratedCircuitBlockEntity.getCircuit().useComponent(packet.pos, packet.blockPos);
+                integratedCircuitBlockEntity.getCircuit().useComponent(packet.pos, serverPlayerEntity);
             }
         });
     }

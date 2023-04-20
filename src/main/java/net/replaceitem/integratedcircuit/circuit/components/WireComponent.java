@@ -4,13 +4,13 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import net.minecraft.block.Block;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.Text;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
 import net.replaceitem.integratedcircuit.circuit.Components;
-import net.replaceitem.integratedcircuit.circuit.state.property.BooleanComponentProperty;
 import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
+import net.replaceitem.integratedcircuit.circuit.state.property.BooleanComponentProperty;
 import net.replaceitem.integratedcircuit.circuit.state.property.IntComponentProperty;
 import net.replaceitem.integratedcircuit.client.IntegratedCircuitScreen;
 import net.replaceitem.integratedcircuit.mixin.RedstoneWireBlockAccessor;
@@ -40,8 +40,8 @@ public class WireComponent extends AbstractWireComponent {
     // yes, this name is confusing, since it returns the cross state, but for some reason RedstoneWireBlock.dotState (yarn) seems to be the same
     private final ComponentState dotState;
 
-    public WireComponent(int id) {
-        super(id, Text.translatable("component.integrated_circuit.wire"));
+    public WireComponent(int id, Settings settings) {
+        super(id, settings);
         this.setDefaultState(this.getDefaultPropertyState()
                 .with(CONNECTED_NORTH, false)
                 .with(CONNECTED_EAST, false)
@@ -105,7 +105,7 @@ public class WireComponent extends AbstractWireComponent {
 
 
     @Override
-    public void onUse(ComponentState state, Circuit circuit, ComponentPos pos) {
+    public void onUse(ComponentState state, Circuit circuit, ComponentPos pos, PlayerEntity player) {
         if (isFullyConnected(state) || isNotConnected(state)) {
             ComponentState newState = isFullyConnected(state) ? this.getDefaultState() : dotState;
             newState = newState.with(POWER, state.get(POWER));

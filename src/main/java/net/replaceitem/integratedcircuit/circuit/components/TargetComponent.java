@@ -1,7 +1,6 @@
 package net.replaceitem.integratedcircuit.circuit.components;
 
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
 import net.replaceitem.integratedcircuit.circuit.Component;
@@ -11,8 +10,8 @@ import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.IntegratedCircuitIdentifier;
 
 public class TargetComponent extends Component {
-    public TargetComponent(int id) {
-        super(id, Text.translatable("component.integrated_circuit.target"));
+    public TargetComponent(int id, Settings settings) {
+        super(id, settings);
     }
 
     public static final Identifier TEXTURE = new IntegratedCircuitIdentifier("textures/integrated_circuit/target.png");

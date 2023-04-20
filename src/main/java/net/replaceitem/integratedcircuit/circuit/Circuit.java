@@ -2,13 +2,17 @@ package net.replaceitem.integratedcircuit.circuit;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.replaceitem.integratedcircuit.circuit.components.PortComponent;
 import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 
@@ -239,9 +243,9 @@ public abstract class Circuit implements CircuitAccess {
         return this.getEmittedRedstonePower(pos.east(), FlatDirection.EAST) > 0;
     }
 
-    public void useComponent(ComponentPos pos, BlockPos blockPos) {
+    public void useComponent(ComponentPos pos, PlayerEntity player) {
         ComponentState state = this.getComponentState(pos);
-        state.onUse(this, pos);
+        state.onUse(this, pos, player);
     }
 
 
@@ -251,6 +255,8 @@ public abstract class Circuit implements CircuitAccess {
     public boolean removeBlock(ComponentPos pos) {
         return this.setComponentState(pos, Components.AIR_DEFAULT_STATE, Block.NOTIFY_ALL);
     }
+
+    public abstract void placeComponentState(ComponentPos pos, Component component, FlatDirection placementRotation);
 
     public long getTickOrder() {
         return this.tickOrder++;
@@ -270,4 +276,10 @@ public abstract class Circuit implements CircuitAccess {
         }
         return this.setComponentState(pos, Components.AIR_DEFAULT_STATE, Component.NOTIFY_ALL, maxUpdateDepth);
     }
+
+    public void playSound(@Nullable PlayerEntity except, SoundEvent sound, SoundCategory category, float volume, float pitch) {
+        // play sound higher pitched, since components are smaller than blocks
+        playSoundInWorld(except, sound, category, volume, pitch * 1.6f);
+    }
+    protected abstract void playSoundInWorld(@Nullable PlayerEntity except, SoundEvent sound, SoundCategory category, float volume, float pitch);
 }

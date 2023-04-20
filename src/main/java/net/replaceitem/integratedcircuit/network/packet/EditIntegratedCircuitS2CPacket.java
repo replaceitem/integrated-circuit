@@ -42,8 +42,8 @@ public class EditIntegratedCircuitS2CPacket {
         return buf;
     }
     
-    public ClientCircuit getClientCircuit(ClientWorld world) {
-        return ClientCircuit.fromNbt(circuit, world);
+    public ClientCircuit getClientCircuit(ClientWorld world, BlockPos pos) {
+        return ClientCircuit.fromNbt(circuit, world, pos);
     }
 
     public void send(ServerPlayerEntity serverPlayerEntity) {

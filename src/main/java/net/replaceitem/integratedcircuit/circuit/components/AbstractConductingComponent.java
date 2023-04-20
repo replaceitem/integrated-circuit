@@ -1,6 +1,5 @@
 package net.replaceitem.integratedcircuit.circuit.components;
 
-import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
 import net.replaceitem.integratedcircuit.circuit.Component;
@@ -11,8 +10,8 @@ import net.replaceitem.integratedcircuit.util.FlatDirection;
 import net.replaceitem.integratedcircuit.util.IntegratedCircuitIdentifier;
 
 public abstract class AbstractConductingComponent extends Component {
-    public AbstractConductingComponent(int id, Text name) {
-        super(id, name);
+    public AbstractConductingComponent(int id, Settings settings) {
+        super(id, settings);
     }
 
     protected static final Identifier TEXTURE_X = new IntegratedCircuitIdentifier("textures/integrated_circuit/wire_x.png");

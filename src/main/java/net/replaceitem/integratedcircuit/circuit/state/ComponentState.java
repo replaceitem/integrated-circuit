@@ -3,6 +3,7 @@ package net.replaceitem.integratedcircuit.circuit.state;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.random.Random;
@@ -68,8 +69,8 @@ public class ComponentState extends AbstractComponentState {
 
 
 
-    public void onUse(Circuit circuit, ComponentPos pos) {
-        this.component.onUse(this, circuit, pos);
+    public void onUse(Circuit circuit, ComponentPos pos, PlayerEntity player) {
+        this.component.onUse(this, circuit, pos, player);
     }
 
     @Deprecated(forRemoval = true)
@@ -78,10 +79,9 @@ public class ComponentState extends AbstractComponentState {
     }
 
 
-    // TODO - check occurrences of this, and replace with ==
     @Override
     public boolean equals(Object obj) { // this should be used instead where minecraft uses == (minecraft's states have only a single instance per possible state in a table (I think?))
-        return obj instanceof ComponentState other && this.encode() == other.encode();
+        return this == obj;
     }
 
     public boolean emitsRedstonePower() {

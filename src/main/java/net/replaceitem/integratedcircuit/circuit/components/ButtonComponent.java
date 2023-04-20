@@ -2,17 +2,22 @@ package net.replaceitem.integratedcircuit.circuit.components;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvent;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.random.Random;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
 import net.replaceitem.integratedcircuit.circuit.ServerCircuit;
-import net.replaceitem.integratedcircuit.circuit.state.property.BooleanComponentProperty;
 import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
+import net.replaceitem.integratedcircuit.circuit.state.property.BooleanComponentProperty;
 import net.replaceitem.integratedcircuit.client.IntegratedCircuitScreen;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
 import net.replaceitem.integratedcircuit.util.IntegratedCircuitIdentifier;
+import org.jetbrains.annotations.Nullable;
 
 public class ButtonComponent extends FacingComponent {
 
@@ -20,9 +25,8 @@ public class ButtonComponent extends FacingComponent {
 
     private final boolean wooden;
 
-    public ButtonComponent(int id, boolean wooden) {
-        // TODO move the translation to parameter (possibly using a settings builder class
-        super(id, Text.translatable("component.integrated_circuit.button_" + (wooden ? "wood" : "stone")));
+    public ButtonComponent(int id, Settings settings, boolean wooden) {
+        super(id, settings);
         this.wooden = wooden;
     }
 
@@ -47,9 +51,20 @@ public class ButtonComponent extends FacingComponent {
     }
 
     @Override
-    public void onUse(ComponentState state, Circuit circuit, ComponentPos pos) {
+    public void onUse(ComponentState state, Circuit circuit, ComponentPos pos, PlayerEntity player) {
         if(state.get(POWERED)) return;
         powerOn(state, circuit, pos);
+        this.playClickSound(player, circuit, true);
+    }
+
+    protected void playClickSound(@Nullable PlayerEntity player, Circuit circuit, boolean powered) {
+        circuit.playSound(powered ? player : null, this.getClickSound(powered), SoundCategory.BLOCKS, 1.0f, 1.0f);
+    }
+
+    protected SoundEvent getClickSound(boolean powered) {
+        return powered ?
+                (this.wooden ? SoundEvents.BLOCK_WOODEN_BUTTON_CLICK_ON : SoundEvents.BLOCK_STONE_BUTTON_CLICK_ON)
+                :(this.wooden ? SoundEvents.BLOCK_WOODEN_BUTTON_CLICK_OFF : SoundEvents.BLOCK_STONE_BUTTON_CLICK_OFF);
     }
 
     @Override
@@ -65,6 +80,7 @@ public class ButtonComponent extends FacingComponent {
         if(!state.get(POWERED)) return;
         circuit.setComponentState(pos, state.with(POWERED, false), Block.NOTIFY_ALL);
         circuit.updateNeighborsAlways(pos, this);
+        this.playClickSound(null, circuit, false);
     }
 
     public void powerOn(ComponentState state, Circuit circuit, ComponentPos pos) {

@@ -2,6 +2,7 @@ package net.replaceitem.integratedcircuit.circuit.components;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
@@ -18,8 +19,8 @@ public class RepeaterComponent extends AbstractRedstoneGateComponent {
     private static final IntComponentProperty DELAY = new IntComponentProperty("delay", 3, 2);
     private static final BooleanComponentProperty LOCKED = new BooleanComponentProperty("locked", 5);
 
-    public RepeaterComponent(int id) {
-        super(id, Text.translatable("component.integrated_circuit.repeater"));
+    public RepeaterComponent(int id, Settings settings) {
+        super(id, settings);
     }
 
     private static final Identifier ITEM_TEXTURE = new Identifier("textures/item/repeater.png");
@@ -60,7 +61,7 @@ public class RepeaterComponent extends AbstractRedstoneGateComponent {
     }
 
     @Override
-    public void onUse(ComponentState state, Circuit circuit, ComponentPos pos) {
+    public void onUse(ComponentState state, Circuit circuit, ComponentPos pos, PlayerEntity player) {
         circuit.setComponentState(pos, state.cycle(DELAY), Block.NOTIFY_ALL);
     }
 
