@@ -2,6 +2,7 @@ package net.replaceitem.integratedcircuit.network.packet;
 
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -41,8 +42,8 @@ public class EditIntegratedCircuitS2CPacket {
         return buf;
     }
     
-    public ClientCircuit getClientCircuit() {
-        return ClientCircuit.fromNbt(circuit);
+    public ClientCircuit getClientCircuit(ClientWorld world, BlockPos pos) {
+        return ClientCircuit.fromNbt(circuit, world, pos);
     }
 
     public void send(ServerPlayerEntity serverPlayerEntity) {

@@ -2,41 +2,46 @@ package net.replaceitem.integratedcircuit.circuit;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
+import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket;
+import net.minecraft.registry.Registries;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.tick.TickPriority;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.replaceitem.integratedcircuit.IntegratedCircuitBlock;
 import net.replaceitem.integratedcircuit.IntegratedCircuitBlockEntity;
 import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
-import net.replaceitem.integratedcircuit.circuit.state.PortComponentState;
 import net.replaceitem.integratedcircuit.network.packet.ComponentUpdateS2CPacket;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.UUID;
+import java.util.Set;
 
 public class ServerCircuit extends Circuit {
-    
-    protected final CircuitNeighborUpdater neighborUpdater;
+
     protected final CircuitTickScheduler circuitTickScheduler = new CircuitTickScheduler();
     
     protected final IntegratedCircuitBlockEntity blockEntity;
-    private long tickOrder;
-    
+
     public ServerCircuit(IntegratedCircuitBlockEntity blockEntity) {
-        super();
+        super(false);
         this.blockEntity = blockEntity;
-        this.neighborUpdater = new CircuitNeighborUpdater(this);
     }
 
     public IntegratedCircuitBlockEntity getCircuitBlockEntity() {
         return blockEntity;
     }
 
+    @Override
     public CircuitTickScheduler getCircuitTickScheduler() {
         return this.circuitTickScheduler;
     }
@@ -44,7 +49,7 @@ public class ServerCircuit extends Circuit {
     public void tick(World world, BlockPos pos, BlockState state, BlockEntity blockEntity) {
         for (FlatDirection direction : FlatDirection.VALUES) {
             int newPower = ((IntegratedCircuitBlock) state.getBlock()).getInputPower(world, pos, direction);
-            this.ports[direction.toInt()].assignExternalPower(this, PORTS_GRID_POS[direction.toInt()], newPower);
+            Components.PORT.assignExternalPower(this, PORTS_GRID_POS[direction.toInt()], this.ports[direction.toInt()], newPower);
         }
         this.circuitTickScheduler.tick(this.getTime(), 65536, this::tickBlock);
 
@@ -52,7 +57,7 @@ public class ServerCircuit extends Circuit {
         boolean updateNeeded = false;
         for (FlatDirection direction : FlatDirection.VALUES) {
             int oldPower = integratedCircuitBlockEntity.getOutputStrength(direction);
-            int newPower = this.ports[direction.toInt()].getInternalPower(this, PORTS_GRID_POS[direction.toInt()]);
+            int newPower = Components.PORT.getInternalPower(this, PORTS_GRID_POS[direction.toInt()], this.ports[direction.toInt()]);
             integratedCircuitBlockEntity.setOutputStrength(direction, newPower);
             if(oldPower != newPower) updateNeeded = true;
         }
@@ -61,6 +66,9 @@ public class ServerCircuit extends Circuit {
             //world.setBlockState(pos, state, Block.NOTIFY_ALL);
             state.onBlockAdded(world, pos, state, true);
         }
+        // Doing this as the end of each tick, since markDirty is not that cheap, since it makes comparator updates.
+        // Having every block state change in the circuit trigger that would be a performance disadvantage.
+        this.blockEntity.markDirty();
     }
 
     public long getTime() {
@@ -111,9 +119,9 @@ public class ServerCircuit extends Circuit {
         this.circuitTickScheduler.loadFromNbt(list, this.getTime());
     }
 
-    public void placeComponentFromClient(ComponentPos pos, Component component, FlatDirection rotation) {
-
-        ComponentState placementState = component.getPlacementState(this, pos, rotation);
+    @Override
+    public void placeComponentState(ComponentPos pos, Component component, FlatDirection placementRotation) {
+        ComponentState placementState = component.getPlacementState(this, pos, placementRotation);
         if(placementState == null) placementState = Components.AIR_DEFAULT_STATE;
         
         ComponentState beforeState = this.getComponentState(pos);
@@ -123,149 +131,27 @@ public class ServerCircuit extends Circuit {
     }
 
     @Override
-    public boolean setComponentState(ComponentPos pos, ComponentState state, int flags) {
-        // maybe check before state and only update on change?
-        ComponentState beforeState = getComponentState(pos);
-        if(!super.setComponentState(pos, state, flags)) return false;
-        
-        handleComponentStateSet(beforeState, state, pos, flags);
-        
-        return true;
-    }
-
-    @Override
-    public void setPortComponentState(ComponentPos pos, PortComponentState newState, int flags) {
-        ComponentState beforeState = getComponentState(pos);
-        super.setPortComponentState(pos, newState, flags);
-        handleComponentStateSet(beforeState, newState, pos, flags);
-    }
-
-    // handles all the updating of stuffs
-    private void handleComponentStateSet(ComponentState beforeState, ComponentState state, ComponentPos pos, int flags) {
+    protected void updateListeners(ComponentPos pos, ComponentState oldState, ComponentState state, int flags) {
         updateClient(pos, state);
-
-        beforeState.onStateReplaced(this, pos, state);
-        state.onBlockAdded(this, pos, beforeState);
-
-        if ((flags & Component.NOTIFY_NEIGHBORS) != 0) {
-            this.updateNeighbors(pos, state.getComponent());
-        }
-        if ((flags & Component.FORCE_STATE) == 0) {
-            int newFlags = flags & ~(Component.NOTIFY_NEIGHBORS | Component.SKIP_DROPS);
-            //blockState.prepare(this, pos, i, maxUpdateDepth - 1);
-            state.updateNeighbors(this, pos, newFlags);
-            //state.prepare(this, pos, i, maxUpdateDepth - 1);
-        }
-
-        blockEntity.markDirty();
-
-    }
-
-    public int getReceivedRedstonePower(ComponentPos pos) {
-        int i = 0;
-        for (FlatDirection direction : FlatDirection.VALUES) {
-            int j = this.getEmittedRedstonePower(pos.offset(direction), direction);
-            if (j >= 15) {
-                return 15;
-            }
-            if (j <= i) continue;
-            i = j;
-        }
-        return i;
-    }
-
-    public int getEmittedRedstonePower(ComponentPos pos, FlatDirection direction) {
-        ComponentState blockState = this.getComponentState(pos);
-        int i = blockState.getWeakRedstonePower(this, pos, direction);
-        if (blockState.isSolidBlock(this, pos)) {
-            return Math.max(i, this.getReceivedStrongRedstonePower(pos));
-        }
-        return i;
-    }
-
-    public boolean isEmittingRedstonePower(ComponentPos pos, FlatDirection direction) {
-        return this.getEmittedRedstonePower(pos, direction) > 0;
-    }
-
-    private int getReceivedStrongRedstonePower(ComponentPos pos) {
-        int i = 0;
-        if ((i = Math.max(i, this.getStrongRedstonePower(pos.north(), FlatDirection.NORTH))) >= 15) {
-            return i;
-        }
-        if ((i = Math.max(i, this.getStrongRedstonePower(pos.south(), FlatDirection.SOUTH))) >= 15) {
-            return i;
-        }
-        if ((i = Math.max(i, this.getStrongRedstonePower(pos.west(), FlatDirection.WEST))) >= 15) {
-            return i;
-        }
-        if ((i = Math.max(i, this.getStrongRedstonePower(pos.east(), FlatDirection.EAST))) >= 15) {
-            return i;
-        }
-        return i;
-    }
-
-    public boolean isReceivingRedstonePower(ComponentPos pos) {
-        if (this.getEmittedRedstonePower(pos.north(), FlatDirection.NORTH) > 0) {
-            return true;
-        }
-        if (this.getEmittedRedstonePower(pos.south(), FlatDirection.SOUTH) > 0) {
-            return true;
-        }
-        if (this.getEmittedRedstonePower(pos.west(), FlatDirection.WEST) > 0) {
-            return true;
-        }
-        return this.getEmittedRedstonePower(pos.east(), FlatDirection.EAST) > 0;
-    }
-
-    public int getStrongRedstonePower(ComponentPos pos, FlatDirection direction) {
-        return this.getComponentState(pos).getStrongRedstonePower(this, pos, direction);
     }
 
     private void updateClient(ComponentPos pos, ComponentState state) {
-        UUID editorUUID = this.blockEntity.getEditor();
-        if(editorUUID == null) return;
-        ServerPlayerEntity editor = this.blockEntity.getWorld().getServer().getPlayerManager().getPlayer(this.blockEntity.getEditor());
-        if(editor == null) return;
-        new ComponentUpdateS2CPacket(pos, state).send(editor);
+        World world = this.blockEntity.getWorld();
+        if(world == null) return;
+        MinecraftServer minecraftServer = world.getServer();
+        if(minecraftServer == null) return;
+        PlayerManager playerManager = minecraftServer.getPlayerManager();
+        if(playerManager == null) return;
+        Set<ServerPlayerEntity> editors = this.blockEntity.getEditingPlayers();
+        new ComponentUpdateS2CPacket(pos, state).send(editors);
     }
 
-    public void cycleState(ComponentPos pos) {
-        if(isPort(pos)) {
-            int portNumber = getPortNumber(pos);
-            FlatDirection portSide = FlatDirection.VALUES[portNumber];
-            PortComponentState portComponentState = ports[portNumber];
-            FlatDirection newRotation = portComponentState.getRotation() == portSide ? portSide.getOpposite() : portSide;
-            setPortComponentState(pos, new PortComponentState(newRotation, (byte) 0, newRotation == portSide), Component.NOTIFY_ALL);
-        } else {
-            ComponentState state = this.getComponentState(pos);
-            state.cycleState(this, pos);
-        }
-    }
-
-    public void createAndScheduleBlockTick(ComponentPos pos, Component component, int delay, TickPriority priority) {
-        this.getCircuitTickScheduler().scheduleTick(this.createOrderedTick(pos, component, delay, priority));
-    }
-
-    public void createAndScheduleBlockTick(ComponentPos pos, Component component, int delay) {
-        this.getCircuitTickScheduler().scheduleTick(this.createOrderedTick(pos, component, delay));
-    }
-
-    private OrderedCircuitTick createOrderedTick(ComponentPos pos, Component type, int delay, TickPriority priority) {
-        return new OrderedCircuitTick(type, pos, this.getTime() + (long)delay, priority, this.getTickOrder());
-    }
-
-    private OrderedCircuitTick createOrderedTick(ComponentPos pos, Component type, int delay) {
-        return new OrderedCircuitTick(type, pos, this.getTime() + (long)delay, this.getTickOrder());
-    }
-
-    public long getTickOrder() {
-        return this.tickOrder++;
-    }
-
+    @Override
     public void updateNeighbors(ComponentPos pos, Component component) {
         this.updateNeighborsAlways(pos, component);
     }
 
+    @Override
     public void updateNeighborsAlways(ComponentPos pos, Component sourceComponent) {
         this.neighborUpdater.updateNeighbors(pos, sourceComponent, null);
     }
@@ -282,7 +168,14 @@ public class ServerCircuit extends Circuit {
         this.neighborUpdater.updateNeighbor(state, pos, sourceComponent, sourcePos, notify);
     }
 
-    public void replaceWithStateForNeighborUpdate(FlatDirection direction, ComponentState neighborState, ComponentPos pos, ComponentPos neighborPos, int flags) {
-        this.neighborUpdater.replaceWithStateForNeighborUpdate(direction, neighborState, pos, neighborPos, flags);
+    @Override
+    public void playSoundInWorld(@Nullable PlayerEntity except, SoundEvent sound, SoundCategory category, float volume, float pitch) {
+        if(this.blockEntity.getWorld() != null) {
+            for (ServerPlayerEntity editingPlayer : this.blockEntity.getEditingPlayers()) {
+                if(editingPlayer.equals(except)) continue;
+                Vec3d soundPos = this.blockEntity.getPos().toCenterPos();
+                editingPlayer.networkHandler.sendPacket(new PlaySoundS2CPacket(Registries.SOUND_EVENT.getEntry(sound), category, soundPos.x, soundPos.y, soundPos.z, volume, pitch, this.blockEntity.getWorld().random.nextLong()));
+            }
+        }
     }
 }

@@ -32,3 +32,7 @@ Each port can be an input or output, which can be changed by clicking on it in t
 
 You can also copy circuits by putting an integrated circuit in the crafting grid,
 along with empty integrated circuits, similar to how books are copied.
+
+Credits for the tweaked redstone component textures (levers, observers):
+
+Vanilla Tweaks: https://vanillatweaks.net/

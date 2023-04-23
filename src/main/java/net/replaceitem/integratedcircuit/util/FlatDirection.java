@@ -1,22 +1,25 @@
 package net.replaceitem.integratedcircuit.util;
 
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3i;
 
 public enum FlatDirection {
 
-    NORTH(0, 0, -1, Axis.Y, net.minecraft.util.math.Direction.NORTH),
-    EAST(1, 1, 0, Axis.X, net.minecraft.util.math.Direction.EAST),
-    SOUTH(2, 0, 1, Axis.Y, net.minecraft.util.math.Direction.SOUTH),
-    WEST(3, -1, 0, Axis.X, net.minecraft.util.math.Direction.WEST);
+    NORTH(0, 0, -1, Axis.Y, Direction.NORTH),
+    EAST(1, 1, 0, Axis.X, Direction.EAST),
+    SOUTH(2, 0, 1, Axis.Y, Direction.SOUTH),
+    WEST(3, -1, 0, Axis.X, Direction.WEST);
 
     private final int index;
     private final Vec3i offset;
     private final Axis axis;
-    private final net.minecraft.util.math.Direction vanillaDirection;
+    private final Direction vanillaDirection;
 
     public static final FlatDirection[] VALUES = FlatDirection.values();
+    public static final FlatDirection[] VALUES_X = {EAST, WEST};
+    public static final FlatDirection[] VALUES_Y = {NORTH, SOUTH};
 
-    FlatDirection(int index, int dx, int dy, Axis axis, net.minecraft.util.math.Direction vanillaDirection) {
+    FlatDirection(int index, int dx, int dy, Axis axis, Direction vanillaDirection) {
         this.index = index;
         this.offset = new Vec3i(dx, dy, 0);
         this.axis = axis;
@@ -39,7 +42,7 @@ public enum FlatDirection {
         return axis;
     }
 
-    public net.minecraft.util.math.Direction getVanillaDirection() {
+    public Direction getVanillaDirection() {
         return vanillaDirection;
     }
 
@@ -47,7 +50,7 @@ public enum FlatDirection {
         return VALUES[Math.floorMod(this.toInt()+times,4)];
     }
     
-    public static FlatDirection fromVanillaDirection(net.minecraft.util.math.Direction direction) {
+    public static FlatDirection fromVanillaDirection(Direction direction) {
         return switch (direction) {
             case DOWN, UP -> null;
             case NORTH -> NORTH;
@@ -55,6 +58,10 @@ public enum FlatDirection {
             case WEST -> WEST;
             case EAST -> EAST;
         };
+    }
+
+    public static FlatDirection[] forAxis(Axis axis) {
+        return axis == Axis.X ? VALUES_X : VALUES_Y;
     }
     
     public enum Axis {

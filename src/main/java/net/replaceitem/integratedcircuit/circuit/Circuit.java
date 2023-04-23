@@ -1,15 +1,22 @@
 package net.replaceitem.integratedcircuit.circuit;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvent;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.replaceitem.integratedcircuit.circuit.components.PortComponent;
 import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
-import net.replaceitem.integratedcircuit.circuit.state.PortComponentState;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 
-public abstract class Circuit {
+public abstract class Circuit implements CircuitAccess {
     public static final int SIZE = 15;
     
     public static final ComponentPos[] PORTS_GRID_POS = new ComponentPos[]{
@@ -20,43 +27,103 @@ public abstract class Circuit {
     };
 
     public final ComponentState[][] components = new ComponentState[SIZE][SIZE];
-    public final PortComponentState[] ports = new PortComponentState[4];
+    public final ComponentState[] ports = new ComponentState[4];
 
 
-    public Circuit() {
+
+    protected final CircuitNeighborUpdater neighborUpdater;
+
+    /**
+     * @see net.minecraft.world.World#isClient
+     */
+    public final boolean isClient;
+    private long tickOrder;
+
+    public Circuit(boolean isClient) {
+        this.isClient = isClient;
         for (ComponentState[] componentState : components) {
             Arrays.fill(componentState, Components.AIR.getDefaultState());
         }
         for (int i = 0; i < ports.length; i++) {
-            ports[i] = new PortComponentState(FlatDirection.VALUES[i].getOpposite(), (byte) 0, false);
+            ports[i] = Components.PORT.getDefaultState().with(PortComponent.FACING, FlatDirection.VALUES[i].getOpposite());
         }
+
+        this.neighborUpdater = new CircuitNeighborUpdater(this);
     }
 
     public boolean isInside(ComponentPos pos) {
         return pos.getX() >= 0 && pos.getX() < SIZE && pos.getY() >= 0 && pos.getY() < SIZE;
     }
 
+    public boolean isValidPos(ComponentPos pos) {
+        return isInside(pos) || isPortPos(pos);
+    }
+
     public ComponentState getComponentState(ComponentPos componentPos) {
-        if(!isInside(componentPos)) {
-            if(isPort(componentPos)) {
-                return ports[getPortNumber(componentPos)];
-            }
-            return Components.AIR.getDefaultState();
+        if (isInside(componentPos)) {
+            return this.components[componentPos.getX()][componentPos.getY()];
         }
-        return this.components[componentPos.getX()][componentPos.getY()];
+        if(isPortPos(componentPos)) {
+            return ports[getPortNumber(componentPos)];
+        }
+        return Components.AIR.getDefaultState();
+    }
+
+    /**
+     * Handles directly setting the component state, without any updates.
+     * Equivalent to {@link net.minecraft.world.chunk.ChunkSection#setBlockState(int, int, int, BlockState)}
+     * @return The old component state before placement.
+     */
+    protected ComponentState assignComponentState(ComponentPos pos, ComponentState state) {
+        ComponentState oldState = getComponentState(pos);
+        if(isPortPos(pos)) {
+            if(!state.isOf(Components.PORT)) throw new RuntimeException("Cannot place non-port component at a port location");
+            ports[getPortNumber(pos)] = state;
+        } else {
+            this.components[pos.getX()][pos.getY()] = state;
+        }
+        return oldState;
     }
 
     public boolean setComponentState(ComponentPos pos, ComponentState state, int flags) {
-        if(!isInside(pos)) return false;
-        if(state == null) state = Components.AIR_DEFAULT_STATE;
-        this.components[pos.getX()][pos.getY()] = state;
-        return true;
+        return this.setComponentState(pos, state, flags, 512);
     }
 
-    public void setPortComponentState(ComponentPos pos, PortComponentState newState, int flags) {
-        if(isPort(pos)) {
-            ports[getPortNumber(pos)] = newState;
+    /**
+     * @see net.minecraft.world.World#setBlockState(BlockPos, BlockState, int)
+     */
+    public boolean setComponentState(ComponentPos pos, ComponentState state, int flags, int maxUpdateDepth) {
+        if(!isValidPos(pos)) return false;
+        if(state == null) state = Components.AIR_DEFAULT_STATE;
+
+        // WorldChunk.setBlockState enters here in World.setBlockState
+        ComponentState oldState = assignComponentState(pos, state);
+        if(oldState == state) return false;
+        if(!this.isClient) {
+            oldState.onStateReplaced(this, pos, state);
         }
+        if(!this.isClient) {
+            state.onBlockAdded(this, pos, oldState);
+        }
+        // ends here
+
+
+        ComponentState placedComponentState = this.getComponentState(pos);
+        if (placedComponentState == state) {
+            if ((flags & Block.NOTIFY_LISTENERS) != 0 && (!this.isClient || (flags & Block.NO_REDRAW) == 0)) {
+                this.updateListeners(pos, oldState, state, flags);
+            }
+            if ((flags & Component.NOTIFY_NEIGHBORS) != 0) {
+                this.updateNeighbors(pos, oldState.getComponent());
+            }
+            if ((flags & Block.FORCE_STATE) == 0 && maxUpdateDepth > 0) {
+                int i = flags & ~(Block.NOTIFY_NEIGHBORS | Block.SKIP_DROPS);
+                oldState.prepare(this, pos, i, maxUpdateDepth - 1);
+                state.updateNeighbors(this, pos, i, maxUpdateDepth - 1);
+                state.prepare(this, pos, i, maxUpdateDepth - 1);
+            }
+        }
+        return true;
     }
 
     public int getPortNumber(ComponentPos pos) {
@@ -66,7 +133,7 @@ public abstract class Circuit {
         return -1;
     }
 
-    public boolean isPort(ComponentPos pos) {
+    public boolean isPortPos(ComponentPos pos) {
         return getPortNumber(pos) != -1;
     }
 
@@ -90,7 +157,7 @@ public abstract class Circuit {
     public void readNbt(NbtCompound nbt) {
         byte[] portBytes = nbt.getByteArray("ports");
         for (int i = 0; i < portBytes.length; i++) {
-            ports[i] = (PortComponentState) Components.PORT.getState(portBytes[i]);
+            ports[i] = Components.PORT.getState(portBytes[i]);
         }
         int[] componentData = nbt.getIntArray("components");
         int componentDataSize = SIZE*SIZE;
@@ -107,11 +174,112 @@ public abstract class Circuit {
         return nbt;
     }
 
+    protected abstract void updateListeners(ComponentPos pos, ComponentState oldState, ComponentState state, int flags);
+
+    @Override
+    public void replaceWithStateForNeighborUpdate(FlatDirection FlatDirection, ComponentState neighborState, ComponentPos pos, ComponentPos neighborPos, int flags, int maxUpdateDepth) {
+        this.neighborUpdater.replaceWithStateForNeighborUpdate(FlatDirection, neighborState, pos, neighborPos, flags);
+    }
+
+
+    public int getEmittedRedstonePower(ComponentPos pos, FlatDirection FlatDirection) {
+        ComponentState blockState = this.getComponentState(pos);
+        int i = blockState.getWeakRedstonePower(this, pos, FlatDirection);
+        if (blockState.isSolidBlock(this, pos)) {
+            return Math.max(i, this.getReceivedStrongRedstonePower(pos));
+        }
+        return i;
+    }
+
+    public boolean isEmittingRedstonePower(ComponentPos pos, FlatDirection FlatDirection) {
+        return this.getEmittedRedstonePower(pos, FlatDirection) > 0;
+    }
+
+
+    private int getReceivedStrongRedstonePower(ComponentPos pos) {
+        int i = 0;
+        if ((i = Math.max(i, this.getStrongRedstonePower(pos.north(), FlatDirection.NORTH))) >= 15) {
+            return i;
+        }
+        if ((i = Math.max(i, this.getStrongRedstonePower(pos.south(), FlatDirection.SOUTH))) >= 15) {
+            return i;
+        }
+        if ((i = Math.max(i, this.getStrongRedstonePower(pos.west(), FlatDirection.WEST))) >= 15) {
+            return i;
+        }
+        if ((i = Math.max(i, this.getStrongRedstonePower(pos.east(), FlatDirection.EAST))) >= 15) {
+            return i;
+        }
+        return i;
+    }
+
+    public int getStrongRedstonePower(ComponentPos pos, FlatDirection FlatDirection) {
+        return this.getComponentState(pos).getStrongRedstonePower(this, pos, FlatDirection);
+    }
+
+    public int getReceivedRedstonePower(ComponentPos pos) {
+        int i = 0;
+        for (FlatDirection direction : FlatDirection.VALUES) {
+            int j = this.getEmittedRedstonePower(pos.offset(direction), direction);
+            if (j >= 15) {
+                return 15;
+            }
+            if (j <= i) continue;
+            i = j;
+        }
+        return i;
+    }
+
+    public boolean isReceivingRedstonePower(ComponentPos pos) {
+        if (this.getEmittedRedstonePower(pos.north(), FlatDirection.NORTH) > 0) {
+            return true;
+        }
+        if (this.getEmittedRedstonePower(pos.south(), FlatDirection.SOUTH) > 0) {
+            return true;
+        }
+        if (this.getEmittedRedstonePower(pos.west(), FlatDirection.WEST) > 0) {
+            return true;
+        }
+        return this.getEmittedRedstonePower(pos.east(), FlatDirection.EAST) > 0;
+    }
+
+    public void useComponent(ComponentPos pos, PlayerEntity player) {
+        ComponentState state = this.getComponentState(pos);
+        state.onUse(this, pos, player);
+    }
+
+
+    /**
+     * @see net.minecraft.world.World#removeBlock(BlockPos, boolean)
+     */
+    public boolean removeBlock(ComponentPos pos) {
+        return this.setComponentState(pos, Components.AIR_DEFAULT_STATE, Block.NOTIFY_ALL);
+    }
+
+    public abstract void placeComponentState(ComponentPos pos, Component component, FlatDirection placementRotation);
+
+    public long getTickOrder() {
+        return this.tickOrder++;
+    }
+
+
+    /**
+     * @see net.minecraft.world.World#breakBlock(BlockPos, boolean)
+     */
     public boolean breakBlock(ComponentPos pos) {
+        return breakBlock(pos, 512);
+    }
+    public boolean breakBlock(ComponentPos pos, int maxUpdateDepth) {
         ComponentState blockState = this.getComponentState(pos);
         if (blockState.isAir()) {
             return false;
         }
-        return this.setComponentState(pos, Components.AIR_DEFAULT_STATE, Component.NOTIFY_ALL);
+        return this.setComponentState(pos, Components.AIR_DEFAULT_STATE, Component.NOTIFY_ALL, maxUpdateDepth);
     }
+
+    public void playSound(@Nullable PlayerEntity except, SoundEvent sound, SoundCategory category, float volume, float pitch) {
+        // play sound higher pitched, since components are smaller than blocks
+        playSoundInWorld(except, sound, category, volume, pitch * 1.6f);
+    }
+    protected abstract void playSoundInWorld(@Nullable PlayerEntity except, SoundEvent sound, SoundCategory category, float volume, float pitch);
 }

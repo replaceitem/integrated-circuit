@@ -8,21 +8,20 @@ import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ColorHelper;
 import net.minecraft.util.math.RotationAxis;
 import net.minecraft.util.math.Vec3d;
-import net.replaceitem.integratedcircuit.circuit.*;
+import net.replaceitem.integratedcircuit.circuit.Circuit;
+import net.replaceitem.integratedcircuit.circuit.ClientCircuit;
+import net.replaceitem.integratedcircuit.circuit.Component;
+import net.replaceitem.integratedcircuit.circuit.Components;
+import net.replaceitem.integratedcircuit.circuit.components.FacingComponent;
 import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
-import net.replaceitem.integratedcircuit.circuit.state.PortComponentState;
-import net.replaceitem.integratedcircuit.circuit.state.RotatableComponentState;
 import net.replaceitem.integratedcircuit.mixin.RedstoneWireBlockAccessor;
-import net.replaceitem.integratedcircuit.network.packet.EditIntegratedCircuitS2CPacket;
+import net.replaceitem.integratedcircuit.network.packet.FinishEditingC2SPacket;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
 import net.replaceitem.integratedcircuit.util.IntegratedCircuitIdentifier;
-import net.replaceitem.integratedcircuit.network.packet.FinishEditingC2SPacket;
-import net.replaceitem.integratedcircuit.util.SignalStrengthAccessor;
 import org.lwjgl.glfw.GLFW;
 
 
@@ -34,10 +33,8 @@ public class IntegratedCircuitScreen extends Screen {
     protected static final int BACKGROUND_HEIGHT = 230;
     
     public static final int COMPONENT_SIZE = 16;
-    private static final int HALF_COMPONENT_SIZE = COMPONENT_SIZE/2;
 
     public static final int RENDER_COMPONENT_SIZE = 12;
-    private static final int HALF_RENDER_COMPONENT_SIZE = RENDER_COMPONENT_SIZE/2;
     
     private static final float RENDER_SCALE = (((float)RENDER_COMPONENT_SIZE)/((float)COMPONENT_SIZE));
 
@@ -51,7 +48,6 @@ public class IntegratedCircuitScreen extends Screen {
     protected int titleX, titleY;
 
     protected final ClientCircuit circuit;
-    protected final BlockPos pos;
 
     private int selectedComponentSlot = -1;
     private FlatDirection cursorRotation = FlatDirection.NORTH;
@@ -61,18 +57,21 @@ public class IntegratedCircuitScreen extends Screen {
     private static final Component[] PALETTE = new Component[]{
             Components.BLOCK,
             Components.WIRE,
+            Components.CROSSOVER,
             Components.TORCH,
             Components.REPEATER,
             Components.COMPARATOR,
             Components.OBSERVER,
             Components.TARGET,
-            Components.REDSTONE_BLOCK
+            Components.REDSTONE_BLOCK,
+            Components.LEVER,
+            Components.STONE_BUTTON,
+            Components.WOODEN_BUTTON
     };
 
-    public IntegratedCircuitScreen(EditIntegratedCircuitS2CPacket packet) {
-        super(packet.name);
-        this.pos = packet.pos;
-        this.circuit = packet.getClientCircuit();
+    public IntegratedCircuitScreen(ClientCircuit circuit, Text name) {
+        super(name);
+        this.circuit = circuit;
     }
 
     @Override
@@ -90,7 +89,7 @@ public class IntegratedCircuitScreen extends Screen {
 
     @Override
     public void close() {
-        new FinishEditingC2SPacket(this.pos).send();
+        new FinishEditingC2SPacket(this.circuit.getBlockPos()).send();
         super.close();
     }
 
@@ -104,21 +103,11 @@ public class IntegratedCircuitScreen extends Screen {
         RenderSystem.setShader(GameRenderer::getPositionTexProgram);
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
         RenderSystem.setShaderTexture(0, BACKGROUND_TEXTURE);
-        this.drawTexture(matrices, x, y, 0, 0, BACKGROUND_WIDTH, BACKGROUND_HEIGHT);
+        drawTexture(matrices, x, y, 0, 0, BACKGROUND_WIDTH, BACKGROUND_HEIGHT);
 
         this.textRenderer.draw(matrices, this.title, this.titleX, this.titleY, 0x404040);
-        
-        ComponentPos pos = getComponentPosAt(mouseX, mouseY);
-        ComponentState componentState = circuit.getComponentState(pos);
-        if(componentState instanceof SignalStrengthAccessor signalStrengthAccessor) {
-            int signalStrength = signalStrengthAccessor.getSignalStrength();
-            String signalStrengthString = String.valueOf(signalStrength);
-            int signalStrengthStringLength = textRenderer.getWidth(signalStrengthString);
-            Vec3d colorVec = RedstoneWireBlockAccessor.getCOLORS()[signalStrength].multiply(255);
-            int color = ColorHelper.Argb.getArgb(0xFF, (int) colorVec.x, (int) colorVec.y, (int) colorVec.z);
-            this.textRenderer.draw(matrices, Text.literal(signalStrengthString), this.x + BACKGROUND_WIDTH - 6 - signalStrengthStringLength,this.titleY, color);
-        }
 
+        this.renderHoverInfo(matrices, mouseX, mouseY);
         this.renderContent(matrices);
         this.renderPalette(matrices);
         this.renderCursorState(matrices, mouseX, mouseY);
@@ -127,15 +116,30 @@ public class IntegratedCircuitScreen extends Screen {
         super.render(matrices, mouseX, mouseY, delta);
     }
 
+    private void renderHoverInfo(MatrixStack matrices, int mouseX, int mouseY) {
+        ComponentPos pos = getComponentPosAt(mouseX, mouseY);
+        ComponentState componentState = circuit.getComponentState(pos);
+        Text text = componentState.getHoverInfoText();
+        int textWidth = textRenderer.getWidth(text);
+        this.textRenderer.draw(matrices, text, this.x + BACKGROUND_WIDTH - 6 - textWidth,this.titleY, 0x404040);
+    }
+
+    public static Text getSignalStrengthText(int signalStrength) {
+        Vec3d colorVec = RedstoneWireBlockAccessor.getCOLORS()[signalStrength].multiply(255);
+        int color = ColorHelper.Argb.getArgb(0xFF, (int) colorVec.x, (int) colorVec.y, (int) colorVec.z);
+        return Text.literal(String.valueOf(signalStrength)).styled(style -> style.withColor(color));
+    }
+
     private void renderCursorState(MatrixStack matrices, int mouseX, int mouseY) {
         ComponentPos pos = getComponentPosAt(mouseX, mouseY);
         boolean validSpot = circuit.getComponentState(pos).isAir();
-        float a = validSpot?0.7f:0.2f;
-        if(this.cursorState != null) {
+        float a = validSpot?0.5f:0.2f;
+        if(this.cursorState != null && circuit.isInside(pos)) {
             matrices.push();
-            matrices.translate(mouseX, mouseY, 0);
+            matrices.translate(getGridPosX(0), getGridPosY(0), 0);
             matrices.scale(RENDER_SCALE, RENDER_SCALE, 1);
-            renderComponentState(matrices, this.cursorState, -HALF_COMPONENT_SIZE, -HALF_COMPONENT_SIZE, a);
+            renderComponentStateInGrid(matrices, this.cursorState, pos.getX(), pos.getY(), a);
+            matrices.pop();
         }
     }
 
@@ -146,7 +150,7 @@ public class IntegratedCircuitScreen extends Screen {
             RenderSystem.setShader(GameRenderer::getPositionTexProgram);
             RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
             RenderSystem.setShaderTexture(0, BACKGROUND_TEXTURE);
-            this.drawTexture(matrices, this.x + PALETTE_X, slotY, selectedComponentSlot == i ? 14 : 0, BACKGROUND_HEIGHT, 14, 14);
+            drawTexture(matrices, this.x + PALETTE_X, slotY, selectedComponentSlot == i ? 14 : 0, BACKGROUND_HEIGHT, 14, 14);
             Identifier itemTexture = component.getItemTexture();
             if(itemTexture != null) renderPaletteItem(matrices, itemTexture, this.x+PALETTE_X+1, slotY+1);
         }
@@ -162,19 +166,17 @@ public class IntegratedCircuitScreen extends Screen {
         matrices.translate(getGridPosX(0), getGridPosY(0), 0);
         
         matrices.scale(RENDER_SCALE, RENDER_SCALE, 1);
-
-        //matrices.translate(-getGridPosX(0), -getGridPosY(0), 0);
         
         for (int i = 0; i < circuit.ports.length; i++) {
-            PortComponentState port = circuit.ports[i];
+            ComponentState port = circuit.ports[i];
             ComponentPos pos = Circuit.PORTS_GRID_POS[i];
-            renderComponentStateInGrid(matrices, port, pos.getX(), pos.getY());
+            renderComponentStateInGrid(matrices, port, pos.getX(), pos.getY(), 1);
         }
         for (int i = 0; i < circuit.components.length; i++) {
             ComponentState[] row = circuit.components[i];
             for (int j = 0; j < row.length; j++) {
                 ComponentState componentState = row[j];
-                renderComponentStateInGrid(matrices, componentState, i, j);
+                renderComponentStateInGrid(matrices, componentState, i, j, 1);
             }
         }
         
@@ -185,8 +187,8 @@ public class IntegratedCircuitScreen extends Screen {
         state.getComponent().render(matrices, x, y, a, state);
     }
 
-    protected void renderComponentStateInGrid(MatrixStack matrices, ComponentState state, int x, int y) {
-        renderComponentState(matrices, state, x * COMPONENT_SIZE, y * COMPONENT_SIZE, 1);
+    protected void renderComponentStateInGrid(MatrixStack matrices, ComponentState state, int x, int y, float a) {
+        renderComponentState(matrices, state, x * COMPONENT_SIZE, y * COMPONENT_SIZE, a);
     }
 
 
@@ -199,27 +201,21 @@ public class IntegratedCircuitScreen extends Screen {
     }
 
     public static void renderComponentTexture(MatrixStack matrices, Identifier component, int x, int y, int rot, float r, float g, float b, float a, int u, int v, int w, int h) {
-        prepareTextureRender(component, r, g, b, a);
-        matrices.push();
-        matrices.translate(x+8, y+8, 0);
-        matrices.multiply(RotationAxis.POSITIVE_Z.rotation((float) (rot*Math.PI*0.5)));
-        matrices.translate(-8, -8, 0);
-        drawTexture(matrices, u, v, u, v, w, h, 16, 16);
-        matrices.pop();
+        renderPartialTexture(matrices, component, x, y, u, v, 16, 16, rot, r, g, b, a, u, v, w, h);
     }
 
 
-    public static void renderComponentPart(MatrixStack matrices, Identifier texture, int componentX, int componentY, int x, int y, int textureW, int textureH, int rot, float r, float g, float b, float a) {
-        renderComponentPart(matrices, texture, componentX, componentY, x, y, textureW, textureH, rot, r, g, b, a, 0, 0, textureW, textureH);
+    public static void renderPartialTexture(MatrixStack matrices, Identifier texture, int componentX, int componentY, int x, int y, int textureW, int textureH, int rot, float r, float g, float b, float a) {
+        renderPartialTexture(matrices, texture, componentX, componentY, x, y, textureW, textureH, rot, r, g, b, a, 0, 0, textureW, textureH);
     }
     
-    public static void renderComponentPart(MatrixStack matrices, Identifier texture, int componentX, int componentY, int x, int y, int textureW, int textureH, int rot, float r, float g, float b, float a, int u, int v, int w, int h) {
+    public static void renderPartialTexture(MatrixStack matrices, Identifier texture, int componentX, int componentY, int x, int y, int textureW, int textureH, int rot, float r, float g, float b, float a, int u, int v, int w, int h) {
         prepareTextureRender(texture, r, g, b, a);
         matrices.push();
         matrices.translate(componentX+8, componentY+8, 0);
         matrices.multiply(RotationAxis.POSITIVE_Z.rotation((float) (rot*Math.PI*0.5)));
         matrices.translate(-8, -8, 0);
-        drawTexture(matrices, x, y, 0, 0, w, h, textureW, textureH);
+        drawTexture(matrices, x, y, u, v, w, h, textureW, textureH);
         matrices.pop();
     }
     
@@ -235,9 +231,9 @@ public class IntegratedCircuitScreen extends Screen {
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
-        if(this.cursorState instanceof RotatableComponentState rotatableComponentState) {
+        if(this.cursorState.getComponent() instanceof FacingComponent) {
             this.cursorRotation = this.cursorRotation.rotated(-((int) amount));
-            rotatableComponentState.setRotation(this.cursorRotation);
+            this.cursorState = this.cursorState.with(FacingComponent.FACING, this.cursorRotation);
             return true;
         }
         return false;
@@ -247,7 +243,7 @@ public class IntegratedCircuitScreen extends Screen {
         if(slot < 0 || slot >= PALETTE.length) return;
         selectedComponentSlot = slot;
         this.cursorState = PALETTE[selectedComponentSlot].getDefaultState();
-        if(this.cursorState instanceof RotatableComponentState rotatableComponentState) rotatableComponentState.setRotation(this.cursorRotation);
+        if(this.cursorState.getComponent() instanceof FacingComponent) this.cursorState = this.cursorState.with(FacingComponent.FACING, this.cursorRotation);
     }
 
     private void deselectPalette() {
@@ -266,12 +262,11 @@ public class IntegratedCircuitScreen extends Screen {
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         ComponentPos clickedPos = getComponentPosAt((int) mouseX, (int) mouseY);
-        
-        if(circuit.isPort(clickedPos)) {
-            circuit.cycleState(clickedPos, this.pos);
-            return true;
-        }
-        if(mouseX >= this.x+PALETTE_X && mouseX < this.x+PALETTE_X+14) {
+        boolean isUse = this.client.options.useKey.matchesMouse(button);
+        boolean isAttack = client.options.attackKey.matchesMouse(button);
+        boolean isPick = client.options.pickItemKey.matchesMouse(button);
+
+        if(isUse && mouseX >= this.x+PALETTE_X && mouseX < this.x+PALETTE_X+14) {
             int slot = getPaletteSlotAt((int) mouseY);
             if(slot >= 0 && slot < PALETTE.length) {
                 if(selectedComponentSlot != slot) {
@@ -282,33 +277,70 @@ public class IntegratedCircuitScreen extends Screen {
                 return true;
             }
         }
-        
-        if(circuit.isInside(clickedPos) && this.client != null) {
-            boolean isUse = this.client.options.useKey.matchesMouse(button);
-            boolean isAttack = client.options.attackKey.matchesMouse(button);
-            boolean isPick = client.options.pickItemKey.matchesMouse(button);
+
+        if(isUse && circuit.isPortPos(clickedPos)) {
+            circuit.useComponent(clickedPos, this.client.player);
+            return true;
+        }
+
+        startedDraggingInside = circuit.isInside(clickedPos);
+
+        if(startedDraggingInside && this.client != null) {
             if(isUse) {
                 ComponentState state = circuit.getComponentState(clickedPos);
                 if(state.isAir()) {
-                    if(this.cursorState == null) return false;
-                    circuit.placeComponentState(clickedPos, this.cursorState.getComponent(), this.cursorRotation, this.pos);
-                    return true;
+                    placeComponent(clickedPos);
+                } else {
+                    circuit.useComponent(clickedPos, this.client.player);
                 }
-                circuit.cycleState(clickedPos, this.pos);
                 return true;
             }
             if(isAttack) {
-                circuit.breakComponentState(clickedPos, this.pos);
+                breakComponent(clickedPos);
                 return true;
             }
             if(isPick) {
                 ComponentState state = circuit.getComponentState(clickedPos);
                 Component component = state.getComponent();
                 pickPalette(component);
+                return true;
             }
         }
 
         return super.mouseClicked(mouseX, mouseY, button);
+    }
+
+    private boolean startedDraggingInside = false;
+
+    private void breakComponent(ComponentPos pos) {
+        circuit.breakComponentState(pos);
+    }
+
+    private void placeComponent(ComponentPos pos) {
+        ComponentState state = circuit.getComponentState(pos);
+        if(state.isAir() && this.cursorState != null) {
+            circuit.placeComponentState(pos, this.cursorState.getComponent(), this.cursorRotation);
+        }
+    }
+
+    @Override
+    public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
+        if(startedDraggingInside && this.client != null) {
+            ComponentPos mousePos = getComponentPosAt((int) mouseX, (int) mouseY);
+            if(circuit.isInside(mousePos)) {
+                boolean isUse = this.client.options.useKey.matchesMouse(button);
+                boolean isAttack = client.options.attackKey.matchesMouse(button);
+                if(isUse && isAttack) return true;
+                if(isUse) {
+                    placeComponent(mousePos);
+                } else if (isAttack) {
+                    breakComponent(mousePos);
+                }
+                return true;
+            }
+        }
+
+        return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
     }
 
     @Override
@@ -345,6 +377,13 @@ public class IntegratedCircuitScreen extends Screen {
 
     protected int getGridYAt(int pixelY) {
         return Math.floorDiv(pixelY-this.y-GRID_Y, RENDER_COMPONENT_SIZE);
+    }
+
+    protected int getGridPosX(ComponentPos pos) {
+        return getGridPosX(pos.getX());
+    }
+    protected int getGridPosY(ComponentPos pos) {
+        return getGridPosY(pos.getY());
     }
 
     protected ComponentPos getComponentPosAt(int pixelX, int pixelY) {
