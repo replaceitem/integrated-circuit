@@ -100,6 +100,7 @@ public class IntegratedCircuitBlock extends HorizontalFacingBlock implements Blo
         if (itemStack.hasCustomName() && world.getBlockEntity(pos) instanceof IntegratedCircuitBlockEntity integratedCircuitBlockEntity) {
             integratedCircuitBlockEntity.setCustomName(itemStack.getName());
         }
+        this.updateTargets(world, pos, state);
     }
 
     public int getInputPower(World world, BlockPos pos, FlatDirection dir) {
