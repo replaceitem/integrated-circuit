@@ -22,6 +22,7 @@ import net.replaceitem.integratedcircuit.network.packet.FinishEditingC2SPacket;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
 import net.replaceitem.integratedcircuit.util.IntegratedCircuitIdentifier;
+import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
 
@@ -51,6 +52,8 @@ public class IntegratedCircuitScreen extends Screen {
 
     private int selectedComponentSlot = -1;
     private FlatDirection cursorRotation = FlatDirection.NORTH;
+    
+    @Nullable
     private ComponentState cursorState = null;
 
 
@@ -231,7 +234,7 @@ public class IntegratedCircuitScreen extends Screen {
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
-        if(this.cursorState.getComponent() instanceof FacingComponent) {
+        if(this.cursorState != null && this.cursorState.getComponent() instanceof FacingComponent) {
             this.cursorRotation = this.cursorRotation.rotated(-((int) amount));
             this.cursorState = this.cursorState.with(FacingComponent.FACING, this.cursorRotation);
             return true;
