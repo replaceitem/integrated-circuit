@@ -264,6 +264,7 @@ public class IntegratedCircuitScreen extends Screen {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if(this.client == null) return false;
         ComponentPos clickedPos = getComponentPosAt((int) mouseX, (int) mouseY);
         boolean isUse = this.client.options.useKey.matchesMouse(button);
         boolean isAttack = client.options.attackKey.matchesMouse(button);

@@ -1,6 +1,7 @@
 package net.replaceitem.integratedcircuit;
 
 import net.minecraft.inventory.CraftingInventory;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.SpecialCraftingRecipe;
@@ -23,7 +24,7 @@ public class IntegratedCircuitCloningRecipe extends SpecialCraftingRecipe {
             ItemStack stack = craftingInventory.getStack(i);
             if(stack.isEmpty()) continue;
             if(!stack.isOf(IntegratedCircuit.INTEGRATED_CIRCUIT_ITEM)) return false;
-            if(sourceIndex == -1 && stack.getCount() == 1 && stack.hasNbt() && stack.getNbt().contains("BlockEntityTag")) {
+            if(sourceIndex == -1 && stack.getCount() == 1 && stack.hasNbt() && stack.getNbt().contains(BlockItem.BLOCK_ENTITY_TAG_KEY)) {
                 sourceIndex = i;
                 continue;
             }
@@ -45,7 +46,7 @@ public class IntegratedCircuitCloningRecipe extends SpecialCraftingRecipe {
             ItemStack stack = craftingInventory.getStack(i);
             if(stack.isEmpty()) continue;
             if(!stack.isOf(IntegratedCircuit.INTEGRATED_CIRCUIT_ITEM)) return ItemStack.EMPTY;
-            if(sourceIndex == -1 && stack.getCount() == 1 && stack.hasNbt() && stack.getNbt().contains("BlockEntityTag")) {
+            if(sourceIndex == -1 && stack.getCount() == 1 && stack.hasNbt() && stack.getNbt().contains(BlockItem.BLOCK_ENTITY_TAG_KEY)) {
                 sourceIndex = i;
                 continue;
             }
@@ -70,7 +71,7 @@ public class IntegratedCircuitCloningRecipe extends SpecialCraftingRecipe {
             ItemStack stack = craftingInventory.getStack(i);
             if(stack.isEmpty()) continue;
             if(!stack.isOf(IntegratedCircuit.INTEGRATED_CIRCUIT_ITEM)) return remainder;
-            if(sourceIndex == -1 && stack.getCount() == 1 && stack.hasNbt() && stack.getNbt().contains("BlockEntityTag")) {
+            if(sourceIndex == -1 && stack.getCount() == 1 && stack.hasNbt() && stack.getNbt().contains(BlockItem.BLOCK_ENTITY_TAG_KEY)) {
                 sourceIndex = i;
                 continue;
             }
