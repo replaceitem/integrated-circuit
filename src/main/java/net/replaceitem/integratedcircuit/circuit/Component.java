@@ -3,7 +3,7 @@ package net.replaceitem.integratedcircuit.circuit;
 import it.unimi.dsi.fastutil.bytes.Byte2ObjectMap;
 import it.unimi.dsi.fastutil.bytes.Byte2ObjectOpenHashMap;
 import net.minecraft.block.BlockState;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.text.Text;
@@ -106,7 +106,7 @@ public abstract class Component {
         return defaultState;
     }
     public abstract Identifier getItemTexture();
-    public abstract void render(MatrixStack matrices, int x, int y, float a, ComponentState state);
+    public abstract void render(DrawContext drawContext, int x, int y, float a, ComponentState state);
 
 
     public static void replace(ComponentState state, ComponentState newState, Circuit world, ComponentPos pos, int flags) {
@@ -174,6 +174,7 @@ public abstract class Component {
      * in that it gets called from the component where the power is checked at, not where it's checked from.
      * This is done so different behaviours can be used for wire/port/crossover, without several checks.
      */
+    @SuppressWarnings("JavadocReference")
     public int increasePower(ComponentState state, FlatDirection side) {
         return 0;
     }

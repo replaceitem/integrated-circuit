@@ -1,7 +1,7 @@
 package net.replaceitem.integratedcircuit.circuit.components;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.random.Random;
@@ -36,8 +36,8 @@ public class ObserverComponent extends FacingComponent {
     }
 
     @Override
-    public void render(MatrixStack matrices, int x, int y, float a, ComponentState state) {
-        IntegratedCircuitScreen.renderComponentTexture(matrices, state.get(POWERED) ? TEXTURE_ON : TEXTURE, x, y, state.get(FACING).getOpposite().toInt(), 1, 1, 1, a);
+    public void render(DrawContext drawContext, int x, int y, float a, ComponentState state) {
+        IntegratedCircuitScreen.renderComponentTexture(drawContext, state.get(POWERED) ? TEXTURE_ON : TEXTURE, x, y, state.get(FACING).getOpposite().toInt(), 1, 1, 1, a);
     }
 
     @Override

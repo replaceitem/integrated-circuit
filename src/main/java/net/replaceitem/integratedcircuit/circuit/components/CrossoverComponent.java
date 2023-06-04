@@ -1,7 +1,7 @@
 package net.replaceitem.integratedcircuit.circuit.components;
 
 import com.google.common.collect.Sets;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
@@ -44,13 +44,13 @@ public class CrossoverComponent extends AbstractConductingComponent {
     }
 
     @Override
-    public void render(MatrixStack matrices, int x, int y, float a, ComponentState state) {
+    public void render(DrawContext drawContext, int x, int y, float a, ComponentState state) {
         Vec3d colorX = RedstoneWireBlockAccessor.getCOLORS()[state.get(POWER_X)];
         Vec3d colorY = RedstoneWireBlockAccessor.getCOLORS()[state.get(POWER_Y)];
 
-        IntegratedCircuitScreen.renderComponentTexture(matrices, TEXTURE_X, x, y, 0, (float) colorX.x, (float) colorX.y, (float) colorX.z, a);
-        IntegratedCircuitScreen.renderComponentTexture(matrices, TEXTURE_BRIDGE, x, y, 0, 1, 1, 1, a);
-        IntegratedCircuitScreen.renderComponentTexture(matrices, TEXTURE_Y, x, y, 0, (float) colorY.x, (float) colorY.y, (float) colorY.z, a);
+        IntegratedCircuitScreen.renderComponentTexture(drawContext, TEXTURE_X, x, y, 0, (float) colorX.x, (float) colorX.y, (float) colorX.z, a);
+        IntegratedCircuitScreen.renderComponentTexture(drawContext, TEXTURE_BRIDGE, x, y, 0, 1, 1, 1, a);
+        IntegratedCircuitScreen.renderComponentTexture(drawContext, TEXTURE_Y, x, y, 0, (float) colorY.x, (float) colorY.y, (float) colorY.z, a);
     }
 
 

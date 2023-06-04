@@ -1,6 +1,6 @@
 package net.replaceitem.integratedcircuit.circuit.components;
 
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.util.Identifier;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
 import net.replaceitem.integratedcircuit.circuit.Component;
@@ -22,8 +22,8 @@ public class BlockComponent extends Component {
     }
 
     @Override
-    public void render(MatrixStack matrices, int x, int y, float a, ComponentState state) {
-        IntegratedCircuitScreen.renderComponentTexture(matrices, TEXTURE, x, y, 0, 1, 1, 1, a);
+    public void render(DrawContext drawContext, int x, int y, float a, ComponentState state) {
+        IntegratedCircuitScreen.renderComponentTexture(drawContext, TEXTURE, x, y, 0, 1, 1, 1, a);
     }
 
     @Override

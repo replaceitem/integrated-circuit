@@ -1,7 +1,7 @@
 package net.replaceitem.integratedcircuit.circuit.components;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -39,24 +39,24 @@ public class RepeaterComponent extends AbstractRedstoneGateComponent {
     }
 
     @Override
-    public void render(MatrixStack matrices, int x, int y, float a, ComponentState state) {
+    public void render(DrawContext drawContext, int x, int y, float a, ComponentState state) {
         FlatDirection renderedRotation = state.get(FACING).getOpposite();
 
         Identifier baseTexture = state.get(POWERED) ? TEXTURE_ON : TEXTURE_OFF;
-        IntegratedCircuitScreen.renderComponentTexture(matrices, baseTexture, x, y, renderedRotation.toInt(), 1, 1, 1, a);
+        IntegratedCircuitScreen.renderComponentTexture(drawContext, baseTexture, x, y, renderedRotation.toInt(), 1, 1, 1, a);
 
 
         Identifier torchTexture = state.get(POWERED) ? TEXTURE_TORCH_ON : TEXTURE_TORCH_OFF;
         
-        IntegratedCircuitScreen.renderPartialTexture(matrices, torchTexture, x, y, 6, 1, 4, 4, renderedRotation.toInt(),  1, 1, 1, a);
+        IntegratedCircuitScreen.renderPartialTexture(drawContext, torchTexture, x, y, 6, 1, 4, 4, renderedRotation.toInt(),  1, 1, 1, a);
 
         boolean locked = state.get(LOCKED);
         Identifier knobTexture = locked ? TEXTURE_BAR : torchTexture;
         int knobOffsetAmount = state.get(DELAY) * 2;
         if(locked) {
-            IntegratedCircuitScreen.renderPartialTexture(matrices, knobTexture, x, y, 2, 6 + knobOffsetAmount, 12, 2, renderedRotation.toInt(),  1, 1, 1, a);
+            IntegratedCircuitScreen.renderPartialTexture(drawContext, knobTexture, x, y, 2, 6 + knobOffsetAmount, 12, 2, renderedRotation.toInt(),  1, 1, 1, a);
         } else {
-            IntegratedCircuitScreen.renderPartialTexture(matrices, knobTexture, x, y, 6, 5 + knobOffsetAmount, 4, 4, renderedRotation.toInt(),  1, 1, 1, a);
+            IntegratedCircuitScreen.renderPartialTexture(drawContext, knobTexture, x, y, 6, 5 + knobOffsetAmount, 4, 4, renderedRotation.toInt(),  1, 1, 1, a);
         }
     }
 

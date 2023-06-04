@@ -18,7 +18,7 @@ public class ServerPacketHandler {
         FinishEditingC2SPacket packet = new FinishEditingC2SPacket(buf);
         minecraftServer.executeSync(() -> {
             serverPlayerEntity.updateLastActionTime();
-            ServerWorld serverWorld = serverPlayerEntity.getWorld();
+            ServerWorld serverWorld = serverPlayerEntity.getServerWorld();
             BlockEntity blockEntity = serverWorld.getBlockEntity(packet.pos);
             if (!(blockEntity instanceof IntegratedCircuitBlockEntity integratedCircuitBlockEntity)) return;
             integratedCircuitBlockEntity.removeEditor(serverPlayerEntity);
@@ -28,7 +28,7 @@ public class ServerPacketHandler {
     public static void receivePlaceComponentPacket(MinecraftServer minecraftServer, ServerPlayerEntity serverPlayerEntity, ServerPlayNetworkHandler serverPlayNetworkHandler, PacketByteBuf buf, PacketSender packetSender) {
         PlaceComponentC2SPacket packet = new PlaceComponentC2SPacket(buf);
         minecraftServer.executeSync(() -> {
-            ServerWorld world = serverPlayerEntity.getWorld();
+            ServerWorld world = serverPlayerEntity.getServerWorld();
             if(world.getBlockState(packet.blockPos).isOf(IntegratedCircuit.INTEGRATED_CIRCUIT_BLOCK) && world.getBlockEntity(packet.blockPos) instanceof IntegratedCircuitBlockEntity integratedCircuitBlockEntity) {
                 if(!integratedCircuitBlockEntity.isEditing(serverPlayerEntity)) return;
                 integratedCircuitBlockEntity.getCircuit().placeComponentState(packet.pos, packet.component, packet.rotation);
@@ -39,7 +39,7 @@ public class ServerPacketHandler {
     public static void receiveComponentInteraction(MinecraftServer minecraftServer, ServerPlayerEntity serverPlayerEntity, ServerPlayNetworkHandler serverPlayNetworkHandler, PacketByteBuf buf, PacketSender packetSender) {
         ComponentInteractionC2SPacket packet = new ComponentInteractionC2SPacket(buf);
         minecraftServer.executeSync(() -> {
-            ServerWorld world = serverPlayerEntity.getWorld();
+            ServerWorld world = serverPlayerEntity.getServerWorld();
             if(world.getBlockState(packet.blockPos).isOf(IntegratedCircuit.INTEGRATED_CIRCUIT_BLOCK) && world.getBlockEntity(packet.blockPos) instanceof IntegratedCircuitBlockEntity integratedCircuitBlockEntity) {
                 if(!integratedCircuitBlockEntity.isEditing(serverPlayerEntity)) return;
                 integratedCircuitBlockEntity.getCircuit().useComponent(packet.pos, serverPlayerEntity);

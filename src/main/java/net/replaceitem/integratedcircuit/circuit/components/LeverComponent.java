@@ -1,6 +1,6 @@
 package net.replaceitem.integratedcircuit.circuit.components;
 
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
@@ -40,9 +40,9 @@ public class LeverComponent extends FacingComponent {
     }
 
     @Override
-    public void render(MatrixStack matrices, int x, int y, float a, ComponentState state) {
+    public void render(DrawContext drawContext, int x, int y, float a, ComponentState state) {
         Identifier texture = state.get(POWERED) ? TEXTURE_ON : TEXTURE_OFF;
-        IntegratedCircuitScreen.renderComponentTexture(matrices, texture, x, y, state.get(FACING).toInt(), 1, 1, 1, a);
+        IntegratedCircuitScreen.renderComponentTexture(drawContext, texture, x, y, state.get(FACING).toInt(), 1, 1, 1, a);
     }
 
     @Override

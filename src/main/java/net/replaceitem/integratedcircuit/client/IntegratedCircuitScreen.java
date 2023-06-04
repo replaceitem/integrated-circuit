@@ -3,9 +3,8 @@ package net.replaceitem.integratedcircuit.client;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.render.GameRenderer;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.ColorHelper;
@@ -101,30 +100,27 @@ public class IntegratedCircuitScreen extends Screen {
     }
 
     @Override
-    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+    public void render(DrawContext drawContext, int mouseX, int mouseY, float delta) {
+        drawContext.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
+        drawContext.drawTexture(BACKGROUND_TEXTURE, x, y, 0, 0, BACKGROUND_WIDTH, BACKGROUND_HEIGHT);
 
-        RenderSystem.setShader(GameRenderer::getPositionTexProgram);
-        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
-        RenderSystem.setShaderTexture(0, BACKGROUND_TEXTURE);
-        drawTexture(matrices, x, y, 0, 0, BACKGROUND_WIDTH, BACKGROUND_HEIGHT);
+        drawContext.drawText(this.textRenderer, this.title, this.titleX, this.titleY, 0x404040, false);
 
-        this.textRenderer.draw(matrices, this.title, this.titleX, this.titleY, 0x404040);
-
-        this.renderHoverInfo(matrices, mouseX, mouseY);
-        this.renderContent(matrices);
-        this.renderPalette(matrices);
-        this.renderCursorState(matrices, mouseX, mouseY);
+        this.renderHoverInfo(drawContext, mouseX, mouseY);
+        this.renderContent(drawContext);
+        this.renderPalette(drawContext);
+        this.renderCursorState(drawContext, mouseX, mouseY);
         
 
-        super.render(matrices, mouseX, mouseY, delta);
+        super.render(drawContext, mouseX, mouseY, delta);
     }
 
-    private void renderHoverInfo(MatrixStack matrices, int mouseX, int mouseY) {
+    private void renderHoverInfo(DrawContext drawContext, int mouseX, int mouseY) {
         ComponentPos pos = getComponentPosAt(mouseX, mouseY);
         ComponentState componentState = circuit.getComponentState(pos);
         Text text = componentState.getHoverInfoText();
         int textWidth = textRenderer.getWidth(text);
-        this.textRenderer.draw(matrices, text, this.x + BACKGROUND_WIDTH - 6 - textWidth,this.titleY, 0x404040);
+        drawContext.drawText(this.textRenderer, text, this.x + BACKGROUND_WIDTH - 6 - textWidth,this.titleY, 0x404040, false);
     }
 
     public static Text getSignalStrengthText(int signalStrength) {
@@ -133,103 +129,92 @@ public class IntegratedCircuitScreen extends Screen {
         return Text.literal(String.valueOf(signalStrength)).styled(style -> style.withColor(color));
     }
 
-    private void renderCursorState(MatrixStack matrices, int mouseX, int mouseY) {
+    private void renderCursorState(DrawContext drawContext, int mouseX, int mouseY) {
         ComponentPos pos = getComponentPosAt(mouseX, mouseY);
         boolean validSpot = circuit.getComponentState(pos).isAir();
         float a = validSpot?0.5f:0.2f;
         if(this.cursorState != null && circuit.isInside(pos)) {
-            matrices.push();
-            matrices.translate(getGridPosX(0), getGridPosY(0), 0);
-            matrices.scale(RENDER_SCALE, RENDER_SCALE, 1);
-            renderComponentStateInGrid(matrices, this.cursorState, pos.getX(), pos.getY(), a);
-            matrices.pop();
+            drawContext.getMatrices().push();
+            drawContext.getMatrices().translate(getGridPosX(0), getGridPosY(0), 0);
+            drawContext.getMatrices().scale(RENDER_SCALE, RENDER_SCALE, 1);
+            renderComponentStateInGrid(drawContext, this.cursorState, pos.getX(), pos.getY(), a);
+            drawContext.getMatrices().pop();
         }
     }
 
-    private void renderPalette(MatrixStack matrices) {
+    private void renderPalette(DrawContext drawContext) {
         for (int i = 0; i < PALETTE.length; i++) {
             Component component = PALETTE[i];
             int slotY = this.getPaletteSlotPosY(i);
-            RenderSystem.setShader(GameRenderer::getPositionTexProgram);
-            RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
-            RenderSystem.setShaderTexture(0, BACKGROUND_TEXTURE);
-            drawTexture(matrices, this.x + PALETTE_X, slotY, selectedComponentSlot == i ? 14 : 0, BACKGROUND_HEIGHT, 14, 14);
+            drawContext.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
+            drawContext.drawTexture(BACKGROUND_TEXTURE, this.x + PALETTE_X, slotY, selectedComponentSlot == i ? 14 : 0, BACKGROUND_HEIGHT, 14, 14);
             Identifier itemTexture = component.getItemTexture();
-            if(itemTexture != null) renderPaletteItem(matrices, itemTexture, this.x+PALETTE_X+1, slotY+1);
+            if(itemTexture != null) renderPaletteItem(drawContext, itemTexture, this.x+PALETTE_X+1, slotY+1);
         }
     }
     
-    private void renderPaletteItem(MatrixStack matrices, Identifier itemTexture, int x, int y) {
-        prepareTextureRender(itemTexture, 1, 1, 1, 1);
-        drawTexture(matrices, x, y, 0, 0, RENDER_COMPONENT_SIZE, RENDER_COMPONENT_SIZE, RENDER_COMPONENT_SIZE, RENDER_COMPONENT_SIZE);
+    private void renderPaletteItem(DrawContext drawContext, Identifier itemTexture, int x, int y) {
+        drawContext.setShaderColor(1,1,1,1);
+        drawContext.drawTexture(itemTexture, x, y, 0, 0, RENDER_COMPONENT_SIZE, RENDER_COMPONENT_SIZE, RENDER_COMPONENT_SIZE, RENDER_COMPONENT_SIZE);
     }
 
-    protected void renderContent(MatrixStack matrices) {
-        matrices.push();
-        matrices.translate(getGridPosX(0), getGridPosY(0), 0);
+    protected void renderContent(DrawContext drawContext) {
+        drawContext.getMatrices().push();
+        drawContext.getMatrices().translate(getGridPosX(0), getGridPosY(0), 0);
         
-        matrices.scale(RENDER_SCALE, RENDER_SCALE, 1);
+        drawContext.getMatrices().scale(RENDER_SCALE, RENDER_SCALE, 1);
         
         for (int i = 0; i < circuit.ports.length; i++) {
             ComponentState port = circuit.ports[i];
             ComponentPos pos = Circuit.PORTS_GRID_POS[i];
-            renderComponentStateInGrid(matrices, port, pos.getX(), pos.getY(), 1);
+            renderComponentStateInGrid(drawContext, port, pos.getX(), pos.getY(), 1);
         }
         for (int i = 0; i < circuit.components.length; i++) {
             ComponentState[] row = circuit.components[i];
             for (int j = 0; j < row.length; j++) {
                 ComponentState componentState = row[j];
-                renderComponentStateInGrid(matrices, componentState, i, j, 1);
+                renderComponentStateInGrid(drawContext, componentState, i, j, 1);
             }
         }
         
-        matrices.pop();
+        drawContext.getMatrices().pop();
     }
 
-    protected static void renderComponentState(MatrixStack matrices, ComponentState state, int x, int y, float a) {
-        state.getComponent().render(matrices, x, y, a, state);
+    protected static void renderComponentState(DrawContext drawContext, ComponentState state, int x, int y, float a) {
+        state.getComponent().render(drawContext, x, y, a, state);
     }
 
-    protected void renderComponentStateInGrid(MatrixStack matrices, ComponentState state, int x, int y, float a) {
-        renderComponentState(matrices, state, x * COMPONENT_SIZE, y * COMPONENT_SIZE, a);
-    }
-
-
-    public static void renderComponentTexture(MatrixStack matrices, Identifier component, int x, int y, int rot) {
-        renderComponentTexture(matrices, component, x, y, rot, 1, 1, 1, 1);
-    }
-
-    public static void renderComponentTexture(MatrixStack matrices, Identifier component, int x, int y, int rot, float r, float g, float b, float a) {
-        renderComponentTexture(matrices, component, x, y, rot, r, g, b, a, 0, 0, 16, 16);
-    }
-
-    public static void renderComponentTexture(MatrixStack matrices, Identifier component, int x, int y, int rot, float r, float g, float b, float a, int u, int v, int w, int h) {
-        renderPartialTexture(matrices, component, x, y, u, v, 16, 16, rot, r, g, b, a, u, v, w, h);
+    protected void renderComponentStateInGrid(DrawContext drawContext, ComponentState state, int x, int y, float a) {
+        renderComponentState(drawContext, state, x * COMPONENT_SIZE, y * COMPONENT_SIZE, a);
     }
 
 
-    public static void renderPartialTexture(MatrixStack matrices, Identifier texture, int componentX, int componentY, int x, int y, int textureW, int textureH, int rot, float r, float g, float b, float a) {
-        renderPartialTexture(matrices, texture, componentX, componentY, x, y, textureW, textureH, rot, r, g, b, a, 0, 0, textureW, textureH);
+    private static void renderComponentTexture(DrawContext drawContext, Identifier component, int x, int y, int rot) {
+        renderComponentTexture(drawContext, component, x, y, rot, 1, 1, 1, 1);
     }
-    
-    public static void renderPartialTexture(MatrixStack matrices, Identifier texture, int componentX, int componentY, int x, int y, int textureW, int textureH, int rot, float r, float g, float b, float a, int u, int v, int w, int h) {
-        prepareTextureRender(texture, r, g, b, a);
-        matrices.push();
-        matrices.translate(componentX+8, componentY+8, 0);
-        matrices.multiply(RotationAxis.POSITIVE_Z.rotation((float) (rot*Math.PI*0.5)));
-        matrices.translate(-8, -8, 0);
-        drawTexture(matrices, x, y, u, v, w, h, textureW, textureH);
-        matrices.pop();
+
+    public static void renderComponentTexture(DrawContext drawContext, Identifier component, int x, int y, int rot, float r, float g, float b, float a) {
+        renderComponentTexture(drawContext, component, x, y, rot, r, g, b, a, 0, 0, 16, 16);
     }
-    
-    
-    public static void prepareTextureRender(Identifier texture, float r, float g, float b, float a) {
-        RenderSystem.setShader(GameRenderer::getPositionTexProgram);
-        RenderSystem.setShaderTexture(0, texture);
-        RenderSystem.setShaderColor(r, g, b, a);
+
+    public static void renderComponentTexture(DrawContext drawContext, Identifier component, int x, int y, int rot, float r, float g, float b, float a, int u, int v, int w, int h) {
+        renderPartialTexture(drawContext, component, x, y, u, v, 16, 16, rot, r, g, b, a, u, v, w, h);
+    }
+
+
+    public static void renderPartialTexture(DrawContext drawContext, Identifier texture, int componentX, int componentY, int x, int y, int textureW, int textureH, int rot, float r, float g, float b, float a) {
+        renderPartialTexture(drawContext, texture, componentX, componentY, x, y, textureW, textureH, rot, r, g, b, a, 0, 0, textureW, textureH);
+    }
+
+    private static void renderPartialTexture(DrawContext drawContext, Identifier texture, int componentX, int componentY, int x, int y, int textureW, int textureH, int rot, float r, float g, float b, float a, int u, int v, int w, int h) {
+        drawContext.getMatrices().push();
+        drawContext.getMatrices().translate(componentX+8, componentY+8, 0);
+        drawContext.getMatrices().multiply(RotationAxis.POSITIVE_Z.rotation((float) (rot*Math.PI*0.5)));
+        drawContext.getMatrices().translate(-8, -8, 0);
         RenderSystem.enableBlend();
-        RenderSystem.defaultBlendFunc();
-        RenderSystem.enableDepthTest();
+        drawContext.setShaderColor(r, g, b, a);
+        drawContext.drawTexture(texture, x, y, u, v, w, h, textureW, textureH);
+        drawContext.getMatrices().pop();
     }
 
     @Override

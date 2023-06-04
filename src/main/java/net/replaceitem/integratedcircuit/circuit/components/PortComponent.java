@@ -1,6 +1,6 @@
 package net.replaceitem.integratedcircuit.circuit.components;
 
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
@@ -36,17 +36,17 @@ public class PortComponent extends AbstractWireComponent {
     }
 
     @Override
-    public void render(MatrixStack matrices, int x, int y, float a, ComponentState state) {
+    public void render(DrawContext drawContext, int x, int y, float a, ComponentState state) {
         Vec3d color = RedstoneWireBlockAccessor.getCOLORS()[state.get(POWER)];
         float r = (float) color.x;
         float g = (float) color.y;
         float b = (float) color.z;
 
         FlatDirection rotation = state.get(FACING);
-        IntegratedCircuitScreen.renderComponentTexture(matrices, TEXTURE_ARROW, x, y, rotation.toInt(), r, g, b, a);
+        IntegratedCircuitScreen.renderComponentTexture(drawContext, TEXTURE_ARROW, x, y, rotation.toInt(), r, g, b, a);
         
         Identifier wireTexture = rotation.getAxis() == FlatDirection.Axis.X ? TEXTURE_X : TEXTURE_Y;
-        IntegratedCircuitScreen.renderComponentTexture(matrices, wireTexture, x, y, 0, r, g, b, a);
+        IntegratedCircuitScreen.renderComponentTexture(drawContext, wireTexture, x, y, 0, r, g, b, a);
     }
 
     @Override

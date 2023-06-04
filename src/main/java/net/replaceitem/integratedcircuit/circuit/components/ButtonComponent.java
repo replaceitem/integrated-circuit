@@ -1,7 +1,7 @@
 package net.replaceitem.integratedcircuit.circuit.components;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
@@ -44,10 +44,10 @@ public class ButtonComponent extends FacingComponent {
     }
 
     @Override
-    public void render(MatrixStack matrices, int x, int y, float a, ComponentState state) {
+    public void render(DrawContext drawContext, int x, int y, float a, ComponentState state) {
         Identifier texture = getItemTexture();
         float b = state.get(POWERED) ? 0.5f : 1f;
-        IntegratedCircuitScreen.renderComponentTexture(matrices, texture, x, y, state.get(FACING).toInt(), b, b, b, a);
+        IntegratedCircuitScreen.renderComponentTexture(drawContext, texture, x, y, state.get(FACING).toInt(), b, b, b, a);
     }
 
     @Override

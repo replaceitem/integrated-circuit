@@ -1,6 +1,6 @@
 package net.replaceitem.integratedcircuit;
 
-import net.minecraft.inventory.CraftingInventory;
+import net.minecraft.inventory.RecipeInputInventory;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.RecipeSerializer;
@@ -17,11 +17,11 @@ public class IntegratedCircuitCloningRecipe extends SpecialCraftingRecipe {
     }
 
     @Override
-    public boolean matches(CraftingInventory craftingInventory, World world) {
+    public boolean matches(RecipeInputInventory inventory, World world) {
         int sourceIndex = -1;
         int destinationIndex = -1;
-        for (int i = 0; i < craftingInventory.size(); i++) {
-            ItemStack stack = craftingInventory.getStack(i);
+        for (int i = 0; i < inventory.size(); i++) {
+            ItemStack stack = inventory.getStack(i);
             if(stack.isEmpty()) continue;
             if(!stack.isOf(IntegratedCircuit.INTEGRATED_CIRCUIT_ITEM)) return false;
             if(sourceIndex == -1 && stack.getCount() == 1 && stack.hasNbt() && stack.getNbt().contains(BlockItem.BLOCK_ENTITY_TAG_KEY)) {
@@ -39,7 +39,7 @@ public class IntegratedCircuitCloningRecipe extends SpecialCraftingRecipe {
     }
 
     @Override
-    public ItemStack craft(CraftingInventory craftingInventory, DynamicRegistryManager registryManager) {
+    public ItemStack craft(RecipeInputInventory craftingInventory, DynamicRegistryManager registryManager) {
         int sourceIndex = -1;
         int destinationIndex = -1;
         for (int i = 0; i < craftingInventory.size(); i++) {
@@ -63,7 +63,7 @@ public class IntegratedCircuitCloningRecipe extends SpecialCraftingRecipe {
     }
 
     @Override
-    public DefaultedList<ItemStack> getRemainder(CraftingInventory craftingInventory) {
+    public DefaultedList<ItemStack> getRemainder(RecipeInputInventory craftingInventory) {
         DefaultedList<ItemStack> remainder = DefaultedList.ofSize(craftingInventory.size(), ItemStack.EMPTY);
         int sourceIndex = -1;
         int destinationIndex = -1;

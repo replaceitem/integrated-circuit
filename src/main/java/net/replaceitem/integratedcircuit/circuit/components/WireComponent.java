@@ -3,7 +3,7 @@ package net.replaceitem.integratedcircuit.circuit.components;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import net.minecraft.block.Block;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
@@ -71,7 +71,7 @@ public class WireComponent extends AbstractWireComponent {
     }
 
     @Override
-    public void render(MatrixStack matrices, int x, int y, float a, ComponentState state) {
+    public void render(DrawContext drawContext, int x, int y, float a, ComponentState state) {
         final int size = IntegratedCircuitScreen.COMPONENT_SIZE;
         final int halfSize = size/2;
 
@@ -80,17 +80,17 @@ public class WireComponent extends AbstractWireComponent {
         float g = (float) color.y;
         float b = (float) color.z;
 
-        if(state.get(CONNECTED_NORTH)) IntegratedCircuitScreen.renderComponentTexture(matrices, TEXTURE_Y, x, y, 0, r, g, b, a, 0, 0, size, halfSize);
-        if(state.get(CONNECTED_EAST)) IntegratedCircuitScreen.renderComponentTexture(matrices, TEXTURE_X, x, y, 0, r, g, b, a, halfSize, 0, halfSize, size);
-        if(state.get(CONNECTED_SOUTH)) IntegratedCircuitScreen.renderComponentTexture(matrices, TEXTURE_Y, x, y, 0, r, g, b, a, 0, halfSize, size, halfSize);
-        if(state.get(CONNECTED_WEST)) IntegratedCircuitScreen.renderComponentTexture(matrices, TEXTURE_X, x, y, 0, r, g, b, a, 0, 0, halfSize, size);
+        if(state.get(CONNECTED_NORTH)) IntegratedCircuitScreen.renderComponentTexture(drawContext, TEXTURE_Y, x, y, 0, r, g, b, a, 0, 0, size, halfSize);
+        if(state.get(CONNECTED_EAST)) IntegratedCircuitScreen.renderComponentTexture(drawContext, TEXTURE_X, x, y, 0, r, g, b, a, halfSize, 0, halfSize, size);
+        if(state.get(CONNECTED_SOUTH)) IntegratedCircuitScreen.renderComponentTexture(drawContext, TEXTURE_Y, x, y, 0, r, g, b, a, 0, halfSize, size, halfSize);
+        if(state.get(CONNECTED_WEST)) IntegratedCircuitScreen.renderComponentTexture(drawContext, TEXTURE_X, x, y, 0, r, g, b, a, 0, 0, halfSize, size);
 
         int connections = 0;
         for (FlatDirection direction : FlatDirection.VALUES) if(state.get(DIRECTION_TO_CONNECTION_PROPERTY.get(direction))) connections++;
-        if(connections != 2) IntegratedCircuitScreen.renderComponentTexture(matrices, TEXTURE_DOT, x, y, 0, r, g, b, a, 0, 0, size, size);
+        if(connections != 2) IntegratedCircuitScreen.renderComponentTexture(drawContext, TEXTURE_DOT, x, y, 0, r, g, b, a, 0, 0, size, size);
         
         if(!(state.get(CONNECTED_NORTH) && state.get(CONNECTED_SOUTH) || state.get(CONNECTED_EAST) && state.get(CONNECTED_WEST))) {
-            IntegratedCircuitScreen.renderComponentTexture(matrices, TEXTURE_DOT, x, y, 0, r, g, b, a, 0, 0, size, size);
+            IntegratedCircuitScreen.renderComponentTexture(drawContext, TEXTURE_DOT, x, y, 0, r, g, b, a, 0, 0, size, size);
         }
     }
 

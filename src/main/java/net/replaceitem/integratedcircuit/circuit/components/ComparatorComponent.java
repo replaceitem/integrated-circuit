@@ -1,7 +1,7 @@
 package net.replaceitem.integratedcircuit.circuit.components;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
@@ -47,18 +47,18 @@ public class ComparatorComponent extends AbstractRedstoneGateComponent {
     }
 
     @Override
-    public void render(MatrixStack matrices, int x, int y, float a, ComponentState state) {
+    public void render(DrawContext drawContext, int x, int y, float a, ComponentState state) {
         boolean powered = state.get(POWERED);
         int rot = state.get(FACING).getOpposite().toInt();
-        IntegratedCircuitScreen.renderComponentTexture(matrices, powered ? TEXTURE_ON : TEXTURE, x, y, rot, 1, 1, 1, a);
+        IntegratedCircuitScreen.renderComponentTexture(drawContext, powered ? TEXTURE_ON : TEXTURE, x, y, rot, 1, 1, 1, a);
         
         Identifier torchTexture = powered ? TEXTURE_TORCH_ON : TEXTURE_TORCH_OFF;
 
-        IntegratedCircuitScreen.renderPartialTexture(matrices, torchTexture, x, y, 3, 10, 4, 4, rot, 1, 1, 1, a);
-        IntegratedCircuitScreen.renderPartialTexture(matrices, torchTexture, x, y, 9, 10, 4, 4, rot, 1, 1, 1, a);
+        IntegratedCircuitScreen.renderPartialTexture(drawContext, torchTexture, x, y, 3, 10, 4, 4, rot, 1, 1, 1, a);
+        IntegratedCircuitScreen.renderPartialTexture(drawContext, torchTexture, x, y, 9, 10, 4, 4, rot, 1, 1, 1, a);
 
         Identifier modeTorchTexture = state.get(SUBTRACT_MODE) ? TEXTURE_TORCH_ON : TEXTURE_TORCH_OFF;
-        IntegratedCircuitScreen.renderPartialTexture(matrices, modeTorchTexture, x, y, 6, 1, 4, 4, rot, 1, 1, 1, a);
+        IntegratedCircuitScreen.renderPartialTexture(drawContext, modeTorchTexture, x, y, 6, 1, 4, 4, rot, 1, 1, 1, a);
     }
 
 
