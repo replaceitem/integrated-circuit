@@ -26,6 +26,7 @@ public class Components {
     public static final LeverComponent LEVER = register(new LeverComponent(11, new Component.Settings("lever").sounds(BlockSoundGroup.WOOD)));
     public static final ButtonComponent STONE_BUTTON = register(new ButtonComponent(12, new Component.Settings("stone_button"), false));
     public static final ButtonComponent WOODEN_BUTTON = register(new ButtonComponent(13, new Component.Settings("wooden_button").sounds(BlockSoundGroup.WOOD), true));
+    public static final LampComponent LAMP = register(new LampComponent(14, new Component.Settings("lamp").sounds(BlockSoundGroup.GLASS)));
 
 
     public static final ComponentState AIR_DEFAULT_STATE = AIR.getDefaultState();
