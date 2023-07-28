@@ -6,6 +6,7 @@ import me.shedaniel.autoconfig.ConfigHolder;
 import me.shedaniel.autoconfig.gui.registry.GuiRegistry;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.text.Text;
 
@@ -42,4 +43,7 @@ public class ClothConfigCompat {
         );
     }
 
+    public static Screen getConfigScreenFavtory(Screen parent) {
+        return AutoConfig.getConfigScreen(ClothConfig.class, parent).get();
+    }
 }
