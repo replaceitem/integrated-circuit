@@ -17,6 +17,9 @@
     ],
     "main": [
       "net.replaceitem.integratedcircuit.IntegratedCircuit"
+    ],
+    "modmenu": [
+      "net.replaceitem.integratedcircuit.client.ModMenuApiImpl"
     ]
   },
   "mixins": [

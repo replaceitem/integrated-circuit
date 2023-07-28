@@ -1,4 +1,11 @@
 {
   "block.integrated_circuit.integrated_circuit": "Integrated Circuit",
-  "integrated_circuit.empty_circuit": "Empty Integrated Circuit"
+  "integrated_circuit.empty_circuit": "Empty Integrated Circuit",
+  
+  "text.autoconfig.integrated_circuit.option.place_component": "Place Component",
+  "text.autoconfig.integrated_circuit.option.destroy_component": "Destroy Component",
+  "text.autoconfig.integrated_circuit.option.pick_component": "Pick Component",
+  "text.autoconfig.integrated_circuit.option.rotate_component": "Rotate Component",
+  "text.autoconfig.integrated_circuit.option.scroll_behaviour": "Scroll Behaviour",
+  "text.autoconfig.integrated_circuit.option.invert_scroll_direction": "Invert Scroll Direction"
 }

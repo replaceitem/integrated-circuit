@@ -4,6 +4,7 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.replaceitem.integratedcircuit.client.config.DefaultConfig;
 import net.replaceitem.integratedcircuit.network.ClientPacketHandler;
 import net.replaceitem.integratedcircuit.network.packet.ComponentUpdateS2CPacket;
 import net.replaceitem.integratedcircuit.network.packet.EditIntegratedCircuitS2CPacket;
@@ -14,5 +15,6 @@ public class IntegratedCircuitClient implements ClientModInitializer {
     public void onInitializeClient() {
         ClientPlayNetworking.registerGlobalReceiver(EditIntegratedCircuitS2CPacket.ID, ClientPacketHandler::receiveEditIntegratedCircuitPacket);
         ClientPlayNetworking.registerGlobalReceiver(ComponentUpdateS2CPacket.ID, ClientPacketHandler::receiveComponentUpdatePacket);
+        DefaultConfig.initialize();
     }
 }

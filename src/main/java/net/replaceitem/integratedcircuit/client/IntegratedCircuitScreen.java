@@ -5,6 +5,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.util.InputUtil;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.ColorHelper;
@@ -16,6 +17,7 @@ import net.replaceitem.integratedcircuit.circuit.Component;
 import net.replaceitem.integratedcircuit.circuit.Components;
 import net.replaceitem.integratedcircuit.circuit.components.FacingComponent;
 import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
+import net.replaceitem.integratedcircuit.client.config.DefaultConfig;
 import net.replaceitem.integratedcircuit.mixin.RedstoneWireBlockAccessor;
 import net.replaceitem.integratedcircuit.network.packet.FinishEditingC2SPacket;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
@@ -218,16 +220,6 @@ public class IntegratedCircuitScreen extends Screen {
         drawContext.getMatrices().pop();
     }
 
-    @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
-        if(this.cursorState != null && this.cursorState.getComponent() instanceof FacingComponent) {
-            this.cursorRotation = this.cursorRotation.rotated(-((int) amount));
-            this.cursorState = this.cursorState.with(FacingComponent.FACING, this.cursorRotation);
-            return true;
-        }
-        return false;
-    }
-
     private void selectPalette(int slot) {
         if(slot < 0 || slot >= PALETTE.length) return;
         selectedComponentSlot = slot;
@@ -252,41 +244,35 @@ public class IntegratedCircuitScreen extends Screen {
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if(this.client == null) return false;
         ComponentPos clickedPos = getComponentPosAt((int) mouseX, (int) mouseY);
-        boolean isUse = this.client.options.useKey.matchesMouse(button);
-        boolean isAttack = client.options.attackKey.matchesMouse(button);
-        boolean isPick = client.options.pickItemKey.matchesMouse(button);
 
-        if(isUse && mouseX >= this.x+PALETTE_X && mouseX < this.x+PALETTE_X+14) {
-            int slot = getPaletteSlotAt((int) mouseY);
-            if(slot >= 0 && slot < PALETTE.length) {
-                if(selectedComponentSlot != slot) {
-                    selectPalette(slot);
-                } else {
-                    deselectPalette();
-                }
-                return true;
-            }
-        }
 
-        if(isUse && circuit.isPortPos(clickedPos)) {
-            circuit.useComponent(clickedPos, this.client.player);
+        if(matchesMouse(DefaultConfig.config.getRotateKeybind(), button)) {
+            rotateComponent(1);
             return true;
         }
+        
+        
+        boolean isPlace = matchesMouse(DefaultConfig.config.getPlaceKeybind(), button);
+        
+        boolean isInCircuit = circuit.isInside(clickedPos);
+        startedDraggingInside = false;
+        if(isInCircuit) {
+            boolean isDestroy = !isPlace && matchesMouse(DefaultConfig.config.getDestroyKeybind(), button);
+            boolean isPick = !isDestroy &&  matchesMouse(DefaultConfig.config.getPickKeybind(), button);
 
-        startedDraggingInside = circuit.isInside(clickedPos);
-
-        if(startedDraggingInside && this.client != null) {
-            if(isUse) {
+            if(isPlace) {
                 ComponentState state = circuit.getComponentState(clickedPos);
                 if(state.isAir()) {
                     placeComponent(clickedPos);
+                    startedDraggingInside = true;
                 } else {
                     circuit.useComponent(clickedPos, this.client.player);
                 }
                 return true;
             }
-            if(isAttack) {
+            if(isDestroy) {
                 breakComponent(clickedPos);
+                startedDraggingInside = true;
                 return true;
             }
             if(isPick) {
@@ -295,7 +281,30 @@ public class IntegratedCircuitScreen extends Screen {
                 pickPalette(component);
                 return true;
             }
+        } else {
+            if(isPlace && circuit.isPortPos(clickedPos)) {
+                circuit.useComponent(clickedPos, this.client.player);
+                return true;
+            }
+            
+            if(mouseX >= this.x+PALETTE_X && mouseX < this.x+PALETTE_X+14) {
+                int slot = getPaletteSlotAt((int) mouseY);
+                if(slot >= 0 && slot < PALETTE.length) {
+                    if(selectedComponentSlot != slot) {
+                        selectPalette(slot);
+                    } else {
+                        deselectPalette();
+                    }
+                    return true;
+                }
+            }
         }
+        
+        
+        
+
+
+        
 
         return super.mouseClicked(mouseX, mouseY, button);
     }
@@ -318,12 +327,11 @@ public class IntegratedCircuitScreen extends Screen {
         if(startedDraggingInside && this.client != null) {
             ComponentPos mousePos = getComponentPosAt((int) mouseX, (int) mouseY);
             if(circuit.isInside(mousePos)) {
-                boolean isUse = this.client.options.useKey.matchesMouse(button);
-                boolean isAttack = client.options.attackKey.matchesMouse(button);
-                if(isUse && isAttack) return true;
-                if(isUse) {
+                boolean isPlace = matchesMouse(DefaultConfig.config.getPlaceKeybind(), button);
+                boolean isDestroy = !isPlace && matchesMouse(DefaultConfig.config.getDestroyKeybind(), button);
+                if(isPlace) {
                     placeComponent(mousePos);
-                } else if (isAttack) {
+                } else if (isDestroy) {
                     breakComponent(mousePos);
                 }
                 return true;
@@ -333,8 +341,33 @@ public class IntegratedCircuitScreen extends Screen {
         return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
     }
 
+
+    private void rotateComponent(int amount) {
+        if(this.cursorState != null && this.cursorState.getComponent() instanceof FacingComponent) {
+            this.cursorRotation = this.cursorRotation.rotated(amount);
+            this.cursorState = this.cursorState.with(FacingComponent.FACING, this.cursorRotation);
+        }
+    }
+
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
+        if(DefaultConfig.config.getInvertScrollDirection()) amount = -amount;
+        int intAmount = (int) amount;
+        switch (DefaultConfig.config.getScrollBehaviour()) {
+            case ROTATE -> rotateComponent(-intAmount);
+            case SELECT_COMPONENT -> selectPalette(selectedComponentSlot - intAmount);
+        }
+        return true;
+    }
+    
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if(matchesKey(DefaultConfig.config.getRotateKeybind(), keyCode, scanCode)) {
+            rotateComponent(1);
+            return true;
+        }
+        
+        
         if(keyCode >= GLFW.GLFW_KEY_0 && keyCode <= GLFW.GLFW_KEY_9) {
             if(keyCode == GLFW.GLFW_KEY_0) {
                 deselectPalette();
@@ -380,5 +413,16 @@ public class IntegratedCircuitScreen extends Screen {
         return new ComponentPos(getGridXAt(pixelX), getGridYAt(pixelY));
     }
 
+
+    public static boolean matchesMouse(InputUtil.Key key, int button) {
+        return key.getCategory() == InputUtil.Type.MOUSE && key.getCode() == button;
+    }
+
+    public static boolean matchesKey(InputUtil.Key key, int keyCode, int scanCode) {
+        if (keyCode == InputUtil.UNKNOWN_KEY.getCode()) {
+            return key.getCategory() == InputUtil.Type.SCANCODE && key.getCode() == scanCode;
+        }
+        return key.getCategory() == InputUtil.Type.KEYSYM && key.getCode() == keyCode;
+    }
     
 }
