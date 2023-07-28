@@ -4,6 +4,7 @@
   "package": "net.replaceitem.integratedcircuit.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "KeyBindingAccessor",
     "RedstoneWireBlockAccessor"
   ],
   "client": [

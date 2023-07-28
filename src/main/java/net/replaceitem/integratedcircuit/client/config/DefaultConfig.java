@@ -1,7 +1,9 @@
 package net.replaceitem.integratedcircuit.client.config;
 
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.InputUtil;
+import net.replaceitem.integratedcircuit.mixin.KeyBindingAccessor;
 import org.lwjgl.glfw.GLFW;
 
 
@@ -20,13 +22,13 @@ public class DefaultConfig {
     }
 
     public InputUtil.Key getPlaceKeybind() {
-        return InputUtil.Type.MOUSE.createFromCode(GLFW.GLFW_MOUSE_BUTTON_RIGHT);
+        return ((KeyBindingAccessor) MinecraftClient.getInstance().options.useKey).getBoundKey();
     }
     public InputUtil.Key getDestroyKeybind() {
-        return InputUtil.Type.MOUSE.createFromCode(GLFW.GLFW_MOUSE_BUTTON_LEFT);
+        return ((KeyBindingAccessor) MinecraftClient.getInstance().options.attackKey).getBoundKey();
     }
     public InputUtil.Key getPickKeybind() {
-        return InputUtil.Type.MOUSE.createFromCode(GLFW.GLFW_MOUSE_BUTTON_MIDDLE);
+        return ((KeyBindingAccessor) MinecraftClient.getInstance().options.pickItemKey).getBoundKey();
     }
     public InputUtil.Key getRotateKeybind() {
         return InputUtil.Type.KEYSYM.createFromCode(GLFW.GLFW_KEY_R);
