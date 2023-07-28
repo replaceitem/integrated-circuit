@@ -2,6 +2,7 @@
 
 [<img alt="Available for fabric" height="56" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/supported/fabric_vector.svg">](https://fabricmc.net/)
 [<img alt="Requires fabric api" height="56" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/requires/fabric-api_vector.svg">](https://modrinth.com/mod/fabric-api)
+[<img alt="Works best with cloth config" height="56" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@2/assets/cozy/requires/cloth-config-api_vector.svg">](https://modrinth.com/mod/cloth-config)
 [<img alt="See me on GitHub" height="56" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/social/github-singular_vector.svg">](https://github.com/replaceitem)
 [<img alt="Chat on Discord" height="56" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/social/discord-singular_vector.svg">](https://discord.gg/etTDQAVSgt)
 
@@ -32,6 +33,17 @@ Each port can be an input or output, which can be changed by clicking on it in t
 
 You can also copy circuits by putting an integrated circuit in the crafting grid,
 along with empty integrated circuits, similar to how books are copied.
+
+## Config
+
+When having [cloth-config](https://modrinth.com/mod/cloth-config) and [ModMenu](https://modrinth.com/mod/modmenu) installed,
+a config can be accessed from the Mod's modmenu page.
+Without cloth-config installed, the mod will use the vanilla keybindings and default config options.
+
+The config allows to customize the three main keybindings for placing, destroying and picking components.
+You can also change the scroll behaviour (rotate component, scroll palette) and inverse the scroll direction.
+
+## Credits
 
 Credits for the tweaked redstone component textures (levers, observers):
 
