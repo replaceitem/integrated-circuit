@@ -1,28 +1,12 @@
 package net.replaceitem.integratedcircuit.client.config;
 
-import com.google.gson.GsonBuilder;
-import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.ConfigData;
-import me.shedaniel.autoconfig.ConfigHolder;
 import me.shedaniel.autoconfig.annotation.Config;
 import me.shedaniel.autoconfig.annotation.ConfigEntry;
-import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import net.minecraft.client.util.InputUtil;
 
 @Config(name = "integrated_circuit")
 public class ClothConfig extends DefaultConfig implements ConfigData {
-
-    
-
-    public static ClothConfig create() {
-        KeySerializer.registerKeyCodeProvider(AutoConfig.getGuiRegistry(ClothConfig.class));
-        AutoConfig.register(ClothConfig.class, (definition, configClass) ->
-                new GsonConfigSerializer<>(definition, configClass, new GsonBuilder().setPrettyPrinting().registerTypeAdapter(InputUtil.Key.class, new KeySerializer()).create())
-        );
-        ConfigHolder<ClothConfig> configHolder = AutoConfig.getConfigHolder(ClothConfig.class);
-        return configHolder.getConfig();
-    }
-
     public InputUtil.Key place_component = super.getPlaceKeybind();
     @Override
     public InputUtil.Key getPlaceKeybind() {

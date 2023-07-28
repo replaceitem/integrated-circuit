@@ -7,13 +7,13 @@ import org.lwjgl.glfw.GLFW;
 
 public class DefaultConfig {
     
-    public static boolean enabled = false;
+    public static boolean clothConfigEnabled = false;
     public static DefaultConfig config;
     
     public static void initialize() {
-        enabled = FabricLoader.getInstance().isModLoaded("cloth-config2");
-        if(enabled) {
-            config = ClothConfig.create();
+        clothConfigEnabled = FabricLoader.getInstance().isModLoaded("cloth-config2");
+        if(clothConfigEnabled) {
+            config = ClothConfigCompat.createConfig();
         } else {
             config = new DefaultConfig();
         }
