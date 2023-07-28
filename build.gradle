@@ -73,6 +73,7 @@ jar {
 }
 
 
+import com.modrinth.minotaur.dependencies.DependencyType
 import com.modrinth.minotaur.dependencies.ModDependency
 
 modrinth {
@@ -85,6 +86,10 @@ modrinth {
     dependencies = [
             // fabric api
             new ModDependency("P7dR8mSH", "required"),
+            // cloth config optional for configuration
+            new ModDependency("9s6osm5g", DependencyType.OPTIONAL),
+            // modmenu optional for accessing the configuration
+            new ModDependency("mOgUt4GM", DependencyType.OPTIONAL)
     ]
     changelog = rootProject.file("changelog.md").text
     syncBodyFrom = rootProject.file("MODRINTH.md").text
