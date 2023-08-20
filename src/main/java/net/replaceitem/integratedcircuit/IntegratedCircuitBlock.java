@@ -146,10 +146,12 @@ public class IntegratedCircuitBlock extends HorizontalFacingBlock implements Blo
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
-        if(type != IntegratedCircuit.INTEGRATED_CIRCUIT_BLOCK_ENTITY) return null;
+        if(world.isClient() || type != IntegratedCircuit.INTEGRATED_CIRCUIT_BLOCK_ENTITY) return null;
         return (world1, pos, state1, blockEntity) -> {
-            IntegratedCircuitBlockEntity integratedCircuitBlockEntity = (IntegratedCircuitBlockEntity) blockEntity;
-            integratedCircuitBlockEntity.getCircuit().tick(world1, pos, state1, blockEntity);
+            if(!world.isChunkLoaded(pos) || !world.getBlockState(pos).isOf(IntegratedCircuit.INTEGRATED_CIRCUIT_BLOCK)) return;
+            if(blockEntity instanceof IntegratedCircuitBlockEntity integratedCircuitBlockEntity) {
+                integratedCircuitBlockEntity.getCircuit().tick(world1, pos, state1, blockEntity);
+            }
         };
     }
 }
