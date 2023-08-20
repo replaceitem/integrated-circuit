@@ -90,7 +90,7 @@ public class IntegratedCircuitBlock extends HorizontalFacingBlock implements Blo
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         if(!world.isClient() && player instanceof ServerPlayerEntity serverPlayerEntity && world.getBlockEntity(pos) instanceof IntegratedCircuitBlockEntity integratedCircuitBlockEntity) {
             integratedCircuitBlockEntity.addEditor(serverPlayerEntity);
-            new EditIntegratedCircuitS2CPacket(pos, integratedCircuitBlockEntity.getName(), integratedCircuitBlockEntity.circuit.toNbt()).send(serverPlayerEntity);
+            new EditIntegratedCircuitS2CPacket(pos, integratedCircuitBlockEntity.getName(), integratedCircuitBlockEntity.getCircuit().toNbt()).send(serverPlayerEntity);
         }
         return ActionResult.SUCCESS;
     }

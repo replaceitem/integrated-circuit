@@ -11,6 +11,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.replaceitem.integratedcircuit.circuit.ServerCircuit;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 import java.util.WeakHashMap;
@@ -20,20 +21,21 @@ public class IntegratedCircuitBlockEntity extends BlockEntity implements Nameabl
     protected WeakHashMap<ServerPlayerEntity, Object> editors;
 
     protected Text customName;
-    protected ServerCircuit circuit;
+    @Nullable
+    private ServerCircuit circuit;
     
     protected byte[] outputStrengths = new byte[] {0,0,0,0};
 
     public IntegratedCircuitBlockEntity(BlockPos pos, BlockState state) {
         super(IntegratedCircuit.INTEGRATED_CIRCUIT_BLOCK_ENTITY, pos, state);
-        this.circuit = new ServerCircuit(this);
-        this.editors = new WeakHashMap<>();
+        this.circuit = null; // save some memory by only initializing this once accessed to not waste this space on the client block entities
+        this.editors = new WeakHashMap<>(4);
     }
 
     @Override
     protected void writeNbt(NbtCompound nbt) {
         if(hasCustomName()) nbt.putString("CustomName", Text.Serializer.toJson(this.customName));
-        this.circuit.writeNbt(nbt);
+        this.getCircuit().writeNbt(nbt);
         nbt.putByteArray("outputStrengths", outputStrengths.clone());
         super.writeNbt(nbt);
     }
@@ -42,11 +44,9 @@ public class IntegratedCircuitBlockEntity extends BlockEntity implements Nameabl
     public void readNbt(NbtCompound nbt) {
         super.readNbt(nbt);
         this.customName = nbt.contains("CustomName", NbtElement.STRING_TYPE) ? Text.Serializer.fromJson(nbt.getString("CustomName")) : null;
-        this.circuit.readNbt(nbt);
+        getCircuit().readNbt(nbt);
         this.outputStrengths = nbt.getByteArray("outputStrengths");
     }
-
-
 
     public void setCustomName(Text name) {
         this.customName = name;
@@ -98,12 +98,20 @@ public class IntegratedCircuitBlockEntity extends BlockEntity implements Nameabl
     }
 
     public ServerCircuit getCircuit() {
+        if(circuit == null) {
+            this.circuit = new ServerCircuit(this);
+            if(this.hasWorld()) {
+                this.circuit.onWorldIsPresent();
+            }
+        }
         return circuit;
     }
 
     @Override
     public void setWorld(World world) {
         super.setWorld(world);
-        this.circuit.onWorldIsPresent();
+        if(this.circuit != null) {
+            this.circuit.onWorldIsPresent();
+        }
     }
 }
