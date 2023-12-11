@@ -1,23 +1,15 @@
 package net.replaceitem.integratedcircuit;
 
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockEntityProvider;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.HorizontalFacingBlock;
-import net.minecraft.block.RedstoneWireBlock;
-import net.minecraft.block.ShapeContext;
+import com.mojang.serialization.MapCodec;
+import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.block.piston.PistonBehavior;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.ActionResult;
@@ -35,12 +27,15 @@ import net.replaceitem.integratedcircuit.util.FlatDirection;
 import org.jetbrains.annotations.Nullable;
 
 public class IntegratedCircuitBlock extends HorizontalFacingBlock implements BlockEntityProvider {
+
+    public static final MapCodec<IntegratedCircuitBlock> CODEC = createCodec(IntegratedCircuitBlock::new);
+
     protected static final VoxelShape SHAPE = VoxelShapes.union(
             Block.createCuboidShape(0.0, 0.0, 0.0, 16.0, 2.0, 16.0),
             Block.createCuboidShape(4.0, 2.0, 4.0, 12.0, 3.0, 12.0)
     );
-    public IntegratedCircuitBlock() {
-        super(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).pistonBehavior(PistonBehavior.DESTROY));
+    public IntegratedCircuitBlock(Settings settings) {
+        super(settings);
         setDefaultState(this.getStateManager().getDefaultState().with(Properties.HORIZONTAL_FACING, Direction.NORTH));
     }
 
@@ -153,5 +148,10 @@ public class IntegratedCircuitBlock extends HorizontalFacingBlock implements Blo
                 integratedCircuitBlockEntity.getCircuit().tick(world1, pos, state1, blockEntity);
             }
         };
+    }
+
+    @Override
+    protected MapCodec<? extends HorizontalFacingBlock> getCodec() {
+        return CODEC;
     }
 }

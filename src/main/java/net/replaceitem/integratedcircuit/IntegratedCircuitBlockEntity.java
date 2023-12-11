@@ -34,7 +34,7 @@ public class IntegratedCircuitBlockEntity extends BlockEntity implements Nameabl
 
     @Override
     protected void writeNbt(NbtCompound nbt) {
-        if(hasCustomName()) nbt.putString("CustomName", Text.Serializer.toJson(this.customName));
+        if(hasCustomName()) nbt.putString("CustomName", Text.Serialization.toJsonString(this.customName));
         this.getCircuit().writeNbt(nbt);
         nbt.putByteArray("outputStrengths", outputStrengths.clone());
         super.writeNbt(nbt);
@@ -43,7 +43,7 @@ public class IntegratedCircuitBlockEntity extends BlockEntity implements Nameabl
     @Override
     public void readNbt(NbtCompound nbt) {
         super.readNbt(nbt);
-        this.customName = nbt.contains("CustomName", NbtElement.STRING_TYPE) ? Text.Serializer.fromJson(nbt.getString("CustomName")) : null;
+        this.customName = nbt.contains("CustomName", NbtElement.STRING_TYPE) ? Text.Serialization.fromJson(nbt.getString("CustomName")) : null;
         getCircuit().readNbt(nbt);
         this.outputStrengths = nbt.getByteArray("outputStrengths");
     }
