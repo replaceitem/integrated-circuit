@@ -123,7 +123,7 @@ public class TorchComponent extends FacingComponent {
 
     @Override
     public int getWeakRedstonePower(ComponentState state, Circuit circuit, ComponentPos pos, FlatDirection direction) {
-        return state.get(LIT) ? 15 : 0;
+        return state.get(LIT) && state.get(FACING) != direction ? 15 : 0;
     }
 
     @Override
