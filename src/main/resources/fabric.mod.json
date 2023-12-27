@@ -26,9 +26,9 @@
     "integrated-circuit.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.14.9",
-    "fabric": "*",
-    "minecraft": ">=1.20.2"
+    "minecraft": ">=1.20.3",
+    "fabricloader": ">=0.15.0",
+    "fabric": "*"
   },
   "custom": {
     "modmenu": {
