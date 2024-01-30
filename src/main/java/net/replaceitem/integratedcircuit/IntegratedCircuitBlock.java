@@ -7,33 +7,33 @@ import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
+import net.minecraft.loot.context.LootContextParameterSet;
+import net.minecraft.loot.context.LootContextParameters;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.DyeColor;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.util.shape.VoxelShapes;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldView;
+import net.minecraft.world.*;
+import net.replaceitem.integratedcircuit.circuit.Circuit;
 import net.replaceitem.integratedcircuit.network.packet.EditIntegratedCircuitS2CPacket;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 public class IntegratedCircuitBlock extends HorizontalFacingBlock implements BlockEntityProvider {
-
     public static final MapCodec<IntegratedCircuitBlock> CODEC = createCodec(IntegratedCircuitBlock::new);
+    protected static final VoxelShape SHAPE = Block.createCuboidShape(0.0, 0.0, 0.0, 16.0, 2.0, 16.0);
 
-    protected static final VoxelShape SHAPE = VoxelShapes.union(
-            Block.createCuboidShape(0.0, 0.0, 0.0, 16.0, 2.0, 16.0),
-            Block.createCuboidShape(4.0, 2.0, 4.0, 12.0, 3.0, 12.0)
-    );
     public IntegratedCircuitBlock(Settings settings) {
         super(settings);
         setDefaultState(this.getStateManager().getDefaultState().with(Properties.HORIZONTAL_FACING, Direction.NORTH));
@@ -60,8 +60,16 @@ public class IntegratedCircuitBlock extends HorizontalFacingBlock implements Blo
     }
 
     @Override
+    public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
+        if (direction == Direction.DOWN && !this.canPlaceAt(state, world, pos)) {
+            return Blocks.AIR.getDefaultState();
+        }
+        return super.getStateForNeighborUpdate(state, direction, neighborState, world, pos, neighborPos);
+    }
+
+    @Override
     public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean notify) {
-        updateTargets(world, pos, state);
+        this.updateTargets(world, pos, state);
     }
 
     @Override
@@ -98,44 +106,44 @@ public class IntegratedCircuitBlock extends HorizontalFacingBlock implements Blo
         this.updateTargets(world, pos, state);
     }
 
-    public int getInputPower(World world, BlockPos pos, FlatDirection dir) {
-        BlockState circuitBlockState = world.getBlockState(pos);
-        Direction facing = circuitBlockState.get(FACING);
-        Direction direction = dir.rotated(FlatDirection.fromVanillaDirection(facing).toInt()).getVanillaDirection();
+    @Override
+    public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+        return new IntegratedCircuitBlockEntity(pos, state);
+    }
+    public int getInputPower(RedstoneView view, BlockPos pos, FlatDirection dir) {
+        BlockState circuitBlockState = view.getBlockState(pos);
+        Direction direction = dir.toVanillaDirection(circuitBlockState);
+
         BlockPos blockPos = pos.offset(direction);
-        BlockState blockState = world.getBlockState(blockPos);
-        int i = world.getEmittedRedstonePower(blockPos, direction);
+        BlockState blockState = view.getBlockState(blockPos);
+
+        int i = view.getEmittedRedstonePower(blockPos, direction);
         if (i >= 15) {
             return i;
         }
         return Math.max(i, blockState.isOf(Blocks.REDSTONE_WIRE) ? blockState.get(RedstoneWireBlock.POWER) : 0);
     }
-
-    @Override
-    public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
-        return new IntegratedCircuitBlockEntity(pos, state);
+    public int getOutputPower(BlockView view, BlockPos pos, FlatDirection dir) {
+        if(view.getBlockEntity(pos) instanceof IntegratedCircuitBlockEntity integratedCircuitBlockEntity) {
+            return integratedCircuitBlockEntity.getOutputStrength(dir);
+        }
+        return 0;
     }
 
     @Override
     public boolean emitsRedstonePower(BlockState state) {
         return true;
     }
-
     @Override
     public int getStrongRedstonePower(BlockState state, BlockView world, BlockPos pos, Direction direction) {
         return state.getWeakRedstonePower(world, pos, direction);
     }
-
     @Override
-    public int getWeakRedstonePower(BlockState state, BlockView world, BlockPos pos, Direction direction) {
-        if(direction.getAxis().isVertical()) return 0;
-        BlockEntity blockEntity = world.getBlockEntity(pos);
-        if(blockEntity instanceof IntegratedCircuitBlockEntity integratedCircuitBlockEntity) {
-            Direction facing = state.get(FACING);
-            FlatDirection newDir = FlatDirection.fromVanillaDirection(direction).rotated(-FlatDirection.fromVanillaDirection(facing).toInt());
-            return integratedCircuitBlockEntity.getOutputStrength(newDir.getOpposite());
+    public int getWeakRedstonePower(BlockState state, BlockView view, BlockPos pos, Direction direction) {
+        if(direction.getAxis().isVertical()) {
+            return 0;
         }
-        return 0;
+        return getOutputPower(view, pos, FlatDirection.fromVanillaDirection(state, direction.getOpposite()));
     }
 
     @Nullable
@@ -143,7 +151,7 @@ public class IntegratedCircuitBlock extends HorizontalFacingBlock implements Blo
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
         if(world.isClient() || type != IntegratedCircuit.INTEGRATED_CIRCUIT_BLOCK_ENTITY) return null;
         return (world1, pos, state1, blockEntity) -> {
-            if(!world.isChunkLoaded(pos) || !world.getBlockState(pos).isOf(IntegratedCircuit.INTEGRATED_CIRCUIT_BLOCK)) return;
+            if(!world.isChunkLoaded(pos) || !world.getBlockState(pos).isIn(IntegratedCircuit.INTEGRATED_CIRCUITS_BLOCK_TAG)) return;
             if(blockEntity instanceof IntegratedCircuitBlockEntity integratedCircuitBlockEntity) {
                 integratedCircuitBlockEntity.getCircuit().tick(world1, pos, state1, blockEntity);
             }
@@ -151,7 +159,73 @@ public class IntegratedCircuitBlock extends HorizontalFacingBlock implements Blo
     }
 
     @Override
+    public BlockState onBreak(World world, BlockPos pos, BlockState state, PlayerEntity player) {
+        BlockEntity blockEntity = world.getBlockEntity(pos);
+        if (blockEntity instanceof IntegratedCircuitBlockEntity integratedCircuitBlockEntity) {
+            if (!world.isClient && player.isCreative() && !integratedCircuitBlockEntity.getCircuit().isEmpty()) {
+                dropStacks(state, world, pos, blockEntity, player, player.getMainHandStack());
+            }
+        }
+        return super.onBreak(world, pos, state, player);
+    }
+    @Override
+    public List<ItemStack> getDroppedStacks(BlockState state, LootContextParameterSet.Builder builder) {
+        List<ItemStack> list = super.getDroppedStacks(state, builder);
+
+        BlockEntity blockEntity = builder.getOptional(LootContextParameters.BLOCK_ENTITY);
+        if (blockEntity instanceof IntegratedCircuitBlockEntity integratedCircuitBlockEntity) {
+            Circuit circuit = integratedCircuitBlockEntity.getCircuit();
+
+            if(circuit.isEmpty()) { // If it's empty, get rid of the NBT data so it stacks with other empty circuits
+                for(ItemStack stack : list) {
+                    stack.removeSubNbt(BlockItem.BLOCK_ENTITY_TAG_KEY);
+                }
+            }
+        }
+        return list;
+    }
+
+    @Override
     protected MapCodec<? extends HorizontalFacingBlock> getCodec() {
         return CODEC;
+    }
+
+    public static IntegratedCircuitBlock fromColor(DyeColor color) {
+        switch (color) {
+            case WHITE:
+                return IntegratedCircuit.WHITE_INTEGRATED_CIRCUIT_BLOCK;
+            case ORANGE:
+                return IntegratedCircuit.ORANGE_INTEGRATED_CIRCUIT_BLOCK;
+            case MAGENTA:
+                return IntegratedCircuit.MAGENTA_INTEGRATED_CIRCUIT_BLOCK;
+            case LIGHT_BLUE:
+                return IntegratedCircuit.LIGHT_BLUE_INTEGRATED_CIRCUIT_BLOCK;
+            case YELLOW:
+                return IntegratedCircuit.YELLOW_INTEGRATED_CIRCUIT_BLOCK;
+            case LIME:
+                return IntegratedCircuit.LIME_INTEGRATED_CIRCUIT_BLOCK;
+            case PINK:
+                return IntegratedCircuit.PINK_INTEGRATED_CIRCUIT_BLOCK;
+            case GRAY:
+                return IntegratedCircuit.GRAY_INTEGRATED_CIRCUIT_BLOCK;
+            case LIGHT_GRAY:
+                return IntegratedCircuit.LIGHT_GRAY_INTEGRATED_CIRCUIT_BLOCK;
+            case CYAN:
+                return IntegratedCircuit.CYAN_INTEGRATED_CIRCUIT_BLOCK;
+            case PURPLE:
+                return IntegratedCircuit.PURPLE_INTEGRATED_CIRCUIT_BLOCK;
+            case BLUE:
+                return IntegratedCircuit.BLUE_INTEGRATED_CIRCUIT_BLOCK;
+            case BROWN:
+                return IntegratedCircuit.BROWN_INTEGRATED_CIRCUIT_BLOCK;
+            case GREEN:
+                return IntegratedCircuit.GREEN_INTEGRATED_CIRCUIT_BLOCK;
+            case RED:
+                return IntegratedCircuit.RED_INTEGRATED_CIRCUIT_BLOCK;
+            case BLACK:
+                return IntegratedCircuit.BLACK_INTEGRATED_CIRCUIT_BLOCK;
+            default:
+                return IntegratedCircuit.INTEGRATED_CIRCUIT_BLOCK;
+        }
     }
 }

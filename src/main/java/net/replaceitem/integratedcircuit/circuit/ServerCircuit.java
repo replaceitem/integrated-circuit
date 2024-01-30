@@ -27,7 +27,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Set;
 
 public class ServerCircuit extends Circuit {
-
     protected final CircuitTickScheduler circuitTickScheduler = new CircuitTickScheduler();
     
     protected final IntegratedCircuitBlockEntity blockEntity;
@@ -47,23 +46,26 @@ public class ServerCircuit extends Circuit {
     }
     
     public void tick(World world, BlockPos pos, BlockState state, BlockEntity blockEntity) {
+        IntegratedCircuitBlockEntity integratedCircuitBlockEntity = (IntegratedCircuitBlockEntity) blockEntity;
+
         for (FlatDirection direction : FlatDirection.VALUES) {
             int newPower = ((IntegratedCircuitBlock) state.getBlock()).getInputPower(world, pos, direction);
             Components.PORT.assignExternalPower(this, PORTS_GRID_POS[direction.toInt()], this.ports[direction.toInt()], newPower);
         }
         this.circuitTickScheduler.tick(this.getTime(), 65536, this::tickBlock);
 
-        IntegratedCircuitBlockEntity integratedCircuitBlockEntity = (IntegratedCircuitBlockEntity) blockEntity;
         boolean updateNeeded = false;
         for (FlatDirection direction : FlatDirection.VALUES) {
             int oldPower = integratedCircuitBlockEntity.getOutputStrength(direction);
             int newPower = Components.PORT.getInternalPower(this, PORTS_GRID_POS[direction.toInt()], this.ports[direction.toInt()]);
-            integratedCircuitBlockEntity.setOutputStrength(direction, newPower);
-            if(oldPower != newPower) updateNeeded = true;
+
+            if(oldPower != newPower) {
+                integratedCircuitBlockEntity.setOutputStrength(world, state, direction, newPower);
+                updateNeeded = true;
+            }
         }
         
         if(updateNeeded) {
-            //world.setBlockState(pos, state, Block.NOTIFY_ALL);
             state.onBlockAdded(world, pos, state, true);
         }
         // Doing this as the end of each tick, since markDirty is not that cheap, since it makes comparator updates.
@@ -89,12 +91,6 @@ public class ServerCircuit extends Circuit {
         return circuit;
     }
 
-    @Override
-    public void writeNbt(NbtCompound nbt) {
-        super.writeNbt(nbt);
-        nbt.put("tickScheduler", this.circuitTickScheduler.toNbt(this.getTime()));
-    }
-
     private NbtList tickSchedulerNbtBuffer;
 
     @Override
@@ -107,6 +103,11 @@ public class ServerCircuit extends Circuit {
             // this has to be stored until the world is present, since the world time is needed to get the correct triggerTime for scheduled ticks
             this.tickSchedulerNbtBuffer = tickSchedulerNbt;
         }
+    }
+    @Override
+    public void writeNbt(NbtCompound nbt) {
+        super.writeNbt(nbt);
+        nbt.put("tickScheduler", this.circuitTickScheduler.toNbt(this.getTime()));
     }
 
     public void onWorldIsPresent() {

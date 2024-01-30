@@ -1,10 +1,11 @@
 package net.replaceitem.integratedcircuit.util;
 
+import net.minecraft.block.BlockState;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3i;
+import net.replaceitem.integratedcircuit.IntegratedCircuitBlock;
 
 public enum FlatDirection {
-
     NORTH(0, 0, -1, Axis.Y, Direction.NORTH),
     EAST(1, 1, 0, Axis.X, Direction.EAST),
     SOUTH(2, 0, 1, Axis.Y, Direction.SOUTH),
@@ -29,27 +30,36 @@ public enum FlatDirection {
     public int toInt() {
         return this.index;
     }
-
     public Vec3i getOffset() {
         return offset;
     }
-
-    public FlatDirection getOpposite() {
-        return this.rotated(2);
-    }
-    
     public Axis getAxis() {
         return axis;
-    }
-
-    public Direction getVanillaDirection() {
-        return vanillaDirection;
     }
 
     public FlatDirection rotated(int times) {
         return VALUES[Math.floorMod(this.toInt()+times,4)];
     }
-    
+    public FlatDirection rotatedCounterclockwise(int times) {
+        return this.rotated(-times);
+    }
+    public FlatDirection getOpposite() {
+        return this.rotated(2);
+    }
+
+    public Direction toVanillaDirection() {
+        return vanillaDirection;
+    }
+	public Direction toVanillaDirection(Direction facing) {
+		return this.rotated(FlatDirection.fromVanillaDirection(facing).toInt()).toVanillaDirection();
+	}
+	public Direction toVanillaDirection(BlockState circuit) {
+		if(circuit.contains(IntegratedCircuitBlock.FACING)) {
+			return this.toVanillaDirection(circuit.get(IntegratedCircuitBlock.FACING));
+		}
+		return this.toVanillaDirection();
+	}
+
     public static FlatDirection fromVanillaDirection(Direction direction) {
         return switch (direction) {
             case DOWN, UP -> null;
@@ -59,11 +69,20 @@ public enum FlatDirection {
             case EAST -> EAST;
         };
     }
+    public static FlatDirection fromVanillaDirection(Direction facing, Direction direction) {
+        return FlatDirection.fromVanillaDirection(direction).rotatedCounterclockwise(FlatDirection.fromVanillaDirection(facing).toInt());
+    }
+    public static FlatDirection fromVanillaDirection(BlockState circuit, Direction direction) {
+        if(circuit.contains(IntegratedCircuitBlock.FACING)) {
+            return FlatDirection.fromVanillaDirection(circuit.get(IntegratedCircuitBlock.FACING), direction);
+        }
+        return FlatDirection.fromVanillaDirection(direction);
+    }
 
     public static FlatDirection[] forAxis(Axis axis) {
         return axis == Axis.X ? VALUES_X : VALUES_Y;
     }
-    
+
     public enum Axis {
         X, Y
     }

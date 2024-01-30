@@ -18,81 +18,102 @@ public class IntegratedCircuitCloningRecipe extends SpecialCraftingRecipe {
     @Override
     public boolean matches(RecipeInputInventory inventory, World world) {
         int sourceIndex = -1;
-        int destinationIndex = -1;
+        int destIndex = -1;
+
         for (int i = 0; i < inventory.size(); i++) {
             ItemStack stack = inventory.getStack(i);
-            if(stack.isEmpty()) continue;
-            if(!stack.isOf(IntegratedCircuit.INTEGRATED_CIRCUIT_ITEM)) return false;
-            if(sourceIndex == -1 && stack.getCount() == 1 && stack.hasNbt() && stack.getNbt().contains(BlockItem.BLOCK_ENTITY_TAG_KEY)) {
+
+            if(stack.isEmpty()) {
+                continue;
+            }
+            if(!(stack.getItem() instanceof IntegratedCircuitItem)) {
+                return false;
+            }
+
+            if(stack.hasNbt() && stack.getNbt().contains(BlockItem.BLOCK_ENTITY_TAG_KEY)) {
+                if(sourceIndex != -1) { // Only one should have NBT data
+                    return false;
+                }
                 sourceIndex = i;
-                continue;
+            } else if(!stack.hasNbt()) {
+               if(destIndex != -1) {
+                   return false;
+               }
+               destIndex = i;
             }
-            if(destinationIndex == -1 && !stack.hasNbt()) {
-                destinationIndex = i;
-                continue;
-            }
-            return false;
         }
-        
-        return sourceIndex != -1 && destinationIndex != -1;
+
+        return sourceIndex != -1 && destIndex != -1;
     }
 
     @Override
-    public ItemStack craft(RecipeInputInventory craftingInventory, DynamicRegistryManager registryManager) {
+    public ItemStack craft(RecipeInputInventory inventory, DynamicRegistryManager registryManager) {
         int sourceIndex = -1;
-        int destinationIndex = -1;
-        for (int i = 0; i < craftingInventory.size(); i++) {
-            ItemStack stack = craftingInventory.getStack(i);
-            if(stack.isEmpty()) continue;
-            if(!stack.isOf(IntegratedCircuit.INTEGRATED_CIRCUIT_ITEM)) return ItemStack.EMPTY;
-            if(sourceIndex == -1 && stack.getCount() == 1 && stack.hasNbt() && stack.getNbt().contains(BlockItem.BLOCK_ENTITY_TAG_KEY)) {
+        int destIndex = -1;
+
+        for (int i = 0; i < inventory.size(); i++) {
+            ItemStack stack = inventory.getStack(i);
+
+            if(stack.isEmpty()) {
+                continue;
+            }
+            if(!(stack.getItem() instanceof IntegratedCircuitItem)) {
+                return ItemStack.EMPTY;
+            }
+
+            if(stack.hasNbt() && stack.getNbt().contains(BlockItem.BLOCK_ENTITY_TAG_KEY)) {
+                if(sourceIndex != -1) { // Only one should have NBT data
+                    return ItemStack.EMPTY;
+                }
                 sourceIndex = i;
-                continue;
+            } else if(!stack.hasNbt()) {
+                if(destIndex != -1) {
+                    return ItemStack.EMPTY;
+                }
+                destIndex = i;
             }
-            if(destinationIndex == -1 && !stack.hasNbt()) {
-                destinationIndex = i;
-                continue;
-            }
-            return ItemStack.EMPTY;
         }
-        ItemStack sourceStack = craftingInventory.getStack(sourceIndex);
-        ItemStack craftedStack = IntegratedCircuit.INTEGRATED_CIRCUIT_ITEM.getDefaultStack();
-        craftedStack.setNbt(sourceStack.getNbt().copy());
-        return craftedStack;
+
+        if(sourceIndex != -1 && destIndex != -1) {
+            ItemStack source = inventory.getStack(sourceIndex);
+            ItemStack dest = inventory.getStack(destIndex);
+
+            ItemStack craftedStack = dest.copyWithCount(1);
+            craftedStack.setNbt(source.getNbt());
+            return craftedStack;
+        }
+        return ItemStack.EMPTY;
     }
 
     @Override
-    public DefaultedList<ItemStack> getRemainder(RecipeInputInventory craftingInventory) {
-        DefaultedList<ItemStack> remainder = DefaultedList.ofSize(craftingInventory.size(), ItemStack.EMPTY);
-        int sourceIndex = -1;
-        int destinationIndex = -1;
-        for (int i = 0; i < craftingInventory.size(); i++) {
-            ItemStack stack = craftingInventory.getStack(i);
-            if(stack.isEmpty()) continue;
-            if(!stack.isOf(IntegratedCircuit.INTEGRATED_CIRCUIT_ITEM)) return remainder;
-            if(sourceIndex == -1 && stack.getCount() == 1 && stack.hasNbt() && stack.getNbt().contains(BlockItem.BLOCK_ENTITY_TAG_KEY)) {
-                sourceIndex = i;
+    public DefaultedList<ItemStack> getRemainder(RecipeInputInventory inventory) {
+        DefaultedList<ItemStack> remainder = DefaultedList.ofSize(inventory.size(), ItemStack.EMPTY);
+
+        for (int i = 0; i < inventory.size(); i++) {
+            ItemStack stack = inventory.getStack(i);
+
+            if(stack.isEmpty()) {
                 continue;
             }
-            if(destinationIndex == -1 && !stack.hasNbt()) {
-                destinationIndex = i;
-                continue;
+            if(!(stack.getItem() instanceof IntegratedCircuitItem)) {
+                return remainder;
             }
-            return remainder;
+
+            if(stack.hasNbt() && stack.getNbt().contains(BlockItem.BLOCK_ENTITY_TAG_KEY)) {
+                remainder.set(i, stack.copyWithCount(1));
+                return remainder;
+            }
         }
-        
-        remainder.set(sourceIndex, craftingInventory.getStack(sourceIndex).copy());
-        
         return remainder;
     }
 
     @Override
-    public RecipeSerializer<?> getSerializer() {
-        return IntegratedCircuit.CIRCUIT_CLONING;
+    public boolean fits(int width, int height) {
+        return width * height >= 2;
     }
 
     @Override
-    public boolean fits(int width, int height) {
-        return width >= 3 && height >= 3;
+    public RecipeSerializer<?> getSerializer() {
+        return IntegratedCircuit.CIRCUIT_CLONING_RECIPE;
     }
 }
