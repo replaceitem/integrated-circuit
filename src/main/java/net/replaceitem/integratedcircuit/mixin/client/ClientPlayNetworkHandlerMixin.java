@@ -1,5 +1,7 @@
 package net.replaceitem.integratedcircuit.mixin.client;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
@@ -16,7 +18,8 @@ public abstract class ClientPlayNetworkHandlerMixin {
     private void onBlockEntityUpdate(BlockEntityUpdateS2CPacket blockEntityUpdateS2CPacket, BlockEntity blockEntity, CallbackInfo ci) {
         if(blockEntity instanceof IntegratedCircuitBlockEntity && blockEntity.getWorld() != null) {
             BlockPos pos = blockEntity.getPos();
-			((ClientWorldAccessor)blockEntity.getWorld()).getWorldRenderer().scheduleBlockRenders(pos.getX(), pos.getY(), pos.getZ(), pos.getX(), pos.getY(), pos.getZ());
+			BlockState state = blockEntity.getWorld().getBlockState(pos);
+			blockEntity.getWorld().updateListeners(pos, state, state, Block.NOTIFY_LISTENERS);
         }
     }
 }

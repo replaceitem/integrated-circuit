@@ -9,8 +9,7 @@
     "BlockRenderViewMixin"
   ],
   "client": [
-    "client.ClientPlayNetworkHandlerMixin",
-    "client.ClientWorldAccessor"
+    "client.ClientPlayNetworkHandlerMixin"
   ],
   "injectors": {
     "defaultRequire": 1
