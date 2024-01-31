@@ -131,13 +131,10 @@ public class IntegratedCircuit implements ModInitializer {
         Registry.register(Registries.ITEM, new IntegratedCircuitIdentifier("black_integrated_circuit"), BLACK_INTEGRATED_CIRCUIT_ITEM);
 
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.REDSTONE).register(entries -> {
-			entries.addAfter(Items.COMPARATOR, INTEGRATED_CIRCUIT_ITEM);
-        });
-		ItemGroupEvents.modifyEntriesEvent(ItemGroups.COLORED_BLOCKS).register(entries -> {
 			for(Item item : INTEGRATED_CIRCUIT_ITEMS) {
 				entries.add(item);
 			}
-		});
+        });
 
         Registry.register(Registries.BLOCK_ENTITY_TYPE, new IntegratedCircuitIdentifier("integrated_circuit_block_entity"), INTEGRATED_CIRCUIT_BLOCK_ENTITY);
 
