@@ -50,15 +50,15 @@ public enum FlatDirection {
     public Direction toVanillaDirection() {
         return vanillaDirection;
     }
-	public Direction toVanillaDirection(Direction facing) {
-		return this.rotated(FlatDirection.fromVanillaDirection(facing).toInt()).toVanillaDirection();
-	}
-	public Direction toVanillaDirection(BlockState circuit) {
-		if(circuit.contains(IntegratedCircuitBlock.FACING)) {
-			return this.toVanillaDirection(circuit.get(IntegratedCircuitBlock.FACING));
-		}
-		return this.toVanillaDirection();
-	}
+    public Direction toVanillaDirection(Direction facing) {
+        return this.rotated(FlatDirection.fromVanillaDirection(facing).toInt()).toVanillaDirection();
+    }
+    public Direction toVanillaDirection(BlockState circuit) {
+        if(circuit.contains(IntegratedCircuitBlock.FACING)) {
+            return this.toVanillaDirection(circuit.get(IntegratedCircuitBlock.FACING));
+        }
+        return this.toVanillaDirection();
+    }
 
     public static FlatDirection fromVanillaDirection(Direction direction) {
         return switch (direction) {

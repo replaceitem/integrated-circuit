@@ -18,8 +18,8 @@ public abstract class ClientPlayNetworkHandlerMixin {
     private void onBlockEntityUpdate(BlockEntityUpdateS2CPacket blockEntityUpdateS2CPacket, BlockEntity blockEntity, CallbackInfo ci) {
         if(blockEntity instanceof IntegratedCircuitBlockEntity && blockEntity.getWorld() != null) {
             BlockPos pos = blockEntity.getPos();
-			BlockState state = blockEntity.getWorld().getBlockState(pos);
-			blockEntity.getWorld().updateListeners(pos, state, state, Block.NOTIFY_LISTENERS);
+            BlockState state = blockEntity.getWorld().getBlockState(pos);
+            blockEntity.getWorld().updateListeners(pos, state, state, Block.NOTIFY_LISTENERS);
         }
     }
 }

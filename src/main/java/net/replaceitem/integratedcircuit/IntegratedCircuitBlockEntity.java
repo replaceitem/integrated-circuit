@@ -92,8 +92,8 @@ public class IntegratedCircuitBlockEntity extends BlockEntity implements Nameabl
 
     public void setOutputStrength(World world, BlockState state, FlatDirection direction, int power) {
         this.outputStrengths[direction.toInt()] = (byte) power;
-		this.markDirty();
-		world.updateListeners(pos, state, state, Block.NOTIFY_LISTENERS);
+        this.markDirty();
+        world.updateListeners(pos, state, state, Block.NOTIFY_LISTENERS);
     }
     public int getOutputStrength(FlatDirection direction) {
         return this.outputStrengths[direction.toInt()];

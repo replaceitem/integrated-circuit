@@ -162,25 +162,25 @@ public abstract class Circuit implements CircuitAccess {
         int componentDataSize = SIZE*SIZE;
         int[] componentsData = new int[MathHelper.ceilDiv(componentDataSize, 2)];
         for (int i = 0; i < componentDataSize; i++) {
-			int shift = (i % 2 == 0) ? 16 : 0;
-			componentsData[i/2] |= (components[i%SIZE][i/SIZE].encode() & 0xFFFF) << shift;
-		}
+            int shift = (i % 2 == 0) ? 16 : 0;
+            componentsData[i/2] |= (components[i%SIZE][i/SIZE].encode() & 0xFFFF) << shift;
+        }
         nbt.putIntArray("components", componentsData);
     }
 
     public void readNbt(NbtCompound nbt) {
-		if(nbt.contains("ports", NbtElement.BYTE_ARRAY_TYPE)) {
-			byte[] portBytes = nbt.getByteArray("ports");
+        if(nbt.contains("ports", NbtElement.BYTE_ARRAY_TYPE)) {
+            byte[] portBytes = nbt.getByteArray("ports");
 
-			if(portBytes.length != ports.length)
-				throw new IllegalArgumentException("Invalid ports length received");
-			for (int i = 0; i < portBytes.length; i++) {
-				ports[i] = Components.PORT.getState(portBytes[i]);
-			}
-		}
+            if(portBytes.length != ports.length)
+                throw new IllegalArgumentException("Invalid ports length received");
+            for (int i = 0; i < portBytes.length; i++) {
+                ports[i] = Components.PORT.getState(portBytes[i]);
+            }
+        }
         if(nbt.contains("components", NbtElement.INT_ARRAY_TYPE)) {
-			int componentDataSize = SIZE*SIZE;
-			int[] componentData = nbt.getIntArray("components");
+            int componentDataSize = SIZE*SIZE;
+            int[] componentData = nbt.getIntArray("components");
 
             if (componentData.length != MathHelper.ceilDiv(componentDataSize, 2))
                 throw new IllegalArgumentException("Invalid componentData length received");
