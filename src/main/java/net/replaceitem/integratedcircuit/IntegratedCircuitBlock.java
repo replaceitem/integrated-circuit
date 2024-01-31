@@ -61,9 +61,8 @@ public class IntegratedCircuitBlock extends HorizontalFacingBlock implements Blo
 
     @Override
     public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
-        if (direction == Direction.DOWN && !this.canPlaceAt(state, world, pos)) {
+        if (direction == Direction.DOWN && !this.canPlaceAt(state, world, pos))
             return Blocks.AIR.getDefaultState();
-        }
         return super.getStateForNeighborUpdate(state, direction, neighborState, world, pos, neighborPos);
     }
 
@@ -74,9 +73,7 @@ public class IntegratedCircuitBlock extends HorizontalFacingBlock implements Blo
 
     @Override
     public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
-        if (moved || state.isOf(newState.getBlock())) {
-            return;
-        }
+        if (moved || state.isOf(newState.getBlock())) return;
         super.onStateReplaced(state, world, pos, newState, moved);
         this.updateTargets(world, pos, state);
     }
@@ -100,9 +97,8 @@ public class IntegratedCircuitBlock extends HorizontalFacingBlock implements Blo
 
     @Override
     public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
-        if (itemStack.hasCustomName() && world.getBlockEntity(pos) instanceof IntegratedCircuitBlockEntity integratedCircuitBlockEntity) {
+        if (itemStack.hasCustomName() && world.getBlockEntity(pos) instanceof IntegratedCircuitBlockEntity integratedCircuitBlockEntity)
             integratedCircuitBlockEntity.setCustomName(itemStack.getName());
-        }
         this.updateTargets(world, pos, state);
     }
 
@@ -124,9 +120,8 @@ public class IntegratedCircuitBlock extends HorizontalFacingBlock implements Blo
         return Math.max(i, blockState.isOf(Blocks.REDSTONE_WIRE) ? blockState.get(RedstoneWireBlock.POWER) : 0);
     }
     public int getOutputPower(BlockView view, BlockPos pos, FlatDirection dir) {
-        if(view.getBlockEntity(pos) instanceof IntegratedCircuitBlockEntity integratedCircuitBlockEntity) {
+        if(view.getBlockEntity(pos) instanceof IntegratedCircuitBlockEntity integratedCircuitBlockEntity)
             return integratedCircuitBlockEntity.getOutputStrength(dir);
-        }
         return 0;
     }
 
@@ -140,9 +135,7 @@ public class IntegratedCircuitBlock extends HorizontalFacingBlock implements Blo
     }
     @Override
     public int getWeakRedstonePower(BlockState state, BlockView view, BlockPos pos, Direction direction) {
-        if(direction.getAxis().isVertical()) {
-            return 0;
-        }
+        if(direction.getAxis().isVertical()) return 0;
         return getOutputPower(view, pos, FlatDirection.fromVanillaDirection(state, direction.getOpposite()));
     }
 
@@ -191,41 +184,24 @@ public class IntegratedCircuitBlock extends HorizontalFacingBlock implements Blo
     }
 
     public static IntegratedCircuitBlock fromColor(DyeColor color) {
-        switch (color) {
-            case WHITE:
-                return IntegratedCircuit.WHITE_INTEGRATED_CIRCUIT_BLOCK;
-            case ORANGE:
-                return IntegratedCircuit.ORANGE_INTEGRATED_CIRCUIT_BLOCK;
-            case MAGENTA:
-                return IntegratedCircuit.MAGENTA_INTEGRATED_CIRCUIT_BLOCK;
-            case LIGHT_BLUE:
-                return IntegratedCircuit.LIGHT_BLUE_INTEGRATED_CIRCUIT_BLOCK;
-            case YELLOW:
-                return IntegratedCircuit.YELLOW_INTEGRATED_CIRCUIT_BLOCK;
-            case LIME:
-                return IntegratedCircuit.LIME_INTEGRATED_CIRCUIT_BLOCK;
-            case PINK:
-                return IntegratedCircuit.PINK_INTEGRATED_CIRCUIT_BLOCK;
-            case GRAY:
-                return IntegratedCircuit.GRAY_INTEGRATED_CIRCUIT_BLOCK;
-            case LIGHT_GRAY:
-                return IntegratedCircuit.LIGHT_GRAY_INTEGRATED_CIRCUIT_BLOCK;
-            case CYAN:
-                return IntegratedCircuit.CYAN_INTEGRATED_CIRCUIT_BLOCK;
-            case PURPLE:
-                return IntegratedCircuit.PURPLE_INTEGRATED_CIRCUIT_BLOCK;
-            case BLUE:
-                return IntegratedCircuit.BLUE_INTEGRATED_CIRCUIT_BLOCK;
-            case BROWN:
-                return IntegratedCircuit.BROWN_INTEGRATED_CIRCUIT_BLOCK;
-            case GREEN:
-                return IntegratedCircuit.GREEN_INTEGRATED_CIRCUIT_BLOCK;
-            case RED:
-                return IntegratedCircuit.RED_INTEGRATED_CIRCUIT_BLOCK;
-            case BLACK:
-                return IntegratedCircuit.BLACK_INTEGRATED_CIRCUIT_BLOCK;
-            default:
-                return IntegratedCircuit.INTEGRATED_CIRCUIT_BLOCK;
-        }
+        return switch (color) {
+            case WHITE -> IntegratedCircuit.WHITE_INTEGRATED_CIRCUIT_BLOCK;
+            case ORANGE -> IntegratedCircuit.ORANGE_INTEGRATED_CIRCUIT_BLOCK;
+            case MAGENTA -> IntegratedCircuit.MAGENTA_INTEGRATED_CIRCUIT_BLOCK;
+            case LIGHT_BLUE -> IntegratedCircuit.LIGHT_BLUE_INTEGRATED_CIRCUIT_BLOCK;
+            case YELLOW -> IntegratedCircuit.YELLOW_INTEGRATED_CIRCUIT_BLOCK;
+            case LIME -> IntegratedCircuit.LIME_INTEGRATED_CIRCUIT_BLOCK;
+            case PINK -> IntegratedCircuit.PINK_INTEGRATED_CIRCUIT_BLOCK;
+            case GRAY -> IntegratedCircuit.GRAY_INTEGRATED_CIRCUIT_BLOCK;
+            case LIGHT_GRAY -> IntegratedCircuit.LIGHT_GRAY_INTEGRATED_CIRCUIT_BLOCK;
+            case CYAN -> IntegratedCircuit.CYAN_INTEGRATED_CIRCUIT_BLOCK;
+            case PURPLE -> IntegratedCircuit.PURPLE_INTEGRATED_CIRCUIT_BLOCK;
+            case BLUE -> IntegratedCircuit.BLUE_INTEGRATED_CIRCUIT_BLOCK;
+            case BROWN -> IntegratedCircuit.BROWN_INTEGRATED_CIRCUIT_BLOCK;
+            case GREEN -> IntegratedCircuit.GREEN_INTEGRATED_CIRCUIT_BLOCK;
+            case RED -> IntegratedCircuit.RED_INTEGRATED_CIRCUIT_BLOCK;
+            case BLACK -> IntegratedCircuit.BLACK_INTEGRATED_CIRCUIT_BLOCK;
+            default -> IntegratedCircuit.INTEGRATED_CIRCUIT_BLOCK;
+        };
     }
 }

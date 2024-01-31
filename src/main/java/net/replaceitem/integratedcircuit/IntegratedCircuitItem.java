@@ -12,9 +12,7 @@ public class IntegratedCircuitItem extends BlockItem {
 
     @Override
     public Text getName(ItemStack stack) {
-        if(stack.hasNbt()) {
-            return super.getName(stack);
-        }
+        if(stack.hasNbt()) return super.getName(stack);
         return Text.translatable(this.getTranslationKey() + ".empty");
     }
 }

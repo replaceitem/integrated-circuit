@@ -23,22 +23,14 @@ public class IntegratedCircuitCloningRecipe extends SpecialCraftingRecipe {
         for (int i = 0; i < inventory.size(); i++) {
             ItemStack stack = inventory.getStack(i);
 
-            if(stack.isEmpty()) {
-                continue;
-            }
-            if(!(stack.getItem() instanceof IntegratedCircuitItem)) {
-                return false;
-            }
+            if(stack.isEmpty()) continue;
+            if(!(stack.getItem() instanceof IntegratedCircuitItem)) return false;
 
             if(stack.hasNbt() && stack.getNbt().contains(BlockItem.BLOCK_ENTITY_TAG_KEY)) {
-                if(sourceIndex != -1) { // Only one should have NBT data
-                    return false;
-                }
+                if(sourceIndex != -1) return false;// Only one should have NBT data
                 sourceIndex = i;
             } else if(!stack.hasNbt()) {
-               if(destIndex != -1) {
-                   return false;
-               }
+               if(destIndex != -1) return false;
                destIndex = i;
             }
         }
@@ -54,22 +46,14 @@ public class IntegratedCircuitCloningRecipe extends SpecialCraftingRecipe {
         for (int i = 0; i < inventory.size(); i++) {
             ItemStack stack = inventory.getStack(i);
 
-            if(stack.isEmpty()) {
-                continue;
-            }
-            if(!(stack.getItem() instanceof IntegratedCircuitItem)) {
-                return ItemStack.EMPTY;
-            }
+            if(stack.isEmpty()) continue;
+            if(!(stack.getItem() instanceof IntegratedCircuitItem)) return ItemStack.EMPTY;
 
             if(stack.hasNbt() && stack.getNbt().contains(BlockItem.BLOCK_ENTITY_TAG_KEY)) {
-                if(sourceIndex != -1) { // Only one should have NBT data
-                    return ItemStack.EMPTY;
-                }
+                if(sourceIndex != -1) return ItemStack.EMPTY; // Only one should have NBT data
                 sourceIndex = i;
             } else if(!stack.hasNbt()) {
-                if(destIndex != -1) {
-                    return ItemStack.EMPTY;
-                }
+                if(destIndex != -1) return ItemStack.EMPTY;
                 destIndex = i;
             }
         }
@@ -92,12 +76,8 @@ public class IntegratedCircuitCloningRecipe extends SpecialCraftingRecipe {
         for (int i = 0; i < inventory.size(); i++) {
             ItemStack stack = inventory.getStack(i);
 
-            if(stack.isEmpty()) {
-                continue;
-            }
-            if(!(stack.getItem() instanceof IntegratedCircuitItem)) {
-                return remainder;
-            }
+            if(stack.isEmpty()) continue;
+            if(!(stack.getItem() instanceof IntegratedCircuitItem)) return remainder;
 
             if(stack.hasNbt() && stack.getNbt().contains(BlockItem.BLOCK_ENTITY_TAG_KEY)) {
                 remainder.set(i, stack.copyWithCount(1));

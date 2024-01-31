@@ -65,9 +65,7 @@ public class IntegratedCircuitBlockEntity extends BlockEntity implements Nameabl
     }
     @Override
     public Text getName() {
-        if(hasCustomName()) {
-            return this.customName;
-        }
+        if(hasCustomName()) return this.customName;
         return Text.translatable("block.integrated_circuit.integrated_circuit");
     }
 

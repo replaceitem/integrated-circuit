@@ -22,19 +22,13 @@ public class IntegratedCircuitDyeingRecipe extends SpecialCraftingRecipe {
         for (int i = 0; i < inventory.size(); i++) {
             ItemStack stack = inventory.getStack(i);
 
-            if(stack.isEmpty()) {
-                continue;
-            }
+            if(stack.isEmpty()) continue;
 
             if(stack.getItem() instanceof DyeItem) {
-                if(dyeIndex != -1) {
-                    return false;
-                }
+                if(dyeIndex != -1) return false;
                 dyeIndex = i;
             } else if(stack.getItem() instanceof IntegratedCircuitItem && stack.isIn(IntegratedCircuit.DYEABLE_INTEGRATED_CIRCUITS_ITEM_TAG)) {
-                if(circuitIndex != -1) {
-                    return false;
-                }
+                if(circuitIndex != -1) return false;
                 circuitIndex = i;
             } else {
                 return false;
@@ -52,19 +46,14 @@ public class IntegratedCircuitDyeingRecipe extends SpecialCraftingRecipe {
         for (int i = 0; i < inventory.size(); i++) {
             ItemStack stack = inventory.getStack(i);
 
-            if(stack.isEmpty()) {
+            if(stack.isEmpty())
                 continue;
-            }
 
             if(stack.getItem() instanceof DyeItem) {
-                if(dyeIndex != -1) {
-                    return ItemStack.EMPTY;
-                }
+                if(dyeIndex != -1) return ItemStack.EMPTY;
                 dyeIndex = i;
             } else if(stack.getItem() instanceof IntegratedCircuitItem && stack.isIn(IntegratedCircuit.DYEABLE_INTEGRATED_CIRCUITS_ITEM_TAG)) {
-                if(circuitIndex != -1) {
-                    return ItemStack.EMPTY;
-                }
+                if(circuitIndex != -1) return ItemStack.EMPTY;
                 circuitIndex = i;
             } else {
                 return ItemStack.EMPTY;

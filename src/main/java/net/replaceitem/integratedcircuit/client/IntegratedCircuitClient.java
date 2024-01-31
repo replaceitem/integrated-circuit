@@ -24,9 +24,9 @@ public class IntegratedCircuitClient implements ClientModInitializer {
         BlockRenderLayerMap.INSTANCE.putBlocks(RenderLayer.getCutoutMipped(), IntegratedCircuit.INTEGRATED_CIRCUIT_BLOCKS);
 
         ColorProviderRegistry.BLOCK.register((state, view, pos, tintIndex) -> {
-            if(!(state.getBlock() instanceof IntegratedCircuitBlock) || tintIndex > 3) {
+            if(!(state.getBlock() instanceof IntegratedCircuitBlock) || tintIndex > 3)
                 return RedstoneWireBlock.getWireColor(0);
-            }
+
             IntegratedCircuitBlock block = ((IntegratedCircuitBlock)state.getBlock());
             FlatDirection circuitDirection = FlatDirection.VALUES[tintIndex];
 
@@ -35,9 +35,7 @@ public class IntegratedCircuitClient implements ClientModInitializer {
                 block.getOutputPower(view, pos, circuitDirection)
             ));
         }, IntegratedCircuit.INTEGRATED_CIRCUIT_BLOCKS);
-        ColorProviderRegistry.ITEM.register((stack, tintIndex) -> {
-            return RedstoneWireBlock.getWireColor(0);
-        }, IntegratedCircuit.INTEGRATED_CIRCUIT_ITEMS);
+        ColorProviderRegistry.ITEM.register((stack, tintIndex) -> RedstoneWireBlock.getWireColor(0), IntegratedCircuit.INTEGRATED_CIRCUIT_ITEMS);
 
         DefaultConfig.initialize();
 
