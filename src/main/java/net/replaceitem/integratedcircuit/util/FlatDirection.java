@@ -30,9 +30,11 @@ public enum FlatDirection {
     public int toInt() {
         return this.index;
     }
+
     public Vec3i getOffset() {
         return offset;
     }
+
     public Axis getAxis() {
         return axis;
     }
@@ -40,9 +42,11 @@ public enum FlatDirection {
     public FlatDirection rotated(int times) {
         return VALUES[Math.floorMod(this.toInt()+times,4)];
     }
+
     public FlatDirection rotatedCounterclockwise(int times) {
         return this.rotated(-times);
     }
+
     public FlatDirection getOpposite() {
         return this.rotated(2);
     }
@@ -50,9 +54,11 @@ public enum FlatDirection {
     public Direction toVanillaDirection() {
         return vanillaDirection;
     }
+
     public Direction toVanillaDirection(Direction facing) {
         return this.rotated(FlatDirection.fromVanillaDirection(facing).toInt()).toVanillaDirection();
     }
+
     public Direction toVanillaDirection(BlockState circuit) {
         if(circuit.contains(IntegratedCircuitBlock.FACING))
             return this.toVanillaDirection(circuit.get(IntegratedCircuitBlock.FACING));
@@ -68,9 +74,11 @@ public enum FlatDirection {
             case EAST -> EAST;
         };
     }
+
     public static FlatDirection fromVanillaDirection(Direction facing, Direction direction) {
         return FlatDirection.fromVanillaDirection(direction).rotatedCounterclockwise(FlatDirection.fromVanillaDirection(facing).toInt());
     }
+
     public static FlatDirection fromVanillaDirection(BlockState circuit, Direction direction) {
         if(circuit.contains(IntegratedCircuitBlock.FACING))
             return FlatDirection.fromVanillaDirection(circuit.get(IntegratedCircuitBlock.FACING), direction);

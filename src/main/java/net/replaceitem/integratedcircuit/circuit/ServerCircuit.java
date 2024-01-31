@@ -104,6 +104,7 @@ public class ServerCircuit extends Circuit {
             this.tickSchedulerNbtBuffer = tickSchedulerNbt;
         }
     }
+
     @Override
     public void writeNbt(NbtCompound nbt) {
         super.writeNbt(nbt);

@@ -45,6 +45,7 @@ public class IntegratedCircuitBlockEntity extends BlockEntity implements Nameabl
         }
         this.getCircuit().readNbt(nbt);
     }
+
     @Override
     protected void writeNbt(NbtCompound nbt) {
         if(this.hasCustomName()) {
@@ -59,10 +60,12 @@ public class IntegratedCircuitBlockEntity extends BlockEntity implements Nameabl
         this.customName = name;
         this.markDirty();
     }
+
     @Override
     public Text getCustomName() {
         return this.customName;
     }
+
     @Override
     public Text getName() {
         if(hasCustomName()) return this.customName;
@@ -74,9 +77,11 @@ public class IntegratedCircuitBlockEntity extends BlockEntity implements Nameabl
     public Set<ServerPlayerEntity> getEditingPlayers() {
         return editors.keySet();
     }
+
     public boolean isEditing(ServerPlayerEntity player) {
         return this.editors.containsKey(player);
     }
+
     public void addEditor(ServerPlayerEntity player) {
         // clean up to at least keep duplicate players away (removed players can be left over in the map, but as long as one player has no duplicates here, should be fine)
         for (ServerPlayerEntity serverPlayerEntity : this.editors.keySet()) {
@@ -84,6 +89,7 @@ public class IntegratedCircuitBlockEntity extends BlockEntity implements Nameabl
         }
         this.editors.put(player, DUMMY);
     }
+
     public void removeEditor(ServerPlayerEntity player) {
         this.editors.remove(player);
     }
@@ -93,6 +99,7 @@ public class IntegratedCircuitBlockEntity extends BlockEntity implements Nameabl
         this.markDirty();
         world.updateListeners(pos, state, state, Block.NOTIFY_LISTENERS);
     }
+
     public int getOutputStrength(FlatDirection direction) {
         return this.outputStrengths[direction.toInt()];
     }
@@ -121,6 +128,7 @@ public class IntegratedCircuitBlockEntity extends BlockEntity implements Nameabl
         nbt.putByteArray("outputStrengths", this.outputStrengths.clone());
         return nbt;
     }
+
     @Override
     public Packet<ClientPlayPacketListener> toUpdatePacket() {
         return BlockEntityUpdateS2CPacket.create(this);

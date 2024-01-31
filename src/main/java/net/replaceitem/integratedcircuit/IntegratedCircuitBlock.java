@@ -106,6 +106,7 @@ public class IntegratedCircuitBlock extends HorizontalFacingBlock implements Blo
     public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
         return new IntegratedCircuitBlockEntity(pos, state);
     }
+
     public int getInputPower(RedstoneView view, BlockPos pos, FlatDirection dir) {
         BlockState circuitBlockState = view.getBlockState(pos);
         Direction direction = dir.toVanillaDirection(circuitBlockState);
@@ -119,6 +120,7 @@ public class IntegratedCircuitBlock extends HorizontalFacingBlock implements Blo
         }
         return Math.max(i, blockState.isOf(Blocks.REDSTONE_WIRE) ? blockState.get(RedstoneWireBlock.POWER) : 0);
     }
+
     public int getOutputPower(BlockView view, BlockPos pos, FlatDirection dir) {
         if(view.getBlockEntity(pos) instanceof IntegratedCircuitBlockEntity integratedCircuitBlockEntity)
             return integratedCircuitBlockEntity.getOutputStrength(dir);
@@ -129,10 +131,12 @@ public class IntegratedCircuitBlock extends HorizontalFacingBlock implements Blo
     public boolean emitsRedstonePower(BlockState state) {
         return true;
     }
+
     @Override
     public int getStrongRedstonePower(BlockState state, BlockView world, BlockPos pos, Direction direction) {
         return state.getWeakRedstonePower(world, pos, direction);
     }
+
     @Override
     public int getWeakRedstonePower(BlockState state, BlockView view, BlockPos pos, Direction direction) {
         if(direction.getAxis().isVertical()) return 0;
@@ -161,6 +165,7 @@ public class IntegratedCircuitBlock extends HorizontalFacingBlock implements Blo
         }
         return super.onBreak(world, pos, state, player);
     }
+
     @Override
     public List<ItemStack> getDroppedStacks(BlockState state, LootContextParameterSet.Builder builder) {
         List<ItemStack> list = super.getDroppedStacks(state, builder);
