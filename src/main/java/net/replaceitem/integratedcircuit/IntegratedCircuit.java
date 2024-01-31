@@ -18,6 +18,7 @@ import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.sound.BlockSoundGroup;
+import net.minecraft.util.DyeColor;
 import net.replaceitem.integratedcircuit.network.ServerPacketHandler;
 import net.replaceitem.integratedcircuit.network.packet.ComponentInteractionC2SPacket;
 import net.replaceitem.integratedcircuit.network.packet.PlaceComponentC2SPacket;
@@ -32,22 +33,22 @@ public class IntegratedCircuit implements ModInitializer {
 	public static final TagKey<Item> DYEABLE_INTEGRATED_CIRCUITS_ITEM_TAG = TagKey.of(RegistryKeys.ITEM, new IntegratedCircuitIdentifier("dyeable_integrated_circuits"));
 
 	public static final IntegratedCircuitBlock INTEGRATED_CIRCUIT_BLOCK            = new IntegratedCircuitBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).pistonBehavior(PistonBehavior.DESTROY));
-    public static final IntegratedCircuitBlock WHITE_INTEGRATED_CIRCUIT_BLOCK      = new IntegratedCircuitBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).pistonBehavior(PistonBehavior.DESTROY));
-    public static final IntegratedCircuitBlock ORANGE_INTEGRATED_CIRCUIT_BLOCK     = new IntegratedCircuitBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).pistonBehavior(PistonBehavior.DESTROY));
-    public static final IntegratedCircuitBlock MAGENTA_INTEGRATED_CIRCUIT_BLOCK    = new IntegratedCircuitBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).pistonBehavior(PistonBehavior.DESTROY));
-    public static final IntegratedCircuitBlock LIGHT_BLUE_INTEGRATED_CIRCUIT_BLOCK = new IntegratedCircuitBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).pistonBehavior(PistonBehavior.DESTROY));
-    public static final IntegratedCircuitBlock YELLOW_INTEGRATED_CIRCUIT_BLOCK     = new IntegratedCircuitBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).pistonBehavior(PistonBehavior.DESTROY));
-    public static final IntegratedCircuitBlock LIME_INTEGRATED_CIRCUIT_BLOCK       = new IntegratedCircuitBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).pistonBehavior(PistonBehavior.DESTROY));
-    public static final IntegratedCircuitBlock PINK_INTEGRATED_CIRCUIT_BLOCK       = new IntegratedCircuitBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).pistonBehavior(PistonBehavior.DESTROY));
-    public static final IntegratedCircuitBlock GRAY_INTEGRATED_CIRCUIT_BLOCK       = new IntegratedCircuitBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).pistonBehavior(PistonBehavior.DESTROY));
-    public static final IntegratedCircuitBlock LIGHT_GRAY_INTEGRATED_CIRCUIT_BLOCK = new IntegratedCircuitBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).pistonBehavior(PistonBehavior.DESTROY));
-    public static final IntegratedCircuitBlock CYAN_INTEGRATED_CIRCUIT_BLOCK       = new IntegratedCircuitBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).pistonBehavior(PistonBehavior.DESTROY));
-    public static final IntegratedCircuitBlock PURPLE_INTEGRATED_CIRCUIT_BLOCK     = new IntegratedCircuitBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).pistonBehavior(PistonBehavior.DESTROY));
-    public static final IntegratedCircuitBlock BLUE_INTEGRATED_CIRCUIT_BLOCK       = new IntegratedCircuitBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).pistonBehavior(PistonBehavior.DESTROY));
-    public static final IntegratedCircuitBlock BROWN_INTEGRATED_CIRCUIT_BLOCK      = new IntegratedCircuitBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).pistonBehavior(PistonBehavior.DESTROY));
-    public static final IntegratedCircuitBlock GREEN_INTEGRATED_CIRCUIT_BLOCK      = new IntegratedCircuitBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).pistonBehavior(PistonBehavior.DESTROY));
-    public static final IntegratedCircuitBlock RED_INTEGRATED_CIRCUIT_BLOCK        = new IntegratedCircuitBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).pistonBehavior(PistonBehavior.DESTROY));
-    public static final IntegratedCircuitBlock BLACK_INTEGRATED_CIRCUIT_BLOCK      = new IntegratedCircuitBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).pistonBehavior(PistonBehavior.DESTROY));
+    public static final IntegratedCircuitBlock WHITE_INTEGRATED_CIRCUIT_BLOCK      = new IntegratedCircuitBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).pistonBehavior(PistonBehavior.DESTROY).mapColor(DyeColor.WHITE));
+    public static final IntegratedCircuitBlock ORANGE_INTEGRATED_CIRCUIT_BLOCK     = new IntegratedCircuitBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).pistonBehavior(PistonBehavior.DESTROY).mapColor(DyeColor.ORANGE));
+    public static final IntegratedCircuitBlock MAGENTA_INTEGRATED_CIRCUIT_BLOCK    = new IntegratedCircuitBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).pistonBehavior(PistonBehavior.DESTROY).mapColor(DyeColor.MAGENTA));
+    public static final IntegratedCircuitBlock LIGHT_BLUE_INTEGRATED_CIRCUIT_BLOCK = new IntegratedCircuitBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).pistonBehavior(PistonBehavior.DESTROY).mapColor(DyeColor.LIGHT_BLUE));
+    public static final IntegratedCircuitBlock YELLOW_INTEGRATED_CIRCUIT_BLOCK     = new IntegratedCircuitBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).pistonBehavior(PistonBehavior.DESTROY).mapColor(DyeColor.YELLOW));
+    public static final IntegratedCircuitBlock LIME_INTEGRATED_CIRCUIT_BLOCK       = new IntegratedCircuitBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).pistonBehavior(PistonBehavior.DESTROY).mapColor(DyeColor.LIME));
+    public static final IntegratedCircuitBlock PINK_INTEGRATED_CIRCUIT_BLOCK       = new IntegratedCircuitBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).pistonBehavior(PistonBehavior.DESTROY).mapColor(DyeColor.PINK));
+    public static final IntegratedCircuitBlock GRAY_INTEGRATED_CIRCUIT_BLOCK       = new IntegratedCircuitBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).pistonBehavior(PistonBehavior.DESTROY).mapColor(DyeColor.GRAY));
+    public static final IntegratedCircuitBlock LIGHT_GRAY_INTEGRATED_CIRCUIT_BLOCK = new IntegratedCircuitBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).pistonBehavior(PistonBehavior.DESTROY).mapColor(DyeColor.LIGHT_GRAY));
+    public static final IntegratedCircuitBlock CYAN_INTEGRATED_CIRCUIT_BLOCK       = new IntegratedCircuitBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).pistonBehavior(PistonBehavior.DESTROY).mapColor(DyeColor.CYAN));
+    public static final IntegratedCircuitBlock PURPLE_INTEGRATED_CIRCUIT_BLOCK     = new IntegratedCircuitBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).pistonBehavior(PistonBehavior.DESTROY).mapColor(DyeColor.PURPLE));
+    public static final IntegratedCircuitBlock BLUE_INTEGRATED_CIRCUIT_BLOCK       = new IntegratedCircuitBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).pistonBehavior(PistonBehavior.DESTROY).mapColor(DyeColor.BLUE));
+    public static final IntegratedCircuitBlock BROWN_INTEGRATED_CIRCUIT_BLOCK      = new IntegratedCircuitBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).pistonBehavior(PistonBehavior.DESTROY).mapColor(DyeColor.BROWN));
+    public static final IntegratedCircuitBlock GREEN_INTEGRATED_CIRCUIT_BLOCK      = new IntegratedCircuitBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).pistonBehavior(PistonBehavior.DESTROY).mapColor(DyeColor.GREEN));
+    public static final IntegratedCircuitBlock RED_INTEGRATED_CIRCUIT_BLOCK        = new IntegratedCircuitBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).pistonBehavior(PistonBehavior.DESTROY).mapColor(DyeColor.RED));
+    public static final IntegratedCircuitBlock BLACK_INTEGRATED_CIRCUIT_BLOCK      = new IntegratedCircuitBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).pistonBehavior(PistonBehavior.DESTROY).mapColor(DyeColor.BLACK));
 
     public static final IntegratedCircuitBlock[] INTEGRATED_CIRCUIT_BLOCKS = {
 			INTEGRATED_CIRCUIT_BLOCK, WHITE_INTEGRATED_CIRCUIT_BLOCK, LIGHT_GRAY_INTEGRATED_CIRCUIT_BLOCK,
