@@ -1,5 +1,5 @@
 {
-  "parent": "integrated_circuit:recipes/root",
+  "parent": "minecraft:recipes/root",
   "criteria": {
     "has_quartz": {
       "conditions": {
