@@ -28,6 +28,16 @@
                   "op": "replace",
                   "source": "ports",
                   "target": "BlockEntityTag.ports"
+                },
+                {
+                  "op": "replace",
+                  "source": "tickScheduler",
+                  "target": "BlockEntityTag.tickScheduler"
+                },
+                {
+                  "op": "replace",
+                  "source": "outputStrengths",
+                  "target": "BlockEntityTag.outputStrengths"
                 }
               ],
               "source": "block_entity"
