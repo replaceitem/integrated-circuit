@@ -19,71 +19,55 @@
     {
       "name": "base",
       "from": [
-        0,
-        0,
-        0
+        0, 0, 0
       ],
       "to": [
-        16,
-        2,
-        16
+        16, 2, 16
       ],
       "faces": {
         "north": {
           "uv": [
-            0,
-            0,
-            16,
-            2
+            0,  0,
+            16, 2
           ],
           "texture": "#base_sides",
           "cullface": "north"
         },
         "east": {
           "uv": [
-            0,
-            2,
-            16,
-            4
+            0,  2,
+            16, 4
           ],
           "texture": "#base_sides",
           "cullface": "east"
         },
         "south": {
           "uv": [
-            0,
-            4,
-            16,
-            6
+            0,  4,
+            16, 6
           ],
           "texture": "#base_sides",
           "cullface": "south"
         },
         "west": {
           "uv": [
-            0,
-            6,
-            16,
-            8
+            0,  6,
+            16, 8
           ],
           "texture": "#base_sides",
           "cullface": "west"
         },
         "up": {
           "uv": [
-            0,
-            0,
-            16,
-            16
+            0,  0,
+            16, 16
           ],
           "texture": "#base_top"
         },
         "down": {
           "uv": [
-            0,
-            0,
-            16,
-            16
+            0,  0,
+            16, 16
           ],
           "texture": "#base_bottom",
           "cullface": "down"
@@ -93,22 +77,16 @@
     {
       "name": "base_sides_overlay",
       "from": [
-        0,
-        0,
-        0
+        0, 0, 0
       ],
       "to": [
-        16,
-        2,
-        16
+        16, 2, 16
       ],
       "faces": {
         "north": {
           "uv": [
-            0,
-            0,
-            16,
-            2
+            0,  0,
+            16, 2
           ],
           "texture": "#base_sides_overlay",
           "tintindex": 0,
@@ -116,10 +94,8 @@
         },
         "east": {
           "uv": [
-            0,
-            2,
-            16,
-            4
+            0,  2,
+            16, 4
           ],
           "texture": "#base_sides_overlay",
           "tintindex": 1,
@@ -127,10 +103,8 @@
         },
         "south": {
           "uv": [
-            0,
-            4,
-            16,
-            6
+            0,  4,
+            16, 6
           ],
           "texture": "#base_sides_overlay",
           "tintindex": 2,
@@ -138,10 +112,8 @@
         },
         "west": {
           "uv": [
-            0,
-            6,
-            16,
-            8
+            0,  6,
+            16, 8
           ],
           "texture": "#base_sides_overlay",
           "tintindex": 3,
@@ -152,22 +124,16 @@
     {
       "name": "base_top_overlay_north",
       "from": [
-        0,
-        0,
-        0
+        0, 0, 0
       ],
       "to": [
-        16,
-        2,
-        16
+        16, 2, 16
       ],
       "faces": {
         "up": {
           "uv": [
-            0,
-            0,
-            16,
-            16
+            0,  0,
+            16, 16
           ],
           "texture": "#base_top_overlay_north",
           "tintindex": 0
@@ -177,22 +143,16 @@
     {
       "name": "base_top_overlay_east",
       "from": [
-        0,
-        0,
-        0
+        0, 0, 0
       ],
       "to": [
-        16,
-        2,
-        16
+        16, 2, 16
       ],
       "faces": {
         "up": {
           "uv": [
-            0,
-            0,
-            16,
-            16
+            0,  0,
+            16, 16
           ],
           "texture": "#base_top_overlay_east",
           "tintindex": 1
@@ -202,22 +162,16 @@
     {
       "name": "base_top_overlay_south",
       "from": [
-        0,
-        0,
-        0
+        0, 0, 0
       ],
       "to": [
-        16,
-        2,
-        16
+        16, 2, 16
       ],
       "faces": {
         "up": {
           "uv": [
-            0,
-            0,
-            16,
-            16
+            0,  0,
+            16, 16
           ],
           "texture": "#base_top_overlay_south",
           "tintindex": 2
@@ -227,22 +181,16 @@
     {
       "name": "base_top_overlay_west",
       "from": [
-        0,
-        0,
-        0
+        0, 0, 0
       ],
       "to": [
-        16,
-        2,
-        16
+        16, 2, 16
       ],
       "faces": {
         "up": {
           "uv": [
-            0,
-            0,
-            16,
-            16
+            0,  0,
+            16, 16
           ],
           "texture": "#base_top_overlay_west",
           "tintindex": 3
@@ -252,58 +200,44 @@
     {
       "name": "box",
       "from": [
-        4,
-        2,
-        4
+        4, 2, 4
       ],
       "to": [
-        12,
-        3,
-        12
+        12, 3, 12
       ],
       "faces": {
         "north": {
           "uv": [
-            8,
-            0,
-            16,
-            1
+            8,  0,
+            16, 1
           ],
           "texture": "#box"
         },
         "east": {
           "uv": [
-            8,
-            1,
-            16,
-            2
+            8,  1,
+            16, 2
           ],
           "texture": "#box"
         },
         "south": {
           "uv": [
-            8,
-            2,
-            16,
-            3
+            8,  2,
+            16, 3
           ],
           "texture": "#box"
         },
         "west": {
           "uv": [
-            8,
-            3,
-            16,
-            4
+            8,  3,
+            16, 4
           ],
           "texture": "#box"
         },
         "up": {
           "uv": [
-            0,
-            0,
-            8,
-            8
+            0, 0,
+            8, 8
           ],
           "texture": "#box"
         }
@@ -312,52 +246,40 @@
     {
       "name": "box_overlay",
       "from": [
-        4,
-        2,
-        4
+        4, 2, 4
       ],
       "to": [
-        12,
-        3,
-        12
+        12, 3, 12
       ],
       "faces": {
         "north": {
           "uv": [
-            8,
-            0,
-            16,
-            1
+            8,  0,
+            16, 1
           ],
           "texture": "#box_overlay",
           "tintindex": 0
         },
         "east": {
           "uv": [
-            8,
-            1,
-            16,
-            2
+            8,  1,
+            16, 2
           ],
           "texture": "#box_overlay",
           "tintindex": 1
         },
         "south": {
           "uv": [
-            8,
-            2,
-            16,
-            3
+            8,  2,
+            16, 3
           ],
           "texture": "#box_overlay",
           "tintindex": 2
         },
         "west": {
           "uv": [
-            8,
-            3,
-            16,
-            4
+            8,  3,
+            16, 4
           ],
           "texture": "#box_overlay",
           "tintindex": 3
