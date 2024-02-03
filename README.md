@@ -3,12 +3,15 @@
 [<img alt="Available for fabric" height="56" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/supported/fabric_vector.svg">](https://fabricmc.net/)
 [<img alt="Requires fabric api" height="56" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/requires/fabric-api_vector.svg">](https://modrinth.com/mod/fabric-api)
 [<img alt="Works best with cloth config" height="56" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@2/assets/cozy/requires/cloth-config-api_vector.svg">](https://modrinth.com/mod/cloth-config)
+[<img alt="See me on GitHub" height="56" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/social/github-singular_vector.svg">](https://github.com/replaceitem)
 [<img alt="Available on Modrinth" height="56" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/modrinth_vector.svg">](https://modrinth.com/mod/integrated-circuit)
 [<img alt="Chat on Discord" height="56" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/social/discord-singular_vector.svg">](https://discord.gg/etTDQAVSgt)
 
 A Minecraft mod that adds an integrated circuit redstone component.
 Each integrated circuit block has a 15x15 grid where you can place two-dimensional
 redstone components. Each side of the circuit can be used as an input or output for your circuit.
+
+<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/rxT5y_9KsVI" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 ![The integrated circuit block](/block.png)
 
@@ -45,4 +48,4 @@ You can also change the scroll behaviour (rotate component, scroll palette) and 
 
 Credits for the tweaked redstone component textures (levers, observers):
 
-Vanilla Tweaks: h
+Vanilla Tweaks: https://vanillatweaks.net/
