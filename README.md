@@ -16,12 +16,9 @@ redstone components. Each side of the circuit can be used as an input or output 
 
 ## How to use
 
-Integrated circuits can be crafted using this recipe:
+To craft an integrated circuit, you need 2 redstone dust, 1 quartz, 1 black terracotta, and 3 concrete or stone arranged like so:
 
-![Crafting recipe](/recipe.png)
-
-You can also dye your integrated circuits different colors by replacing the stone with concrete or crafting them with dye.
-In creative, you can also find them in the redstone tab.
+![Crafting recipe](/recipe.gif)
 
 When you place one down and click on it, it will open the circuit editor screen.
 You can select a block on the left, and place it in the 15x15 grid as you normally would in minecraft.
@@ -32,7 +29,8 @@ The four ports are labeled using four colors to associate them with the sides of
 Each port can be an input or output, which can be changed by right clicking it in the editor.
 
 You can also copy circuits by putting an integrated circuit in the crafting grid,
-along with empty integrated circuits, similar to how books are copied.
+along with empty integrated circuits, similar to how books are copied, or re-dye them a different color
+by crafting them with a dye item, like with wool or shulker boxes.
 
 ## Config
 
