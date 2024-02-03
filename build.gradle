@@ -72,6 +72,17 @@ jar {
 import com.modrinth.minotaur.dependencies.DependencyType
 import com.modrinth.minotaur.dependencies.ModDependency
 
+String promptChangelog() {
+    File changelogFile = project.file("changelog.md")
+    changelogFile.createNewFile()
+    println "Edit " + changelogFile.getAbsolutePath() + " and press [Enter] to confirm"
+    System.in.read()
+    String changelog
+    changelog = changelogFile.text;
+    changelogFile.delete()
+    return changelog
+}
+
 modrinth {
     token = System.getenv("MODRINTH_TOKEN") // This is the default. Remember to have the MODRINTH_TOKEN environment variable set or else this will fail, or set it to whatever you want - just make sure it stays private!
     projectId = "bybyRAPl"
@@ -87,8 +98,11 @@ modrinth {
             // modmenu optional for accessing the configuration
             new ModDependency("mOgUt4GM", DependencyType.OPTIONAL)
     ]
-    changelog = rootProject.file("changelog.md").text
-    syncBodyFrom = rootProject.file("MODRINTH.md").text
+    gradle.taskGraph.whenReady { TaskExecutionGraph taskGraph ->
+        if (taskGraph.hasTask(":modrinth")) {
+            changelog = promptChangelog() ?: "*No changelog provided*"
+        }
+    }
     syncBodyFrom = rootProject.file("README.md").text
 }
 
