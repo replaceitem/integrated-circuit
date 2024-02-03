@@ -4,6 +4,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.math.BlockPos;
@@ -28,8 +29,6 @@ public abstract class Circuit implements CircuitAccess {
 
     public final ComponentState[][] components = new ComponentState[SIZE][SIZE];
     public final ComponentState[] ports = new ComponentState[4];
-
-
 
     protected final CircuitNeighborUpdater neighborUpdater;
 
@@ -137,6 +136,21 @@ public abstract class Circuit implements CircuitAccess {
         return getPortNumber(pos) != -1;
     }
 
+    public boolean isEmpty() {
+        for (int i = 0; i < ports.length; i++) {
+            if(ports[i].get(PortComponent.FACING) != FlatDirection.VALUES[i].getOpposite()) {
+                return false;
+            }
+        }
+        for(int y = 0; y < SIZE; y++) {
+            for(int x = 0; x < SIZE; x++) {
+                if(this.components[x][y] != Components.AIR.getDefaultState()) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
     public void writeNbt(NbtCompound nbt) {
         byte[] portBytes = new byte[4];
         for (int i = 0; i < ports.length; i++) {
@@ -144,27 +158,36 @@ public abstract class Circuit implements CircuitAccess {
         }
         nbt.putByteArray("ports", portBytes);
 
-        //packing two shorts in an int
+        // Packing two shorts in an int
         int componentDataSize = SIZE*SIZE;
         int[] componentsData = new int[MathHelper.ceilDiv(componentDataSize, 2)];
         for (int i = 0; i < componentDataSize; i++) {
-            int shift = (i%2==0)?16:0;
+            int shift = (i % 2 == 0) ? 16 : 0;
             componentsData[i/2] |= (components[i%SIZE][i/SIZE].encode() & 0xFFFF) << shift;
         }
         nbt.putIntArray("components", componentsData);
     }
 
     public void readNbt(NbtCompound nbt) {
-        byte[] portBytes = nbt.getByteArray("ports");
-        for (int i = 0; i < portBytes.length; i++) {
-            ports[i] = Components.PORT.getState(portBytes[i]);
+        if(nbt.contains("ports", NbtElement.BYTE_ARRAY_TYPE)) {
+            byte[] portBytes = nbt.getByteArray("ports");
+
+            if(portBytes.length != ports.length)
+                throw new IllegalArgumentException("Invalid ports length received");
+            for (int i = 0; i < portBytes.length; i++) {
+                ports[i] = Components.PORT.getState(portBytes[i]);
+            }
         }
-        int[] componentData = nbt.getIntArray("components");
-        int componentDataSize = SIZE*SIZE;
-        if(componentData.length != MathHelper.ceilDiv(componentDataSize, 2)) throw new RuntimeException("Invalid componentData length received");
-        for (int i = 0; i < componentDataSize; i++) {
-            int shift = (i%2==0)?16:0;
-            components[i % SIZE][i / SIZE] = Components.createComponentState((short) (componentData[i / 2] >> shift & 0xFFFF));
+        if(nbt.contains("components", NbtElement.INT_ARRAY_TYPE)) {
+            int componentDataSize = SIZE*SIZE;
+            int[] componentData = nbt.getIntArray("components");
+
+            if (componentData.length != MathHelper.ceilDiv(componentDataSize, 2))
+                throw new IllegalArgumentException("Invalid componentData length received");
+            for (int i = 0; i < componentDataSize; i++) {
+                int shift = (i % 2 == 0) ? 16 : 0;
+                components[i % SIZE][i / SIZE] = Components.createComponentState((short) (componentData[i / 2] >> shift & 0xFFFF));
+            }
         }
     }
 
@@ -177,22 +200,22 @@ public abstract class Circuit implements CircuitAccess {
     protected abstract void updateListeners(ComponentPos pos, ComponentState oldState, ComponentState state, int flags);
 
     @Override
-    public void replaceWithStateForNeighborUpdate(FlatDirection FlatDirection, ComponentState neighborState, ComponentPos pos, ComponentPos neighborPos, int flags, int maxUpdateDepth) {
-        this.neighborUpdater.replaceWithStateForNeighborUpdate(FlatDirection, neighborState, pos, neighborPos, flags);
+    public void replaceWithStateForNeighborUpdate(FlatDirection direction, ComponentState neighborState, ComponentPos pos, ComponentPos neighborPos, int flags, int maxUpdateDepth) {
+        this.neighborUpdater.replaceWithStateForNeighborUpdate(direction, neighborState, pos, neighborPos, flags);
     }
 
 
-    public int getEmittedRedstonePower(ComponentPos pos, FlatDirection FlatDirection) {
+    public int getEmittedRedstonePower(ComponentPos pos, FlatDirection direction) {
         ComponentState blockState = this.getComponentState(pos);
-        int i = blockState.getWeakRedstonePower(this, pos, FlatDirection);
+        int i = blockState.getWeakRedstonePower(this, pos, direction);
         if (blockState.isSolidBlock(this, pos)) {
             return Math.max(i, this.getReceivedStrongRedstonePower(pos));
         }
         return i;
     }
 
-    public boolean isEmittingRedstonePower(ComponentPos pos, FlatDirection FlatDirection) {
-        return this.getEmittedRedstonePower(pos, FlatDirection) > 0;
+    public boolean isEmittingRedstonePower(ComponentPos pos, FlatDirection direction) {
+        return this.getEmittedRedstonePower(pos, direction) > 0;
     }
 
 
@@ -213,8 +236,8 @@ public abstract class Circuit implements CircuitAccess {
         return i;
     }
 
-    public int getStrongRedstonePower(ComponentPos pos, FlatDirection FlatDirection) {
-        return this.getComponentState(pos).getStrongRedstonePower(this, pos, FlatDirection);
+    public int getStrongRedstonePower(ComponentPos pos, FlatDirection direction) {
+        return this.getComponentState(pos).getStrongRedstonePower(this, pos, direction);
     }
 
     public int getReceivedRedstonePower(ComponentPos pos) {

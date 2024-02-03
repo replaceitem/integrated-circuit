@@ -1,6 +1,3 @@
 {
-  "parent": "minecraft:item/generated",
-  "textures": {
-    "layer0": "integrated_circuit:item/integrated_circuit"
-  }
+  "parent": "integrated_circuit:block/integrated_circuit"
 }

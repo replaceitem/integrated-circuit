@@ -1,0 +1,22 @@
+{
+  "replace": false,
+  "values": [
+		"integrated_circuit:integrated_circuit",
+    "integrated_circuit:white_integrated_circuit",
+    "integrated_circuit:orange_integrated_circuit",
+    "integrated_circuit:magenta_integrated_circuit",
+    "integrated_circuit:light_blue_integrated_circuit",
+    "integrated_circuit:yellow_integrated_circuit",
+    "integrated_circuit:lime_integrated_circuit",
+    "integrated_circuit:pink_integrated_circuit",
+    "integrated_circuit:gray_integrated_circuit",
+    "integrated_circuit:light_gray_integrated_circuit",
+    "integrated_circuit:cyan_integrated_circuit",
+    "integrated_circuit:purple_integrated_circuit",
+    "integrated_circuit:blue_integrated_circuit",
+    "integrated_circuit:brown_integrated_circuit",
+    "integrated_circuit:green_integrated_circuit",
+    "integrated_circuit:red_integrated_circuit",
+    "integrated_circuit:black_integrated_circuit"
+  ]
+}

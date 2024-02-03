@@ -1,19 +1,21 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "group": "integrated_circuit:integrated_circuit",
   "pattern": [
-    " _ ",
-    "BRB",
+    " T ",
+    "RQR",
     "SSS"
   ],
   "key": {
-    "_": {
-      "item": "minecraft:quartz_slab"
-    },
-    "B": {
+    "T": {
       "item": "minecraft:black_terracotta"
     },
     "R": {
-      "item": "minecraft:redstone_block"
+      "item": "minecraft:redstone"
+    },
+    "Q": {
+      "item": "minecraft:quartz"
     },
     "S": {
       "item": "minecraft:stone"

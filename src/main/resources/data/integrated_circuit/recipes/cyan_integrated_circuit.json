@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "group": "integrated_circuit:integrated_circuit",
+  "pattern": [
+    " T ",
+    "RQR",
+    "CCC"
+  ],
+  "key": {
+    "T": {
+      "item": "minecraft:black_terracotta"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    },
+    "Q": {
+      "item": "minecraft:quartz"
+    },
+    "C": {
+      "item": "minecraft:cyan_concrete"
+    }
+  },
+  "result": {
+    "item": "integrated_circuit:cyan_integrated_circuit",
+    "count": 1
+  }
+}

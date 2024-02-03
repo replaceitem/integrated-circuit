@@ -29,7 +29,7 @@ public class ServerPacketHandler {
         PlaceComponentC2SPacket packet = new PlaceComponentC2SPacket(buf);
         minecraftServer.executeSync(() -> {
             ServerWorld world = serverPlayerEntity.getServerWorld();
-            if(world.getBlockState(packet.blockPos).isOf(IntegratedCircuit.INTEGRATED_CIRCUIT_BLOCK) && world.getBlockEntity(packet.blockPos) instanceof IntegratedCircuitBlockEntity integratedCircuitBlockEntity) {
+            if(world.getBlockState(packet.blockPos).isIn(IntegratedCircuit.INTEGRATED_CIRCUITS_BLOCK_TAG) && world.getBlockEntity(packet.blockPos) instanceof IntegratedCircuitBlockEntity integratedCircuitBlockEntity) {
                 if(!integratedCircuitBlockEntity.isEditing(serverPlayerEntity)) return;
                 integratedCircuitBlockEntity.getCircuit().placeComponentState(packet.pos, packet.component, packet.rotation);
             }
@@ -40,7 +40,7 @@ public class ServerPacketHandler {
         ComponentInteractionC2SPacket packet = new ComponentInteractionC2SPacket(buf);
         minecraftServer.executeSync(() -> {
             ServerWorld world = serverPlayerEntity.getServerWorld();
-            if(world.getBlockState(packet.blockPos).isOf(IntegratedCircuit.INTEGRATED_CIRCUIT_BLOCK) && world.getBlockEntity(packet.blockPos) instanceof IntegratedCircuitBlockEntity integratedCircuitBlockEntity) {
+            if(world.getBlockState(packet.blockPos).isIn(IntegratedCircuit.INTEGRATED_CIRCUITS_BLOCK_TAG) && world.getBlockEntity(packet.blockPos) instanceof IntegratedCircuitBlockEntity integratedCircuitBlockEntity) {
                 if(!integratedCircuitBlockEntity.isEditing(serverPlayerEntity)) return;
                 integratedCircuitBlockEntity.getCircuit().useComponent(packet.pos, serverPlayerEntity);
             }

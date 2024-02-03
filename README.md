@@ -1,4 +1,4 @@
-# Integrated circuit
+# Integrated Circuit
 
 [<img alt="Available for fabric" height="56" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/supported/fabric_vector.svg">](https://fabricmc.net/)
 [<img alt="Requires fabric api" height="56" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/requires/fabric-api_vector.svg">](https://modrinth.com/mod/fabric-api)
@@ -10,27 +10,27 @@ A Minecraft mod that adds an integrated circuit redstone component.
 Each integrated circuit block has a 15x15 grid where you can place two-dimensional
 redstone components. Each side of the circuit can be used as an input or output for your circuit.
 
-![The integrated circuit block](https://raw.githubusercontent.com/replaceitem/integrated-circuit/master/block.png)
+![The integrated circuit block](/block.png)
 
 ![Example circuit](https://i.imgur.com/QbySfvI.gif)
 
 ## How to use
 
-Integrated circuits can be crafted using this crafting recipe
+To craft an integrated circuit, you need 2 redstone dust, 1 quartz, 1 black terracotta, and 3 concrete or stone arranged like so:
 
-![Crafting recipe](https://raw.githubusercontent.com/replaceitem/integrated-circuit/master/recipe.png)
+![Crafting recipe](/recipe.gif)
 
-In creative, you can also find it in the redstone tab.
-When you place it down and click on it, it will open the circuit editor screen.
+When you place one down and click on it, it will open the circuit editor screen.
 You can select a block on the left, and place it in the 15x15 grid as you normally would in minecraft.
 To rotate a component, you use the scroll wheel.
-Adjusting repeater delay or the comparator mode is done by clicking on a component.
+Adjusting repeater delay or the comparator mode is done by right clicking on a component.
 
 The four ports are labeled using four colors to associate them with the sides of the integrated circuit block.
-Each port can be an input or output, which can be changed by clicking on it in the editor.
+Each port can be an input or output, which can be changed by right clicking it in the editor.
 
 You can also copy circuits by putting an integrated circuit in the crafting grid,
-along with empty integrated circuits, similar to how books are copied.
+along with empty integrated circuits, similar to how books are copied, or re-dye them a different color
+by crafting them with a dye item, like with wool or shulker boxes.
 
 ## Config
 

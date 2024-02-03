@@ -1,9 +1,13 @@
 package net.replaceitem.integratedcircuit;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
+import net.minecraft.network.listener.ClientPlayPacketListener;
+import net.minecraft.network.packet.Packet;
+import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Nameable;
@@ -17,13 +21,12 @@ import java.util.Set;
 import java.util.WeakHashMap;
 
 public class IntegratedCircuitBlockEntity extends BlockEntity implements Nameable {
-
     protected WeakHashMap<ServerPlayerEntity, Object> editors;
-
     protected Text customName;
+
     @Nullable
     private ServerCircuit circuit;
-    
+
     protected byte[] outputStrengths = new byte[] {0,0,0,0};
 
     public IntegratedCircuitBlockEntity(BlockPos pos, BlockState state) {
@@ -33,19 +36,24 @@ public class IntegratedCircuitBlockEntity extends BlockEntity implements Nameabl
     }
 
     @Override
-    protected void writeNbt(NbtCompound nbt) {
-        if(hasCustomName()) nbt.putString("CustomName", Text.Serialization.toJsonString(this.customName));
-        this.getCircuit().writeNbt(nbt);
-        nbt.putByteArray("outputStrengths", outputStrengths.clone());
-        super.writeNbt(nbt);
+    public void readNbt(NbtCompound nbt) {
+        if(nbt.contains("CustomName", NbtElement.STRING_TYPE)) {
+            this.customName = Text.Serialization.fromJson(nbt.getString("CustomName"));
+        }
+        if(nbt.contains("outputStrengths")) {
+            this.outputStrengths = nbt.getByteArray("outputStrengths");
+        }
+        this.getCircuit().readNbt(nbt);
     }
 
     @Override
-    public void readNbt(NbtCompound nbt) {
-        super.readNbt(nbt);
-        this.customName = nbt.contains("CustomName", NbtElement.STRING_TYPE) ? Text.Serialization.fromJson(nbt.getString("CustomName")) : null;
-        getCircuit().readNbt(nbt);
-        this.outputStrengths = nbt.getByteArray("outputStrengths");
+    protected void writeNbt(NbtCompound nbt) {
+        if(this.hasCustomName()) {
+            nbt.putString("CustomName", Text.Serialization.toJsonString(this.customName));
+        }
+        nbt.putByteArray("outputStrengths", this.outputStrengths.clone());
+
+        this.getCircuit().writeNbt(nbt);
     }
 
     public void setCustomName(Text name) {
@@ -61,10 +69,8 @@ public class IntegratedCircuitBlockEntity extends BlockEntity implements Nameabl
     @Override
     public Text getName() {
         if(hasCustomName()) return this.customName;
-        return IntegratedCircuit.INTEGRATED_CIRCUIT_BLOCK.getName();
+        return Text.translatable("block.integrated_circuit.integrated_circuit");
     }
-
-
 
     private static final Object DUMMY = new Object();
 
@@ -88,9 +94,10 @@ public class IntegratedCircuitBlockEntity extends BlockEntity implements Nameabl
         this.editors.remove(player);
     }
 
-    public void setOutputStrength(FlatDirection direction, int power) {
+    public void setOutputStrength(World world, BlockState state, FlatDirection direction, int power) {
         this.outputStrengths[direction.toInt()] = (byte) power;
         this.markDirty();
+        world.updateListeners(pos, state, state, Block.NOTIFY_LISTENERS);
     }
 
     public int getOutputStrength(FlatDirection direction) {
@@ -98,13 +105,13 @@ public class IntegratedCircuitBlockEntity extends BlockEntity implements Nameabl
     }
 
     public ServerCircuit getCircuit() {
-        if(circuit == null) {
+        if(this.circuit == null) {
             this.circuit = new ServerCircuit(this);
             if(this.hasWorld()) {
                 this.circuit.onWorldIsPresent();
             }
         }
-        return circuit;
+        return this.circuit;
     }
 
     @Override
@@ -113,5 +120,17 @@ public class IntegratedCircuitBlockEntity extends BlockEntity implements Nameabl
         if(this.circuit != null) {
             this.circuit.onWorldIsPresent();
         }
+    }
+
+    @Override
+    public NbtCompound toInitialChunkDataNbt() {
+        NbtCompound nbt = new NbtCompound();
+        nbt.putByteArray("outputStrengths", this.outputStrengths.clone());
+        return nbt;
+    }
+
+    @Override
+    public Packet<ClientPlayPacketListener> toUpdatePacket() {
+        return BlockEntityUpdateS2CPacket.create(this);
     }
 }

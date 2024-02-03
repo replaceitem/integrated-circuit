@@ -6,14 +6,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 
 public class IntegratedCircuitItem extends BlockItem {
-    public static final Text NAME_EMPTY = Text.translatable("integrated_circuit.empty_circuit");
-    
-    public IntegratedCircuitItem() {
-        super(IntegratedCircuit.INTEGRATED_CIRCUIT_BLOCK,  new FabricItemSettings());
+    public IntegratedCircuitItem(IntegratedCircuitBlock block) {
+        super(block, new FabricItemSettings());
     }
 
     @Override
     public Text getName(ItemStack stack) {
-        return stack.hasNbt() ? super.getName(stack) : NAME_EMPTY;
+        if(stack.hasNbt()) return super.getName(stack);
+        return Text.translatable(this.getTranslationKey() + ".empty");
     }
 }
