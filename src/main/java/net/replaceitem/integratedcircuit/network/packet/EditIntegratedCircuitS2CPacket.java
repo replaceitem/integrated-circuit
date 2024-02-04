@@ -9,6 +9,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
+import net.replaceitem.integratedcircuit.circuit.context.ClientWorldClientCircuitContext;
 import net.replaceitem.integratedcircuit.util.IntegratedCircuitIdentifier;
 import net.replaceitem.integratedcircuit.circuit.ClientCircuit;
 
@@ -43,7 +44,7 @@ public class EditIntegratedCircuitS2CPacket {
     }
     
     public ClientCircuit getClientCircuit(ClientWorld world, BlockPos pos) {
-        return ClientCircuit.fromNbt(circuit, world, pos);
+        return ClientCircuit.fromNbt(circuit, new ClientWorldClientCircuitContext(world, pos));
     }
 
     public void send(ServerPlayerEntity serverPlayerEntity) {

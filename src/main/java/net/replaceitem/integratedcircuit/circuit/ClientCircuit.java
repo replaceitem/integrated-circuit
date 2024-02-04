@@ -1,30 +1,21 @@
 package net.replaceitem.integratedcircuit.circuit;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.util.math.BlockPos;
+import net.replaceitem.integratedcircuit.circuit.context.ClientCircuitContext;
 import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
 import net.replaceitem.integratedcircuit.network.packet.ComponentInteractionC2SPacket;
 import net.replaceitem.integratedcircuit.network.packet.PlaceComponentC2SPacket;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
-import org.jetbrains.annotations.Nullable;
 
-public class ClientCircuit extends Circuit {
+public class ClientCircuit extends Circuit<ClientCircuitContext> {
 
-    private final ClientWorld world;
-
-    protected final BlockPos blockPos;
-
-    public ClientCircuit(ClientWorld world, BlockPos blockPos) {
-        super(true);
-        this.world = world;
-        this.blockPos = blockPos;
+    public ClientCircuit(ClientCircuitContext context) {
+        super(true, context);
     }
 
     @Override
@@ -32,18 +23,9 @@ public class ClientCircuit extends Circuit {
         return CircuitTickScheduler.getClientTickScheduler();
     }
 
-    @Override
-    public long getTime() {
-        return this.world.getTime();
-    }
-
-    public BlockPos getBlockPos() {
-        return blockPos;
-    }
-
-    public static ClientCircuit fromNbt(NbtCompound nbt, ClientWorld world, BlockPos pos) {
+    public static ClientCircuit fromNbt(NbtCompound nbt, ClientCircuitContext context) {
         if(nbt == null) return null;
-        ClientCircuit circuit = new ClientCircuit(world, pos);
+        ClientCircuit circuit = new ClientCircuit(context);
         circuit.readNbt(nbt);
         return circuit;
     }
@@ -54,7 +36,7 @@ public class ClientCircuit extends Circuit {
 
     @Override
     public void placeComponentState(ComponentPos pos, Component component, FlatDirection placementRotation) {
-        new PlaceComponentC2SPacket(pos, this.blockPos, component, placementRotation).send();
+        new PlaceComponentC2SPacket(pos, this.context.getBlockPos(), component, placementRotation).send();
         ComponentState placementState = component.getPlacementState(this, pos, placementRotation);
         boolean breaking = component == Components.AIR;
         BlockSoundGroup soundGroup = (breaking ? getComponentState(pos).getComponent() : component).getSettings().soundGroup;
@@ -70,17 +52,12 @@ public class ClientCircuit extends Circuit {
 
     @Override
     public void useComponent(ComponentPos pos, PlayerEntity player) {
-        new ComponentInteractionC2SPacket(pos, this.blockPos).send();
+        new ComponentInteractionC2SPacket(pos, this.context.getBlockPos()).send();
         super.useComponent(pos, player);
     }
 
     @Override
     protected void updateListeners(ComponentPos pos, ComponentState oldState, ComponentState state, int flags) {
 
-    }
-
-    @Override
-    public void playSoundInWorld(@Nullable PlayerEntity except, SoundEvent sound, SoundCategory category, float volume, float pitch) {
-        this.world.playSound(except, this.blockPos, sound, category, volume, pitch);
     }
 }

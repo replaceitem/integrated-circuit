@@ -94,7 +94,7 @@ public class IntegratedCircuitScreen extends Screen {
 
     @Override
     public void close() {
-        new FinishEditingC2SPacket(this.circuit.getBlockPos()).send();
+        new FinishEditingC2SPacket(this.circuit.getContext().getBlockPos()).send();
         super.close();
     }
 

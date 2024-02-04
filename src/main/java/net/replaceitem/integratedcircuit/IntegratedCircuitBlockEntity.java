@@ -13,6 +13,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Nameable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.replaceitem.integratedcircuit.circuit.context.BlockEntityServerCircuitContext;
 import net.replaceitem.integratedcircuit.circuit.ServerCircuit;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
 import org.jetbrains.annotations.Nullable;
@@ -106,7 +107,7 @@ public class IntegratedCircuitBlockEntity extends BlockEntity implements Nameabl
 
     public ServerCircuit getCircuit() {
         if(this.circuit == null) {
-            this.circuit = new ServerCircuit(this);
+            this.circuit = new ServerCircuit(new BlockEntityServerCircuitContext(this));
             if(this.hasWorld()) {
                 this.circuit.onWorldIsPresent();
             }
@@ -132,5 +133,9 @@ public class IntegratedCircuitBlockEntity extends BlockEntity implements Nameabl
     @Override
     public Packet<ClientPlayPacketListener> toUpdatePacket() {
         return BlockEntityUpdateS2CPacket.create(this);
+    }
+
+    public void tick(World world, BlockPos pos, BlockState state) {
+        this.getCircuit().tick();
     }
 }

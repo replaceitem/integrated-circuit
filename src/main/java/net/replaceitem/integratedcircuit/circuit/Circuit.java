@@ -10,6 +10,7 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.replaceitem.integratedcircuit.circuit.components.PortComponent;
+import net.replaceitem.integratedcircuit.circuit.context.CircuitContext;
 import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
@@ -17,7 +18,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 
-public abstract class Circuit implements CircuitAccess {
+public abstract class Circuit<C extends CircuitContext> implements CircuitAccess {
     public static final int SIZE = 15;
     
     public static final ComponentPos[] PORTS_GRID_POS = new ComponentPos[]{
@@ -31,15 +32,19 @@ public abstract class Circuit implements CircuitAccess {
     public final ComponentState[] ports = new ComponentState[4];
 
     protected final CircuitNeighborUpdater neighborUpdater;
-
+    
     /**
      * @see net.minecraft.world.World#isClient
      */
     public final boolean isClient;
     private long tickOrder;
+    private long time = 0;
 
-    public Circuit(boolean isClient) {
+    protected final C context;
+
+    public Circuit(boolean isClient, C context) {
         this.isClient = isClient;
+        this.context = context;
         for (ComponentState[] componentState : components) {
             Arrays.fill(componentState, Components.AIR.getDefaultState());
         }
@@ -50,8 +55,21 @@ public abstract class Circuit implements CircuitAccess {
         this.neighborUpdater = new CircuitNeighborUpdater(this);
     }
 
+    public C getContext() {
+        return context;
+    }
+    
+    public void tick() {
+        time++;
+    }
+
     public boolean isInside(ComponentPos pos) {
         return pos.getX() >= 0 && pos.getX() < SIZE && pos.getY() >= 0 && pos.getY() < SIZE;
+    }
+
+    @Override
+    public long getTime() {
+        return time;
     }
 
     public boolean isValidPos(ComponentPos pos) {
@@ -166,6 +184,8 @@ public abstract class Circuit implements CircuitAccess {
             componentsData[i/2] |= (components[i%SIZE][i/SIZE].encode() & 0xFFFF) << shift;
         }
         nbt.putIntArray("components", componentsData);
+        
+        nbt.putLong("time", time);
     }
 
     public void readNbt(NbtCompound nbt) {
@@ -188,6 +208,9 @@ public abstract class Circuit implements CircuitAccess {
                 int shift = (i % 2 == 0) ? 16 : 0;
                 components[i % SIZE][i / SIZE] = Components.createComponentState((short) (componentData[i / 2] >> shift & 0xFFFF));
             }
+        }
+        if(nbt.contains("time", NbtElement.LONG_TYPE)) {
+            this.time = nbt.getLong("time");
         }
     }
 
@@ -302,7 +325,6 @@ public abstract class Circuit implements CircuitAccess {
 
     public void playSound(@Nullable PlayerEntity except, SoundEvent sound, SoundCategory category, float volume, float pitch) {
         // play sound higher pitched, since components are smaller than blocks
-        playSoundInWorld(except, sound, category, volume, pitch * 1.6f);
+        this.context.playSoundInWorld(except, sound, category, volume, pitch * 1.6f);
     }
-    protected abstract void playSoundInWorld(@Nullable PlayerEntity except, SoundEvent sound, SoundCategory category, float volume, float pitch);
 }

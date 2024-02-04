@@ -67,6 +67,12 @@ public class IntegratedCircuitBlock extends HorizontalFacingBlock implements Blo
     }
 
     @Override
+    public void neighborUpdate(BlockState state, World world, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
+        super.neighborUpdate(state, world, pos, sourceBlock, sourcePos, notify);
+        pos.subtract(sourcePos);
+    }
+
+    @Override
     public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean notify) {
         this.updateTargets(world, pos, state);
     }
@@ -150,7 +156,7 @@ public class IntegratedCircuitBlock extends HorizontalFacingBlock implements Blo
         return (world1, pos, state1, blockEntity) -> {
             if(!world.isChunkLoaded(pos) || !world.getBlockState(pos).isIn(IntegratedCircuit.INTEGRATED_CIRCUITS_BLOCK_TAG)) return;
             if(blockEntity instanceof IntegratedCircuitBlockEntity integratedCircuitBlockEntity) {
-                integratedCircuitBlockEntity.getCircuit().tick(world1, pos, state1, blockEntity);
+                integratedCircuitBlockEntity.tick(world1, pos, state1);
             }
         };
     }
