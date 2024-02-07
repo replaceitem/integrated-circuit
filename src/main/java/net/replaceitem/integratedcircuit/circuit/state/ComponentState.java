@@ -78,12 +78,6 @@ public class ComponentState extends AbstractComponentState {
         return Components.createComponentState(this.encode());
     }
 
-
-    @Override
-    public boolean equals(Object obj) { // this should be used instead where minecraft uses == (minecraft's states have only a single instance per possible state in a table (I think?))
-        return this == obj;
-    }
-
     public boolean emitsRedstonePower() {
         return this.component.emitsRedstonePower(this);
     }
