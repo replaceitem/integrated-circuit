@@ -13,7 +13,7 @@ redstone components. Each side of the circuit can be used as an input or output 
 
 <iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/rxT5y_9KsVI" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
-![The integrated circuit block](/block.png)
+![The integrated circuit block](https://raw.githubusercontent.com/replaceitem/integrated-circuit/master/block.png)
 
 ![Example circuit](https://i.imgur.com/QbySfvI.gif)
 
@@ -21,7 +21,7 @@ redstone components. Each side of the circuit can be used as an input or output 
 
 To craft an integrated circuit, you need 2 redstone dust, 1 quartz, 1 black terracotta, and 3 concrete or stone arranged like so:
 
-![Crafting recipe](/recipe.gif)
+![Crafting recipe](https://raw.githubusercontent.com/replaceitem/integrated-circuit/master/recipe.gif)
 
 When you place one down and click on it, it will open the circuit editor screen.
 You can select a block on the left, and place it in the 15x15 grid as you normally would in minecraft.
