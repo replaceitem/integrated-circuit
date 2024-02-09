@@ -1,23 +1,26 @@
 package net.replaceitem.integratedcircuit.circuit;
 
-import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.replaceitem.integratedcircuit.IntegratedCircuitBlock;
-import net.replaceitem.integratedcircuit.IntegratedCircuitBlockEntity;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvent;
+import net.replaceitem.integratedcircuit.circuit.components.PortComponent;
 import net.replaceitem.integratedcircuit.circuit.context.ServerCircuitContext;
 import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
+import org.jetbrains.annotations.Nullable;
 
-public class ServerCircuit extends Circuit<ServerCircuitContext> {
+public class ServerCircuit extends Circuit {
+    
+    private final ServerCircuitContext context;
     protected final CircuitTickScheduler circuitTickScheduler = new CircuitTickScheduler();
 
     public ServerCircuit(ServerCircuitContext context) {
-        super(false, context);
+        super(false);
+        this.context = context;
     }
 
     @Override
@@ -25,39 +28,15 @@ public class ServerCircuit extends Circuit<ServerCircuitContext> {
         return this.circuitTickScheduler;
     }
 
+    public ServerCircuitContext getContext() {
+        return context;
+    }
+
     @Override
     public void tick() {
         super.tick();
         this.circuitTickScheduler.tick(this.getTime(), 65536, this::tickBlock);
-    }
-
-    @Deprecated // TODO remove
-    public void tick(World world, BlockPos pos, BlockState state, IntegratedCircuitBlockEntity blockEntity) {
-        for (FlatDirection direction : FlatDirection.VALUES) {
-            int newPower = ((IntegratedCircuitBlock) state.getBlock()).getInputPower(world, pos, direction);
-            Components.PORT.assignExternalPower(this, PORTS_GRID_POS[direction.toInt()], this.ports[direction.toInt()], newPower);
-        }
-        
-        // tickScheduler used to be called here
-
-        boolean updateNeeded = false;
-        for (FlatDirection direction : FlatDirection.VALUES) {
-            int oldPower = blockEntity.getOutputStrength(direction);
-            int newPower = Components.PORT.getInternalPower(this, PORTS_GRID_POS[direction.toInt()], this.ports[direction.toInt()]);
-
-            if(oldPower != newPower) {
-                blockEntity.setOutputStrength(world, state, direction, newPower);
-                updateNeeded = true;
-            }
-        }
-        
-        if(updateNeeded) {
-            state.onBlockAdded(world, pos, state, true);
-        }
-        // Doing this as the end of each tick, since markDirty is not that cheap, since it makes comparator updates.
-        // Having every block state change in the circuit trigger that would be a performance disadvantage.
-        // TODO: remove the comparator update
-        // this.blockEntity.markDirty();
+        context.markDirty(); // TODO - Cheating for now
     }
 
     private void tickBlock(ComponentPos pos, Component block) {
@@ -65,6 +44,22 @@ public class ServerCircuit extends Circuit<ServerCircuitContext> {
         if (blockState.isOf(block)) {
             blockState.scheduledTick(this, pos, this.context.getRandom());
         }
+    }
+    
+    public void onExternalPowerChanged(FlatDirection direction, int power) {
+        ComponentPos pos = PORT_POSITIONS.get(direction);
+        ComponentState state = getComponentState(pos);
+        boolean isOutput = state.get(PortComponent.IS_OUTPUT);
+        if(!isOutput && state.get(PortComponent.POWER) != power) {
+            setComponentState(pos, state.with(PortComponent.POWER, power), Component.NOTIFY_ALL);
+        }
+    }
+
+    public int getPortOutputStrength(FlatDirection direction) {
+        ComponentPos pos = PORT_POSITIONS.get(direction);
+        ComponentState state = getComponentState(pos);
+        if(!state.get(PortComponent.IS_OUTPUT)) return 0;
+        return state.get(PortComponent.POWER);
     }
 
     public static ServerCircuit fromNbt(NbtCompound nbt, ServerCircuitContext context) {
@@ -114,6 +109,11 @@ public class ServerCircuit extends Circuit<ServerCircuitContext> {
         if(beforeState.isAir() && placementState.isAir()) return;
         this.setComponentState(pos, placementState, Component.NOTIFY_ALL);
         placementState.getComponent().onPlaced(this, pos, placementState);
+    }
+
+    @Override
+    public void playSoundInternal(@Nullable PlayerEntity except, SoundEvent sound, SoundCategory category, float volume, float pitch) {
+        this.context.playSound(except, sound, category, volume, pitch);
     }
 
     @Override

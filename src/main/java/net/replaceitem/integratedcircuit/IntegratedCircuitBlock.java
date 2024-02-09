@@ -1,7 +1,13 @@
 package net.replaceitem.integratedcircuit;
 
 import com.mojang.serialization.MapCodec;
-import net.minecraft.block.*;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockEntityProvider;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.HorizontalFacingBlock;
+import net.minecraft.block.RedstoneWireBlock;
+import net.minecraft.block.ShapeContext;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
@@ -22,7 +28,11 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.world.*;
+import net.minecraft.world.BlockView;
+import net.minecraft.world.RedstoneView;
+import net.minecraft.world.World;
+import net.minecraft.world.WorldAccess;
+import net.minecraft.world.WorldView;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
 import net.replaceitem.integratedcircuit.network.packet.EditIntegratedCircuitS2CPacket;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
@@ -69,26 +79,35 @@ public class IntegratedCircuitBlock extends HorizontalFacingBlock implements Blo
     @Override
     public void neighborUpdate(BlockState state, World world, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
         super.neighborUpdate(state, world, pos, sourceBlock, sourcePos, notify);
-        pos.subtract(sourcePos);
+        if(world.isClient) return;
+        if(world.getBlockEntity(pos) instanceof IntegratedCircuitBlockEntity integratedCircuitBlockEntity) {
+            for (FlatDirection direction : FlatDirection.VALUES) {
+                integratedCircuitBlockEntity.getCircuit().getContext().readExternalPower(direction);
+            }
+        }
     }
 
     @Override
     public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean notify) {
-        this.updateTargets(world, pos, state);
+        this.updateTargets(world, pos);
     }
 
     @Override
     public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
         if (moved || state.isOf(newState.getBlock())) return;
         super.onStateReplaced(state, world, pos, newState, moved);
-        this.updateTargets(world, pos, state);
+        this.updateTargets(world, pos);
+    }
+    
+    public void updateTarget(World world, BlockPos pos, Direction direction) {
+        BlockPos blockPos = pos.offset(direction);
+        world.updateNeighbor(blockPos, this, pos);
+        world.updateNeighborsExcept(blockPos, this, direction.getOpposite());
     }
 
-    protected void updateTargets(World world, BlockPos pos, BlockState state) {
+    protected void updateTargets(World world, BlockPos pos) {
         for (Direction direction : Direction.values()) {
-            BlockPos blockPos = pos.offset(direction.getOpposite());
-            world.updateNeighbor(blockPos, this, pos);
-            world.updateNeighborsExcept(blockPos, this, direction);
+            updateTarget(world, pos, direction);
         }
     }
 
@@ -105,7 +124,7 @@ public class IntegratedCircuitBlock extends HorizontalFacingBlock implements Blo
     public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
         if (itemStack.hasCustomName() && world.getBlockEntity(pos) instanceof IntegratedCircuitBlockEntity integratedCircuitBlockEntity)
             integratedCircuitBlockEntity.setCustomName(itemStack.getName());
-        this.updateTargets(world, pos, state);
+        this.updateTargets(world, pos);
     }
 
     @Override
@@ -113,9 +132,8 @@ public class IntegratedCircuitBlock extends HorizontalFacingBlock implements Blo
         return new IntegratedCircuitBlockEntity(pos, state);
     }
 
-    public int getInputPower(RedstoneView view, BlockPos pos, FlatDirection dir) {
-        BlockState circuitBlockState = view.getBlockState(pos);
-        Direction direction = dir.toVanillaDirection(circuitBlockState);
+    public int getInputPower(RedstoneView view, BlockPos pos, BlockState state, FlatDirection dir) {
+        Direction direction = dir.toVanillaDirection(state);
 
         BlockPos blockPos = pos.offset(direction);
         BlockState blockState = view.getBlockState(blockPos);
@@ -125,12 +143,6 @@ public class IntegratedCircuitBlock extends HorizontalFacingBlock implements Blo
             return i;
         }
         return Math.max(i, blockState.isOf(Blocks.REDSTONE_WIRE) ? blockState.get(RedstoneWireBlock.POWER) : 0);
-    }
-
-    public int getOutputPower(BlockView view, BlockPos pos, FlatDirection dir) {
-        if(view.getBlockEntity(pos) instanceof IntegratedCircuitBlockEntity integratedCircuitBlockEntity)
-            return integratedCircuitBlockEntity.getOutputStrength(dir);
-        return 0;
     }
 
     @Override
@@ -146,7 +158,10 @@ public class IntegratedCircuitBlock extends HorizontalFacingBlock implements Blo
     @Override
     public int getWeakRedstonePower(BlockState state, BlockView view, BlockPos pos, Direction direction) {
         if(direction.getAxis().isVertical()) return 0;
-        return getOutputPower(view, pos, FlatDirection.fromVanillaDirection(state, direction.getOpposite()));
+        FlatDirection circuitDirection = FlatDirection.fromVanillaDirection(state, direction.getOpposite());
+        if(view.getBlockEntity(pos) instanceof IntegratedCircuitBlockEntity integratedCircuitBlockEntity)
+            return integratedCircuitBlockEntity.getCircuit().getPortOutputStrength(circuitDirection);
+        return 0;
     }
 
     @Nullable
@@ -189,6 +204,13 @@ public class IntegratedCircuitBlock extends HorizontalFacingBlock implements Blo
         return list;
     }
 
+    public int getPortRenderStrength(RedstoneView view, BlockPos pos, FlatDirection circuitDirection) {
+        if(view.getBlockEntity(pos) instanceof IntegratedCircuitBlockEntity integratedCircuitBlockEntity) {
+            return integratedCircuitBlockEntity.getPortRenderStrength(circuitDirection);
+        }
+        return 0;
+    }
+
     @Override
     protected MapCodec<? extends HorizontalFacingBlock> getCodec() {
         return CODEC;
@@ -212,7 +234,6 @@ public class IntegratedCircuitBlock extends HorizontalFacingBlock implements Blo
             case GREEN -> IntegratedCircuit.GREEN_INTEGRATED_CIRCUIT_BLOCK;
             case RED -> IntegratedCircuit.RED_INTEGRATED_CIRCUIT_BLOCK;
             case BLACK -> IntegratedCircuit.BLACK_INTEGRATED_CIRCUIT_BLOCK;
-            default -> IntegratedCircuit.INTEGRATED_CIRCUIT_BLOCK;
         };
     }
 }

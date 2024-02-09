@@ -1,5 +1,7 @@
 package net.replaceitem.integratedcircuit.circuit;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.EnumHashBiMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
@@ -10,7 +12,6 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.replaceitem.integratedcircuit.circuit.components.PortComponent;
-import net.replaceitem.integratedcircuit.circuit.context.CircuitContext;
 import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
@@ -18,15 +19,17 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 
-public abstract class Circuit<C extends CircuitContext> implements CircuitAccess {
+public abstract class Circuit implements CircuitAccess {
     public static final int SIZE = 15;
     
-    public static final ComponentPos[] PORTS_GRID_POS = new ComponentPos[]{
-            new ComponentPos(7, -1),
-            new ComponentPos(15, 7),
-            new ComponentPos(7, 15),
-            new ComponentPos(-1, 7)
-    };
+    public static final BiMap<FlatDirection, ComponentPos> PORT_POSITIONS = EnumHashBiMap.create(FlatDirection.class);
+    
+    static {
+        PORT_POSITIONS.put(FlatDirection.NORTH, new ComponentPos(7, -1));
+        PORT_POSITIONS.put(FlatDirection.EAST, new ComponentPos(15, 7));
+        PORT_POSITIONS.put(FlatDirection.SOUTH, new ComponentPos(7, 15));
+        PORT_POSITIONS.put(FlatDirection.WEST, new ComponentPos(-1, 7));
+    }
 
     public final ComponentState[][] components = new ComponentState[SIZE][SIZE];
     public final ComponentState[] ports = new ComponentState[4];
@@ -40,11 +43,8 @@ public abstract class Circuit<C extends CircuitContext> implements CircuitAccess
     private long tickOrder;
     private long time = 0;
 
-    protected final C context;
-
-    public Circuit(boolean isClient, C context) {
+    public Circuit(boolean isClient) {
         this.isClient = isClient;
-        this.context = context;
         for (ComponentState[] componentState : components) {
             Arrays.fill(componentState, Components.AIR.getDefaultState());
         }
@@ -53,10 +53,6 @@ public abstract class Circuit<C extends CircuitContext> implements CircuitAccess
         }
 
         this.neighborUpdater = new CircuitNeighborUpdater(this);
-    }
-
-    public C getContext() {
-        return context;
     }
     
     public void tick() {
@@ -80,22 +76,25 @@ public abstract class Circuit<C extends CircuitContext> implements CircuitAccess
         if (isInside(componentPos)) {
             return this.components[componentPos.getX()][componentPos.getY()];
         }
-        if(isPortPos(componentPos)) {
-            return ports[getPortNumber(componentPos)];
+        FlatDirection portSide = getPortSide(componentPos);
+        if(portSide != null) {
+            return ports[portSide.toInt()];
         }
         return Components.AIR.getDefaultState();
     }
 
     /**
      * Handles directly setting the component state, without any updates.
+     * Assumes {@code pos} is already valid
      * Equivalent to {@link net.minecraft.world.chunk.ChunkSection#setBlockState(int, int, int, BlockState)}
      * @return The old component state before placement.
      */
     protected ComponentState assignComponentState(ComponentPos pos, ComponentState state) {
         ComponentState oldState = getComponentState(pos);
-        if(isPortPos(pos)) {
+        FlatDirection portSide = getPortSide(pos);
+        if(portSide != null) {
             if(!state.isOf(Components.PORT)) throw new RuntimeException("Cannot place non-port component at a port location");
-            ports[getPortNumber(pos)] = state;
+            ports[portSide.toInt()] = state;
         } else {
             this.components[pos.getX()][pos.getY()] = state;
         }
@@ -143,15 +142,12 @@ public abstract class Circuit<C extends CircuitContext> implements CircuitAccess
         return true;
     }
 
-    public int getPortNumber(ComponentPos pos) {
-        for (int i = 0; i < 4; i++) {
-            if(PORTS_GRID_POS[i].equals(pos)) return i;
-        }
-        return -1;
+    public static @Nullable FlatDirection getPortSide(ComponentPos pos) {
+        return PORT_POSITIONS.inverse().get(pos);
     }
 
-    public boolean isPortPos(ComponentPos pos) {
-        return getPortNumber(pos) != -1;
+    public static boolean isPortPos(ComponentPos pos) {
+        return getPortSide(pos) != null;
     }
 
     public boolean isEmpty() {
@@ -315,6 +311,7 @@ public abstract class Circuit<C extends CircuitContext> implements CircuitAccess
     public boolean breakBlock(ComponentPos pos) {
         return breakBlock(pos, 512);
     }
+    
     public boolean breakBlock(ComponentPos pos, int maxUpdateDepth) {
         ComponentState blockState = this.getComponentState(pos);
         if (blockState.isAir()) {
@@ -322,9 +319,10 @@ public abstract class Circuit<C extends CircuitContext> implements CircuitAccess
         }
         return this.setComponentState(pos, Components.AIR_DEFAULT_STATE, Component.NOTIFY_ALL, maxUpdateDepth);
     }
-
-    public void playSound(@Nullable PlayerEntity except, SoundEvent sound, SoundCategory category, float volume, float pitch) {
-        // play sound higher pitched, since components are smaller than blocks
-        this.context.playSoundInWorld(except, sound, category, volume, pitch * 1.6f);
+    
+    public final void playSound(@Nullable PlayerEntity except, SoundEvent sound, SoundCategory category, float volume, float pitch) {
+        playSoundInternal(except, sound, category, volume, pitch * 1.6f);
     }
+    
+    protected abstract void playSoundInternal(@Nullable PlayerEntity except, SoundEvent sound, SoundCategory category, float volume, float pitch);
 }

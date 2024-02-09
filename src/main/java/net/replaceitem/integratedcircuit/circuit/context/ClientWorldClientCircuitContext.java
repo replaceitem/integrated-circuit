@@ -16,14 +16,13 @@ public class ClientWorldClientCircuitContext implements ClientCircuitContext {
         this.blockPos = blockPos;
     }
 
-
     @Override
-    public void playSoundInWorld(@Nullable PlayerEntity except, SoundEvent sound, SoundCategory category, float volume, float pitch) {
+    public void playSound(@Nullable PlayerEntity except, SoundEvent sound, SoundCategory category, float volume, float pitch) {
         this.world.playSound(except, this.blockPos, sound, category, volume, pitch);
     }
 
     @Override
     public BlockPos getBlockPos() {
-        return null;
+        return blockPos;
     }
 }

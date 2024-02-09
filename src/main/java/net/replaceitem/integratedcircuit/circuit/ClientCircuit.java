@@ -5,17 +5,26 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvent;
 import net.replaceitem.integratedcircuit.circuit.context.ClientCircuitContext;
 import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
 import net.replaceitem.integratedcircuit.network.packet.ComponentInteractionC2SPacket;
 import net.replaceitem.integratedcircuit.network.packet.PlaceComponentC2SPacket;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
+import org.jetbrains.annotations.Nullable;
 
-public class ClientCircuit extends Circuit<ClientCircuitContext> {
+public class ClientCircuit extends Circuit {
 
+    private final ClientCircuitContext context;
+    
     public ClientCircuit(ClientCircuitContext context) {
-        super(true, context);
+        super(true);
+        this.context = context;
+    }
+
+    public ClientCircuitContext getContext() {
+        return context;
     }
 
     @Override
@@ -44,6 +53,11 @@ public class ClientCircuit extends Circuit<ClientCircuitContext> {
         if(success) {
             playSound(MinecraftClient.getInstance().player, breaking ? soundGroup.getBreakSound() : soundGroup.getPlaceSound(), SoundCategory.BLOCKS, (soundGroup.getVolume() + 1.0f) / 2.0f, soundGroup.getPitch());
         }
+    }
+
+    @Override
+    public void playSoundInternal(@Nullable PlayerEntity except, SoundEvent sound, SoundCategory category, float volume, float pitch) {
+        this.context.playSound(except, sound, category, volume, pitch);
     }
 
     public void breakComponentState(ComponentPos pos) {

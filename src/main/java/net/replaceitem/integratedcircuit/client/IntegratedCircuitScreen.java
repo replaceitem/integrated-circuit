@@ -164,9 +164,9 @@ public class IntegratedCircuitScreen extends Screen {
         
         drawContext.getMatrices().scale(RENDER_SCALE, RENDER_SCALE, 1);
         
-        for (int i = 0; i < circuit.ports.length; i++) {
-            ComponentState port = circuit.ports[i];
-            ComponentPos pos = Circuit.PORTS_GRID_POS[i];
+        for (FlatDirection direction : FlatDirection.VALUES) {
+            ComponentState port = circuit.ports[direction.toInt()];
+            ComponentPos pos = Circuit.PORT_POSITIONS.get(direction);
             renderComponentStateInGrid(drawContext, port, pos.getX(), pos.getY(), 1);
         }
         for (int i = 0; i < circuit.components.length; i++) {
@@ -279,7 +279,7 @@ public class IntegratedCircuitScreen extends Screen {
                 return true;
             }
         } else {
-            if(isPlace && circuit.isPortPos(clickedPos)) {
+            if(isPlace && Circuit.isPortPos(clickedPos)) {
                 circuit.useComponent(clickedPos, this.client.player);
                 return true;
             }

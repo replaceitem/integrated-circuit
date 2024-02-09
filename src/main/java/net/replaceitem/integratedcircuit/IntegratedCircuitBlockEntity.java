@@ -1,6 +1,5 @@
 package net.replaceitem.integratedcircuit;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.nbt.NbtCompound;
@@ -13,8 +12,8 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Nameable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.replaceitem.integratedcircuit.circuit.context.BlockEntityServerCircuitContext;
 import net.replaceitem.integratedcircuit.circuit.ServerCircuit;
+import net.replaceitem.integratedcircuit.circuit.context.BlockEntityServerCircuitContext;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,7 +27,7 @@ public class IntegratedCircuitBlockEntity extends BlockEntity implements Nameabl
     @Nullable
     private ServerCircuit circuit;
 
-    protected byte[] outputStrengths = new byte[] {0,0,0,0};
+    protected byte[] renderSignalStrengths = new byte[] {0,0,0,0};
 
     public IntegratedCircuitBlockEntity(BlockPos pos, BlockState state) {
         super(IntegratedCircuit.INTEGRATED_CIRCUIT_BLOCK_ENTITY, pos, state);
@@ -42,7 +41,7 @@ public class IntegratedCircuitBlockEntity extends BlockEntity implements Nameabl
             this.customName = Text.Serialization.fromJson(nbt.getString("CustomName"));
         }
         if(nbt.contains("outputStrengths")) {
-            this.outputStrengths = nbt.getByteArray("outputStrengths");
+            this.renderSignalStrengths = nbt.getByteArray("outputStrengths");
         }
         this.getCircuit().readNbt(nbt);
     }
@@ -52,7 +51,7 @@ public class IntegratedCircuitBlockEntity extends BlockEntity implements Nameabl
         if(this.hasCustomName()) {
             nbt.putString("CustomName", Text.Serialization.toJsonString(this.customName));
         }
-        nbt.putByteArray("outputStrengths", this.outputStrengths.clone());
+        nbt.putByteArray("outputStrengths", this.renderSignalStrengths.clone());
 
         this.getCircuit().writeNbt(nbt);
     }
@@ -95,14 +94,12 @@ public class IntegratedCircuitBlockEntity extends BlockEntity implements Nameabl
         this.editors.remove(player);
     }
 
-    public void setOutputStrength(World world, BlockState state, FlatDirection direction, int power) {
-        this.outputStrengths[direction.toInt()] = (byte) power;
-        this.markDirty();
-        world.updateListeners(pos, state, state, Block.NOTIFY_LISTENERS);
+    public void setRenderSignalStrength(FlatDirection direction, int power) {
+        this.renderSignalStrengths[direction.toInt()] = (byte) power;
     }
 
-    public int getOutputStrength(FlatDirection direction) {
-        return this.outputStrengths[direction.toInt()];
+    public int getPortRenderStrength(FlatDirection direction) {
+        return this.renderSignalStrengths[direction.toInt()];
     }
 
     public ServerCircuit getCircuit() {
@@ -126,7 +123,7 @@ public class IntegratedCircuitBlockEntity extends BlockEntity implements Nameabl
     @Override
     public NbtCompound toInitialChunkDataNbt() {
         NbtCompound nbt = new NbtCompound();
-        nbt.putByteArray("outputStrengths", this.outputStrengths.clone());
+        nbt.putByteArray("outputStrengths", this.renderSignalStrengths.clone());
         return nbt;
     }
 

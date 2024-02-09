@@ -7,6 +7,7 @@ import net.minecraft.util.math.Vec3d;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
 import net.replaceitem.integratedcircuit.circuit.Component;
 import net.replaceitem.integratedcircuit.circuit.ServerCircuit;
+import net.replaceitem.integratedcircuit.circuit.context.ServerCircuitContext;
 import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
 import net.replaceitem.integratedcircuit.circuit.state.property.BooleanComponentProperty;
 import net.replaceitem.integratedcircuit.circuit.state.property.ComponentProperty;
@@ -22,7 +23,7 @@ public class PortComponent extends AbstractWireComponent {
 
     public static final FlatDirectionComponentProperty FACING = new FlatDirectionComponentProperty("facing", 0);
     public static final IntComponentProperty POWER = new IntComponentProperty("power", 3, 4);
-    private static final BooleanComponentProperty IS_OUTPUT = new BooleanComponentProperty("is_output", 7);
+    public static final BooleanComponentProperty IS_OUTPUT = new BooleanComponentProperty("is_output", 7);
 
     public PortComponent(int id, Settings settings) {
         super(id, settings);
@@ -52,8 +53,15 @@ public class PortComponent extends AbstractWireComponent {
     @Override
     public void onBlockAdded(ComponentState state, Circuit circuit, ComponentPos pos, ComponentState oldState) {
         if(circuit.isClient) return;
+        ServerCircuitContext context = ((ServerCircuit) circuit).getContext();
+        FlatDirection portSide = Circuit.getPortSide(pos);
+        boolean isOutput = state.get(IS_OUTPUT);
+        boolean wasOutput = oldState.get(IS_OUTPUT);
+        context.setRenderStrength(portSide, state.get(POWER));
         this.update(circuit, pos, state);
         this.updateOffsetNeighbors(circuit, pos);
+        if(isOutput || wasOutput) context.updateExternal(portSide);
+        if(!isOutput && wasOutput) context.readExternalPower(portSide);
     }
 
     @Override
@@ -67,18 +75,6 @@ public class PortComponent extends AbstractWireComponent {
         ComponentState state = world.getComponentState(pos);
         if(!state.get(IS_OUTPUT)) return state.get(POWER);
         return super.getReceivedRedstonePower(world, pos);
-    }
-
-    public int getInternalPower(ServerCircuit circuit, ComponentPos pos, ComponentState state) {
-        if(!state.get(IS_OUTPUT)) return 0;
-        return state.get(POWER);
-    }
-
-    public void assignExternalPower(ServerCircuit circuit, ComponentPos pos, ComponentState state, int newPower) {
-        if(state.get(IS_OUTPUT)) return;
-        if(state.get(POWER) == newPower) return;
-        state = state.with(POWER, newPower);
-        circuit.setComponentState(pos, state, Component.NOTIFY_ALL);
     }
 
     @Override
