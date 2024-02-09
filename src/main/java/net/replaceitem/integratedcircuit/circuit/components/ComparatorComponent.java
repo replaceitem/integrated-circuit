@@ -49,7 +49,7 @@ public class ComparatorComponent extends AbstractRedstoneGateComponent {
     @Override
     public void render(DrawContext drawContext, int x, int y, float a, ComponentState state) {
         boolean powered = state.get(POWERED);
-        int rot = state.get(FACING).getOpposite().toInt();
+        int rot = state.get(FACING).getOpposite().getIndex();
         IntegratedCircuitScreen.renderComponentTexture(drawContext, powered ? TEXTURE_ON : TEXTURE, x, y, rot, 1, 1, 1, a);
         
         Identifier torchTexture = powered ? TEXTURE_TORCH_ON : TEXTURE_TORCH_OFF;

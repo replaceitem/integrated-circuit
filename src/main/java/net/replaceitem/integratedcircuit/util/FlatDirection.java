@@ -27,7 +27,7 @@ public enum FlatDirection {
         this.vanillaDirection = vanillaDirection;
     }
 
-    public int toInt() {
+    public int getIndex() {
         return this.index;
     }
 
@@ -40,7 +40,7 @@ public enum FlatDirection {
     }
 
     public FlatDirection rotated(int times) {
-        return VALUES[Math.floorMod(this.toInt()+times,4)];
+        return VALUES[Math.floorMod(this.getIndex()+times,4)];
     }
 
     public FlatDirection rotatedCounterclockwise(int times) {
@@ -56,7 +56,7 @@ public enum FlatDirection {
     }
 
     public Direction toVanillaDirection(Direction facing) {
-        return this.rotated(FlatDirection.fromVanillaDirection(facing).toInt()).toVanillaDirection();
+        return this.rotated(FlatDirection.fromVanillaDirection(facing).getIndex()).toVanillaDirection();
     }
 
     public Direction toVanillaDirection(BlockState circuit) {
@@ -76,7 +76,7 @@ public enum FlatDirection {
     }
 
     public static FlatDirection fromVanillaDirection(Direction facing, Direction direction) {
-        return FlatDirection.fromVanillaDirection(direction).rotatedCounterclockwise(FlatDirection.fromVanillaDirection(facing).toInt());
+        return FlatDirection.fromVanillaDirection(direction).rotatedCounterclockwise(FlatDirection.fromVanillaDirection(facing).getIndex());
     }
 
     public static FlatDirection fromVanillaDirection(BlockState circuit, Direction direction) {

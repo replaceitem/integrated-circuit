@@ -61,7 +61,7 @@ public class TorchComponent extends FacingComponent {
     @Override
     public void render(DrawContext drawContext, int x, int y, float a, ComponentState state) {
         Identifier texture = state.get(LIT)?TEXTURE:TEXTURE_OFF;
-        IntegratedCircuitScreen.renderComponentTexture(drawContext, texture, x, y, state.get(FACING).toInt(), 1, 1, 1, a);
+        IntegratedCircuitScreen.renderComponentTexture(drawContext, texture, x, y, state.get(FACING).getIndex(), 1, 1, 1, a);
     }
 
     @Override

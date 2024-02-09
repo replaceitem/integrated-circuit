@@ -41,7 +41,7 @@ public class PlaceComponentC2SPacket {
         buf.writeByte(pos.getY());
         buf.writeBlockPos(blockPos);
         buf.writeByte(component.getId());
-        buf.writeByte(rotation.toInt());
+        buf.writeByte(rotation.getIndex());
         return buf;
     }
 

@@ -10,7 +10,7 @@ public class FlatDirectionComponentProperty extends ComponentProperty<FlatDirect
 
     @Override
     public byte encodeBits(FlatDirection value) {
-        return (byte) value.toInt();
+        return (byte) value.getIndex();
     }
 
     @Override

@@ -44,7 +44,7 @@ public class PortComponent extends AbstractWireComponent {
         float b = (float) color.z;
 
         FlatDirection rotation = state.get(FACING);
-        IntegratedCircuitScreen.renderComponentTexture(drawContext, TEXTURE_ARROW, x, y, rotation.toInt(), r, g, b, a);
+        IntegratedCircuitScreen.renderComponentTexture(drawContext, TEXTURE_ARROW, x, y, rotation.getIndex(), r, g, b, a);
         
         Identifier wireTexture = rotation.getAxis() == FlatDirection.Axis.X ? TEXTURE_X : TEXTURE_Y;
         IntegratedCircuitScreen.renderComponentTexture(drawContext, wireTexture, x, y, 0, r, g, b, a);

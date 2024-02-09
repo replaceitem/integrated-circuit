@@ -37,7 +37,7 @@ public class ObserverComponent extends FacingComponent {
 
     @Override
     public void render(DrawContext drawContext, int x, int y, float a, ComponentState state) {
-        IntegratedCircuitScreen.renderComponentTexture(drawContext, state.get(POWERED) ? TEXTURE_ON : TEXTURE, x, y, state.get(FACING).getOpposite().toInt(), 1, 1, 1, a);
+        IntegratedCircuitScreen.renderComponentTexture(drawContext, state.get(POWERED) ? TEXTURE_ON : TEXTURE, x, y, state.get(FACING).getOpposite().getIndex(), 1, 1, 1, a);
     }
 
     @Override

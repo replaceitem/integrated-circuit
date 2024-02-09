@@ -95,11 +95,11 @@ public class IntegratedCircuitBlockEntity extends BlockEntity implements Nameabl
     }
 
     public void setRenderSignalStrength(FlatDirection direction, int power) {
-        this.renderSignalStrengths[direction.toInt()] = (byte) power;
+        this.renderSignalStrengths[direction.getIndex()] = (byte) power;
     }
 
     public int getPortRenderStrength(FlatDirection direction) {
-        return this.renderSignalStrengths[direction.toInt()];
+        return this.renderSignalStrengths[direction.getIndex()];
     }
 
     public ServerCircuit getCircuit() {

@@ -78,7 +78,7 @@ public abstract class Circuit implements CircuitAccess {
         }
         FlatDirection portSide = getPortSide(componentPos);
         if(portSide != null) {
-            return ports[portSide.toInt()];
+            return ports[portSide.getIndex()];
         }
         return Components.AIR.getDefaultState();
     }
@@ -94,7 +94,7 @@ public abstract class Circuit implements CircuitAccess {
         FlatDirection portSide = getPortSide(pos);
         if(portSide != null) {
             if(!state.isOf(Components.PORT)) throw new RuntimeException("Cannot place non-port component at a port location");
-            ports[portSide.toInt()] = state;
+            ports[portSide.getIndex()] = state;
         } else {
             this.components[pos.getX()][pos.getY()] = state;
         }

@@ -43,20 +43,20 @@ public class RepeaterComponent extends AbstractRedstoneGateComponent {
         FlatDirection renderedRotation = state.get(FACING).getOpposite();
 
         Identifier baseTexture = state.get(POWERED) ? TEXTURE_ON : TEXTURE_OFF;
-        IntegratedCircuitScreen.renderComponentTexture(drawContext, baseTexture, x, y, renderedRotation.toInt(), 1, 1, 1, a);
+        IntegratedCircuitScreen.renderComponentTexture(drawContext, baseTexture, x, y, renderedRotation.getIndex(), 1, 1, 1, a);
 
 
         Identifier torchTexture = state.get(POWERED) ? TEXTURE_TORCH_ON : TEXTURE_TORCH_OFF;
         
-        IntegratedCircuitScreen.renderPartialTexture(drawContext, torchTexture, x, y, 6, 1, 4, 4, renderedRotation.toInt(),  1, 1, 1, a);
+        IntegratedCircuitScreen.renderPartialTexture(drawContext, torchTexture, x, y, 6, 1, 4, 4, renderedRotation.getIndex(),  1, 1, 1, a);
 
         boolean locked = state.get(LOCKED);
         Identifier knobTexture = locked ? TEXTURE_BAR : torchTexture;
         int knobOffsetAmount = state.get(DELAY) * 2;
         if(locked) {
-            IntegratedCircuitScreen.renderPartialTexture(drawContext, knobTexture, x, y, 2, 6 + knobOffsetAmount, 12, 2, renderedRotation.toInt(),  1, 1, 1, a);
+            IntegratedCircuitScreen.renderPartialTexture(drawContext, knobTexture, x, y, 2, 6 + knobOffsetAmount, 12, 2, renderedRotation.getIndex(),  1, 1, 1, a);
         } else {
-            IntegratedCircuitScreen.renderPartialTexture(drawContext, knobTexture, x, y, 6, 5 + knobOffsetAmount, 4, 4, renderedRotation.toInt(),  1, 1, 1, a);
+            IntegratedCircuitScreen.renderPartialTexture(drawContext, knobTexture, x, y, 6, 5 + knobOffsetAmount, 4, 4, renderedRotation.getIndex(),  1, 1, 1, a);
         }
     }
 
