@@ -5,8 +5,7 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "KeyBindingAccessor",
-    "RedstoneWireBlockAccessor",
-    "BlockRenderViewMixin"
+    "RedstoneWireBlockAccessor"
   ],
   "client": [
     "client.ClientPlayNetworkHandlerMixin"

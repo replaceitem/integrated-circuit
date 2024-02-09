@@ -28,6 +28,7 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.shape.VoxelShape;
+import net.minecraft.world.BlockRenderView;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.RedstoneView;
 import net.minecraft.world.World;
@@ -204,7 +205,7 @@ public class IntegratedCircuitBlock extends HorizontalFacingBlock implements Blo
         return list;
     }
 
-    public int getPortRenderStrength(RedstoneView view, BlockPos pos, FlatDirection circuitDirection) {
+    public int getPortRenderStrength(BlockRenderView view, BlockPos pos, FlatDirection circuitDirection) {
         if(view.getBlockEntity(pos) instanceof IntegratedCircuitBlockEntity integratedCircuitBlockEntity) {
             return integratedCircuitBlockEntity.getPortRenderStrength(circuitDirection);
         }

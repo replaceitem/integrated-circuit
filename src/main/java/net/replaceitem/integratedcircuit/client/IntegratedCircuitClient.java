@@ -8,7 +8,6 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.minecraft.block.RedstoneWireBlock;
 import net.minecraft.client.render.RenderLayer;
-import net.minecraft.world.RedstoneView;
 import net.replaceitem.integratedcircuit.IntegratedCircuit;
 import net.replaceitem.integratedcircuit.IntegratedCircuitBlock;
 import net.replaceitem.integratedcircuit.client.config.DefaultConfig;
@@ -24,13 +23,13 @@ public class IntegratedCircuitClient implements ClientModInitializer {
         BlockRenderLayerMap.INSTANCE.putBlocks(RenderLayer.getCutoutMipped(), IntegratedCircuit.INTEGRATED_CIRCUIT_BLOCKS);
 
         ColorProviderRegistry.BLOCK.register((state, view, pos, tintIndex) -> {
-            if(pos == null || !(state.getBlock() instanceof IntegratedCircuitBlock block) || tintIndex > 3)
+            if(view == null || pos == null || !(state.getBlock() instanceof IntegratedCircuitBlock block) || tintIndex > 3)
                 return RedstoneWireBlock.getWireColor(0);
 
             FlatDirection circuitDirection = FlatDirection.VALUES[tintIndex];
 
             return RedstoneWireBlock.getWireColor(
-                block.getPortRenderStrength((RedstoneView)view, pos, circuitDirection)
+                block.getPortRenderStrength(view, pos, circuitDirection)
             );
         }, IntegratedCircuit.INTEGRATED_CIRCUIT_BLOCKS);
         ColorProviderRegistry.ITEM.register((stack, tintIndex) -> RedstoneWireBlock.getWireColor(0), IntegratedCircuit.INTEGRATED_CIRCUIT_ITEMS);
