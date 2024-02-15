@@ -9,8 +9,6 @@ import net.minecraft.block.HorizontalFacingBlock;
 import net.minecraft.block.RedstoneWireBlock;
 import net.minecraft.block.ShapeContext;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityTicker;
-import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItem;
@@ -19,6 +17,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.loot.context.LootContextParameterSet;
 import net.minecraft.loot.context.LootContextParameters;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.ActionResult;
@@ -27,6 +26,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockRenderView;
 import net.minecraft.world.BlockView;
@@ -69,6 +69,14 @@ public class IntegratedCircuitBlock extends HorizontalFacingBlock implements Blo
     public BlockState getPlacementState(ItemPlacementContext ctx) {
         return this.getDefaultState().with(Properties.HORIZONTAL_FACING, ctx.getHorizontalPlayerFacing());
     }
+    
+    @Override
+    public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
+        if(world.getBlockEntity(pos) instanceof IntegratedCircuitBlockEntity integratedCircuitBlockEntity) {
+            integratedCircuitBlockEntity.getCircuit().tick();
+        }
+        world.scheduleBlockTick(pos, state.getBlock(), 1);
+    }
 
     @Override
     public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
@@ -86,11 +94,13 @@ public class IntegratedCircuitBlock extends HorizontalFacingBlock implements Blo
                 integratedCircuitBlockEntity.getCircuit().getContext().readExternalPower(direction);
             }
         }
+        world.scheduleBlockTick(pos, state.getBlock(), 0);
     }
 
     @Override
     public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean notify) {
         this.updateTargets(world, pos);
+        world.scheduleBlockTick(pos, state.getBlock(), 0);
     }
 
     @Override
@@ -163,18 +173,6 @@ public class IntegratedCircuitBlock extends HorizontalFacingBlock implements Blo
         if(view.getBlockEntity(pos) instanceof IntegratedCircuitBlockEntity integratedCircuitBlockEntity)
             return integratedCircuitBlockEntity.getCircuit().getPortOutputStrength(circuitDirection);
         return 0;
-    }
-
-    @Nullable
-    @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
-        if(world.isClient() || type != IntegratedCircuit.INTEGRATED_CIRCUIT_BLOCK_ENTITY) return null;
-        return (world1, pos, state1, blockEntity) -> {
-            if(!world.isChunkLoaded(pos) || !world.getBlockState(pos).isIn(IntegratedCircuit.INTEGRATED_CIRCUITS_BLOCK_TAG)) return;
-            if(blockEntity instanceof IntegratedCircuitBlockEntity integratedCircuitBlockEntity) {
-                integratedCircuitBlockEntity.tick(world1, pos, state1);
-            }
-        };
     }
 
     @Override

@@ -131,8 +131,4 @@ public class IntegratedCircuitBlockEntity extends BlockEntity implements Nameabl
     public Packet<ClientPlayPacketListener> toUpdatePacket() {
         return BlockEntityUpdateS2CPacket.create(this);
     }
-
-    public void tick(World world, BlockPos pos, BlockState state) {
-        this.getCircuit().tick();
-    }
 }
