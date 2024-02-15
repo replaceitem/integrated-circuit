@@ -41,7 +41,6 @@ public abstract class Circuit implements CircuitAccess {
      */
     public final boolean isClient;
     private long tickOrder;
-    private long time = 0;
 
     public Circuit(boolean isClient) {
         this.isClient = isClient;
@@ -54,19 +53,12 @@ public abstract class Circuit implements CircuitAccess {
 
         this.neighborUpdater = new CircuitNeighborUpdater(this);
     }
-    
-    public void tick() {
-        time++;
-    }
 
     public boolean isInside(ComponentPos pos) {
         return pos.getX() >= 0 && pos.getX() < SIZE && pos.getY() >= 0 && pos.getY() < SIZE;
     }
-
-    @Override
-    public long getTime() {
-        return time;
-    }
+    
+    public abstract long getTime();
 
     public boolean isValidPos(ComponentPos pos) {
         return isInside(pos) || isPortPos(pos);
@@ -180,8 +172,6 @@ public abstract class Circuit implements CircuitAccess {
             componentsData[i/2] |= (components[i%SIZE][i/SIZE].encode() & 0xFFFF) << shift;
         }
         nbt.putIntArray("components", componentsData);
-        
-        nbt.putLong("time", time);
     }
 
     public void readNbt(NbtCompound nbt) {
@@ -204,9 +194,6 @@ public abstract class Circuit implements CircuitAccess {
                 int shift = (i % 2 == 0) ? 16 : 0;
                 components[i % SIZE][i / SIZE] = Components.createComponentState((short) (componentData[i / 2] >> shift & 0xFFFF));
             }
-        }
-        if(nbt.contains("time", NbtElement.LONG_TYPE)) {
-            this.time = nbt.getLong("time");
         }
     }
 

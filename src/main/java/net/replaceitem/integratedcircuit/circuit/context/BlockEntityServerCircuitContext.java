@@ -110,4 +110,11 @@ public class BlockEntityServerCircuitContext implements ServerCircuitContext {
             }
         }
     }
+
+    @Override
+    public long getTime() {
+        World world = getWorld();
+        if(world == null) return 0;
+        return world.getTime();
+    }
 }

@@ -6,7 +6,7 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
 
-public interface ClientCircuitContext {
+public interface ClientCircuitContext extends CircuitContext {
     BlockPos getBlockPos();
     void playSound(@Nullable PlayerEntity except, SoundEvent sound, SoundCategory category, float volume, float pitch);
 }

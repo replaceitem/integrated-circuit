@@ -71,6 +71,11 @@ public class ClientCircuit extends Circuit {
     }
 
     @Override
+    public long getTime() {
+        return context.getTime();
+    }
+
+    @Override
     protected void updateListeners(ComponentPos pos, ComponentState oldState, ComponentState state, int flags) {
 
     }

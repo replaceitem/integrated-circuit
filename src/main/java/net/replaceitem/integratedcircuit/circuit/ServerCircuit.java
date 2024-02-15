@@ -32,9 +32,7 @@ public class ServerCircuit extends Circuit {
         return context;
     }
 
-    @Override
     public void tick() {
-        super.tick();
         this.circuitTickScheduler.tick(this.getTime(), 65536, this::tickBlock);
         context.markDirty(); // TODO - Cheating for now
     }
@@ -81,6 +79,11 @@ public class ServerCircuit extends Circuit {
             // this has to be stored until the context is ready, since the time is needed to get the correct triggerTime for scheduled ticks
             this.tickSchedulerNbtBuffer = tickSchedulerNbt;
         }
+    }
+
+    @Override
+    public long getTime() {
+        return context.getTime();
     }
 
     @Override

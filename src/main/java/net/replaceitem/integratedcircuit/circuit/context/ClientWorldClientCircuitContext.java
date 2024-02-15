@@ -25,4 +25,9 @@ public class ClientWorldClientCircuitContext implements ClientCircuitContext {
     public BlockPos getBlockPos() {
         return blockPos;
     }
+
+    @Override
+    public long getTime() {
+        return world.getTime();
+    }
 }

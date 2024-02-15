@@ -9,7 +9,7 @@ import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
 import org.jetbrains.annotations.Nullable;
 
-public interface ServerCircuitContext {
+public interface ServerCircuitContext extends CircuitContext {
     Random getRandom();
     boolean isReady();
     void onComponentUpdate(ComponentPos pos, ComponentState state);
