@@ -113,6 +113,9 @@ public class IntegratedCircuitScreen extends Screen {
         this.renderContent(drawContext);
         this.renderPalette(drawContext);
         this.renderCursorState(drawContext, mouseX, mouseY);
+        
+
+        super.render(drawContext, mouseX, mouseY, delta);
     }
 
     private void renderHoverInfo(DrawContext drawContext, int mouseX, int mouseY) {
@@ -347,9 +350,9 @@ public class IntegratedCircuitScreen extends Screen {
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
-        if(DefaultConfig.config.getInvertScrollDirection()) verticalAmount = -verticalAmount;
-        int intAmount = (int) verticalAmount;
+    public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
+        if(DefaultConfig.config.getInvertScrollDirection()) amount = -amount;
+        int intAmount = (int) amount;
         switch (DefaultConfig.config.getScrollBehaviour()) {
             case ROTATE -> rotateComponent(-intAmount);
             case SELECT_COMPONENT -> selectPalette(selectedComponentSlot - intAmount);
