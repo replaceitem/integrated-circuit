@@ -1,6 +1,5 @@
 package net.replaceitem.integratedcircuit;
 
-import com.mojang.serialization.MapCodec;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockEntityProvider;
 import net.minecraft.block.BlockState;
@@ -42,7 +41,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class IntegratedCircuitBlock extends HorizontalFacingBlock implements BlockEntityProvider {
-    public static final MapCodec<IntegratedCircuitBlock> CODEC = createCodec(IntegratedCircuitBlock::new);
     protected static final VoxelShape SHAPE = Block.createCuboidShape(0.0, 0.0, 0.0, 16.0, 2.0, 16.0);
 
     public IntegratedCircuitBlock(Settings settings) {
@@ -176,14 +174,14 @@ public class IntegratedCircuitBlock extends HorizontalFacingBlock implements Blo
     }
 
     @Override
-    public BlockState onBreak(World world, BlockPos pos, BlockState state, PlayerEntity player) {
+    public void onBreak(World world, BlockPos pos, BlockState state, PlayerEntity player) {
         BlockEntity blockEntity = world.getBlockEntity(pos);
         if (blockEntity instanceof IntegratedCircuitBlockEntity integratedCircuitBlockEntity) {
             if (!world.isClient && player.isCreative() && !integratedCircuitBlockEntity.getCircuit().isEmpty()) {
                 dropStacks(state, world, pos, blockEntity, player, player.getMainHandStack());
             }
         }
-        return super.onBreak(world, pos, state, player);
+        super.onBreak(world, pos, state, player);
     }
 
     @Override
@@ -208,11 +206,6 @@ public class IntegratedCircuitBlock extends HorizontalFacingBlock implements Blo
             return integratedCircuitBlockEntity.getPortRenderStrength(circuitDirection);
         }
         return 0;
-    }
-
-    @Override
-    protected MapCodec<? extends HorizontalFacingBlock> getCodec() {
-        return CODEC;
     }
 
     public static IntegratedCircuitBlock fromColor(DyeColor color) {

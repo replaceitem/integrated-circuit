@@ -7,11 +7,12 @@ import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.SpecialCraftingRecipe;
 import net.minecraft.recipe.book.CraftingRecipeCategory;
 import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 
 public class IntegratedCircuitDyeingRecipe extends SpecialCraftingRecipe {
-    public IntegratedCircuitDyeingRecipe(CraftingRecipeCategory category) {
-        super(category);
+    public IntegratedCircuitDyeingRecipe(Identifier identifier, CraftingRecipeCategory category) {
+        super(identifier, category);
     }
 
     @Override
