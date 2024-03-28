@@ -22,6 +22,7 @@ import java.util.WeakHashMap;
 
 public class IntegratedCircuitBlockEntity extends BlockEntity implements Nameable {
     protected WeakHashMap<ServerPlayerEntity, Object> editors;
+    @Nullable
     protected Text customName;
 
     @Nullable
@@ -56,12 +57,13 @@ public class IntegratedCircuitBlockEntity extends BlockEntity implements Nameabl
         this.getCircuit().writeNbt(nbt);
     }
 
-    public void setCustomName(Text name) {
+    public void setCustomName(@Nullable Text name) {
         this.customName = name;
         this.markDirty();
     }
 
     @Override
+    @Nullable
     public Text getCustomName() {
         return this.customName;
     }
@@ -124,6 +126,9 @@ public class IntegratedCircuitBlockEntity extends BlockEntity implements Nameabl
     public NbtCompound toInitialChunkDataNbt() {
         NbtCompound nbt = new NbtCompound();
         nbt.putByteArray("outputStrengths", this.renderSignalStrengths.clone());
+        if(this.hasCustomName()) {
+            nbt.putString("CustomName", Text.Serialization.toJsonString(this.customName));
+        }
         return nbt;
     }
 

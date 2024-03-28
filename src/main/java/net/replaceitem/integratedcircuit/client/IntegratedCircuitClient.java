@@ -8,8 +8,10 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.minecraft.block.RedstoneWireBlock;
 import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
 import net.replaceitem.integratedcircuit.IntegratedCircuit;
 import net.replaceitem.integratedcircuit.IntegratedCircuitBlock;
+import net.replaceitem.integratedcircuit.IntegratedCircuitBlockEntityRenderer;
 import net.replaceitem.integratedcircuit.client.config.DefaultConfig;
 import net.replaceitem.integratedcircuit.network.ClientPacketHandler;
 import net.replaceitem.integratedcircuit.network.packet.ComponentUpdateS2CPacket;
@@ -33,6 +35,8 @@ public class IntegratedCircuitClient implements ClientModInitializer {
             );
         }, IntegratedCircuit.INTEGRATED_CIRCUIT_BLOCKS);
         ColorProviderRegistry.ITEM.register((stack, tintIndex) -> RedstoneWireBlock.getWireColor(0), IntegratedCircuit.INTEGRATED_CIRCUIT_ITEMS);
+        
+        BlockEntityRendererFactories.register(IntegratedCircuit.INTEGRATED_CIRCUIT_BLOCK_ENTITY, IntegratedCircuitBlockEntityRenderer::new);
 
         DefaultConfig.initialize();
 
