@@ -8,6 +8,7 @@ import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
 import net.replaceitem.integratedcircuit.client.IntegratedCircuitScreen;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.IntegratedCircuitIdentifier;
+import org.jetbrains.annotations.Nullable;
 
 public class TargetComponent extends Component {
     public TargetComponent(int id, Settings settings) {
@@ -17,7 +18,7 @@ public class TargetComponent extends Component {
     public static final Identifier TEXTURE = new IntegratedCircuitIdentifier("textures/integrated_circuit/target.png");
 
     @Override
-    public Identifier getItemTexture() {
+    public @Nullable Identifier getItemTexture() {
         return TEXTURE;
     }
 

@@ -13,6 +13,7 @@ import net.replaceitem.integratedcircuit.client.IntegratedCircuitScreen;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
 import net.replaceitem.integratedcircuit.util.IntegratedCircuitIdentifier;
+import org.jetbrains.annotations.Nullable;
 
 public class RepeaterComponent extends AbstractRedstoneGateComponent {
 
@@ -95,7 +96,7 @@ public class RepeaterComponent extends AbstractRedstoneGateComponent {
     }
 
     @Override
-    public Identifier getItemTexture() {
+    public @Nullable Identifier getItemTexture() {
         return ITEM_TEXTURE;
     }
 

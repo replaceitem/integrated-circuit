@@ -14,6 +14,7 @@ import net.replaceitem.integratedcircuit.client.IntegratedCircuitScreen;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
 import net.replaceitem.integratedcircuit.util.IntegratedCircuitIdentifier;
+import org.jetbrains.annotations.Nullable;
 
 public class LeverComponent extends FacingComponent {
 
@@ -30,7 +31,7 @@ public class LeverComponent extends FacingComponent {
     public static final Identifier TEXTURE_ON = new IntegratedCircuitIdentifier("textures/integrated_circuit/lever_on.png");
 
     @Override
-    public Identifier getItemTexture() {
+    public @Nullable Identifier getItemTexture() {
         return ITEM_TEXTURE;
     }
 

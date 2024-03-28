@@ -13,6 +13,7 @@ import net.replaceitem.integratedcircuit.client.IntegratedCircuitScreen;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
 import net.replaceitem.integratedcircuit.util.IntegratedCircuitIdentifier;
+import org.jetbrains.annotations.Nullable;
 
 public class LampComponent extends Component {
     private static final BooleanComponentProperty LIT = new BooleanComponentProperty("lit", 0);
@@ -25,7 +26,7 @@ public class LampComponent extends Component {
     }
 
     @Override
-    public Identifier getItemTexture() {
+    public @Nullable Identifier getItemTexture() {
         return TEXTURE;
     }
 

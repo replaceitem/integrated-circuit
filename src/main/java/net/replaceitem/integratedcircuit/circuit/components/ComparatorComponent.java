@@ -17,6 +17,7 @@ import net.replaceitem.integratedcircuit.circuit.state.property.IntComponentProp
 import net.replaceitem.integratedcircuit.client.IntegratedCircuitScreen;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.IntegratedCircuitIdentifier;
+import org.jetbrains.annotations.Nullable;
 
 public class ComparatorComponent extends AbstractRedstoneGateComponent {
 
@@ -36,7 +37,7 @@ public class ComparatorComponent extends AbstractRedstoneGateComponent {
     public static final Identifier TEXTURE_TORCH_ON = new IntegratedCircuitIdentifier("textures/integrated_circuit/torch_top_on.png");
 
     @Override
-    public Identifier getItemTexture() {
+    public @Nullable Identifier getItemTexture() {
         return ITEM_TEXTURE;
     }
 

@@ -6,6 +6,7 @@ import net.replaceitem.integratedcircuit.circuit.Circuit;
 import net.replaceitem.integratedcircuit.circuit.Component;
 import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
+import org.jetbrains.annotations.Nullable;
 
 public class AirComponent extends Component {
 
@@ -14,7 +15,7 @@ public class AirComponent extends Component {
     }
 
     @Override
-    public Identifier getItemTexture() {
+    public @Nullable Identifier getItemTexture() {
         return null;
     }
 

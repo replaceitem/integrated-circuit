@@ -34,7 +34,7 @@ public class ButtonComponent extends FacingComponent {
     public static final Identifier TEXTURE_WOOD = new IntegratedCircuitIdentifier("textures/integrated_circuit/button_wood.png");
 
     @Override
-    public Identifier getItemTexture() {
+    public @Nullable Identifier getItemTexture() {
         return wooden ? TEXTURE_WOOD : TEXTURE_STONE;
     }
 

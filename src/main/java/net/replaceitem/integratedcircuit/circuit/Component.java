@@ -14,6 +14,7 @@ import net.replaceitem.integratedcircuit.circuit.state.property.ComponentPropert
 import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 
@@ -105,7 +106,7 @@ public abstract class Component {
         if(this.properties.contains(FacingComponent.FACING)) return defaultState.with(FacingComponent.FACING, rotation);
         return defaultState;
     }
-    public abstract Identifier getItemTexture();
+    public abstract @Nullable Identifier getItemTexture();
     public abstract void render(DrawContext drawContext, int x, int y, float a, ComponentState state);
 
 
