@@ -5,15 +5,15 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
+import net.replaceitem.integratedcircuit.IntegratedCircuit;
 import net.replaceitem.integratedcircuit.circuit.Components;
 import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
-import net.replaceitem.integratedcircuit.util.IntegratedCircuitIdentifier;
 
 import java.util.Collection;
 
 public class ComponentUpdateS2CPacket {
-    public static final Identifier ID = new IntegratedCircuitIdentifier("component_update_s2c_packet");
+    public static final Identifier ID = IntegratedCircuit.id("component_update_s2c_packet");
 
     public final ComponentPos pos;
     public final ComponentState state;

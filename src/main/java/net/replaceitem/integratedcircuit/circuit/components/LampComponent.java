@@ -4,6 +4,7 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.random.Random;
+import net.replaceitem.integratedcircuit.IntegratedCircuit;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
 import net.replaceitem.integratedcircuit.circuit.Component;
 import net.replaceitem.integratedcircuit.circuit.ServerCircuit;
@@ -12,14 +13,13 @@ import net.replaceitem.integratedcircuit.circuit.state.property.BooleanComponent
 import net.replaceitem.integratedcircuit.client.IntegratedCircuitScreen;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
-import net.replaceitem.integratedcircuit.util.IntegratedCircuitIdentifier;
 import org.jetbrains.annotations.Nullable;
 
 public class LampComponent extends Component {
     private static final BooleanComponentProperty LIT = new BooleanComponentProperty("lit", 0);
 
-    public static final Identifier TEXTURE = new IntegratedCircuitIdentifier("textures/integrated_circuit/lamp.png");
-    public static final Identifier TEXTURE_ON = new IntegratedCircuitIdentifier("textures/integrated_circuit/lamp_on.png");
+    public static final Identifier TEXTURE = IntegratedCircuit.id("textures/integrated_circuit/lamp.png");
+    public static final Identifier TEXTURE_ON = IntegratedCircuit.id("textures/integrated_circuit/lamp_on.png");
 
     public LampComponent(int id, Settings settings) {
         super(id, settings);

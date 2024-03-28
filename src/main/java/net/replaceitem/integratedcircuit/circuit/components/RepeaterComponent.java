@@ -5,14 +5,14 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.replaceitem.integratedcircuit.IntegratedCircuit;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
-import net.replaceitem.integratedcircuit.circuit.state.*;
+import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
 import net.replaceitem.integratedcircuit.circuit.state.property.BooleanComponentProperty;
 import net.replaceitem.integratedcircuit.circuit.state.property.IntComponentProperty;
 import net.replaceitem.integratedcircuit.client.IntegratedCircuitScreen;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
-import net.replaceitem.integratedcircuit.util.IntegratedCircuitIdentifier;
 import org.jetbrains.annotations.Nullable;
 
 public class RepeaterComponent extends AbstractRedstoneGateComponent {
@@ -26,12 +26,12 @@ public class RepeaterComponent extends AbstractRedstoneGateComponent {
 
     private static final Identifier ITEM_TEXTURE = new Identifier("textures/item/repeater.png");
 
-    public static final Identifier TEXTURE_OFF = new IntegratedCircuitIdentifier("textures/integrated_circuit/repeater_off.png");
-    public static final Identifier TEXTURE_ON = new IntegratedCircuitIdentifier("textures/integrated_circuit/repeater_on.png");
+    public static final Identifier TEXTURE_OFF = IntegratedCircuit.id("textures/integrated_circuit/repeater_off.png");
+    public static final Identifier TEXTURE_ON = IntegratedCircuit.id("textures/integrated_circuit/repeater_on.png");
 
-    public static final Identifier TEXTURE_TORCH_OFF = new IntegratedCircuitIdentifier("textures/integrated_circuit/torch_top_off.png");
-    public static final Identifier TEXTURE_TORCH_ON = new IntegratedCircuitIdentifier("textures/integrated_circuit/torch_top_on.png");
-    public static final Identifier TEXTURE_BAR = new IntegratedCircuitIdentifier("textures/integrated_circuit/repeater_bar.png");
+    public static final Identifier TEXTURE_TORCH_OFF = IntegratedCircuit.id("textures/integrated_circuit/torch_top_off.png");
+    public static final Identifier TEXTURE_TORCH_ON = IntegratedCircuit.id("textures/integrated_circuit/torch_top_on.png");
+    public static final Identifier TEXTURE_BAR = IntegratedCircuit.id("textures/integrated_circuit/repeater_bar.png");
 
 
     @Override

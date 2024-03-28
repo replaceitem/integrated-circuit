@@ -9,13 +9,13 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
-import net.replaceitem.integratedcircuit.circuit.context.ClientWorldClientCircuitContext;
-import net.replaceitem.integratedcircuit.util.IntegratedCircuitIdentifier;
+import net.replaceitem.integratedcircuit.IntegratedCircuit;
 import net.replaceitem.integratedcircuit.circuit.ClientCircuit;
+import net.replaceitem.integratedcircuit.circuit.context.ClientWorldClientCircuitContext;
 
 public class EditIntegratedCircuitS2CPacket {
 
-    public static final Identifier ID = new IntegratedCircuitIdentifier("edit_integrated_circuit_s2c_packet");
+    public static final Identifier ID = IntegratedCircuit.id("edit_integrated_circuit_s2c_packet");
 
     public final BlockPos pos;
     public final Text name;

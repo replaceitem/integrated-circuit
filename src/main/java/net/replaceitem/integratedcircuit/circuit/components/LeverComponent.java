@@ -6,6 +6,7 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.replaceitem.integratedcircuit.IntegratedCircuit;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
 import net.replaceitem.integratedcircuit.circuit.Component;
 import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
@@ -13,7 +14,6 @@ import net.replaceitem.integratedcircuit.circuit.state.property.BooleanComponent
 import net.replaceitem.integratedcircuit.client.IntegratedCircuitScreen;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
-import net.replaceitem.integratedcircuit.util.IntegratedCircuitIdentifier;
 import org.jetbrains.annotations.Nullable;
 
 public class LeverComponent extends FacingComponent {
@@ -27,8 +27,8 @@ public class LeverComponent extends FacingComponent {
 
     private static final Identifier ITEM_TEXTURE = new Identifier("textures/block/lever.png");
 
-    public static final Identifier TEXTURE_OFF = new IntegratedCircuitIdentifier("textures/integrated_circuit/lever_off.png");
-    public static final Identifier TEXTURE_ON = new IntegratedCircuitIdentifier("textures/integrated_circuit/lever_on.png");
+    public static final Identifier TEXTURE_OFF = IntegratedCircuit.id("textures/integrated_circuit/lever_off.png");
+    public static final Identifier TEXTURE_ON = IntegratedCircuit.id("textures/integrated_circuit/lever_on.png");
 
     @Override
     public @Nullable Identifier getItemTexture() {

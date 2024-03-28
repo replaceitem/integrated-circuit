@@ -9,6 +9,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.tick.TickPriority;
+import net.replaceitem.integratedcircuit.IntegratedCircuit;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
 import net.replaceitem.integratedcircuit.circuit.ServerCircuit;
 import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
@@ -16,7 +17,6 @@ import net.replaceitem.integratedcircuit.circuit.state.property.BooleanComponent
 import net.replaceitem.integratedcircuit.circuit.state.property.IntComponentProperty;
 import net.replaceitem.integratedcircuit.client.IntegratedCircuitScreen;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
-import net.replaceitem.integratedcircuit.util.IntegratedCircuitIdentifier;
 import org.jetbrains.annotations.Nullable;
 
 public class ComparatorComponent extends AbstractRedstoneGateComponent {
@@ -30,11 +30,11 @@ public class ComparatorComponent extends AbstractRedstoneGateComponent {
 
     private static final Identifier ITEM_TEXTURE = new Identifier("textures/item/comparator.png");
 
-    public static final Identifier TEXTURE = new IntegratedCircuitIdentifier("textures/integrated_circuit/comparator.png");
-    public static final Identifier TEXTURE_ON = new IntegratedCircuitIdentifier("textures/integrated_circuit/comparator_on.png");
+    public static final Identifier TEXTURE = IntegratedCircuit.id("textures/integrated_circuit/comparator.png");
+    public static final Identifier TEXTURE_ON = IntegratedCircuit.id("textures/integrated_circuit/comparator_on.png");
 
-    public static final Identifier TEXTURE_TORCH_OFF = new IntegratedCircuitIdentifier("textures/integrated_circuit/torch_top_off.png");
-    public static final Identifier TEXTURE_TORCH_ON = new IntegratedCircuitIdentifier("textures/integrated_circuit/torch_top_on.png");
+    public static final Identifier TEXTURE_TORCH_OFF = IntegratedCircuit.id("textures/integrated_circuit/torch_top_off.png");
+    public static final Identifier TEXTURE_TORCH_ON = IntegratedCircuit.id("textures/integrated_circuit/torch_top_on.png");
 
     @Override
     public @Nullable Identifier getItemTexture() {

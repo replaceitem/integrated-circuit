@@ -5,14 +5,14 @@ import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
-import net.replaceitem.integratedcircuit.util.FlatDirection;
-import net.replaceitem.integratedcircuit.util.IntegratedCircuitIdentifier;
+import net.replaceitem.integratedcircuit.IntegratedCircuit;
 import net.replaceitem.integratedcircuit.circuit.Component;
-import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.circuit.Components;
+import net.replaceitem.integratedcircuit.util.ComponentPos;
+import net.replaceitem.integratedcircuit.util.FlatDirection;
 
 public class PlaceComponentC2SPacket {
-    public static final Identifier ID = new IntegratedCircuitIdentifier("place_component_c2s_packet");
+    public static final Identifier ID = IntegratedCircuit.id("place_component_c2s_packet");
 
     public final ComponentPos pos;
     public final BlockPos blockPos;

@@ -9,6 +9,7 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.random.Random;
+import net.replaceitem.integratedcircuit.IntegratedCircuit;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
 import net.replaceitem.integratedcircuit.circuit.ServerCircuit;
 import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
@@ -16,7 +17,6 @@ import net.replaceitem.integratedcircuit.circuit.state.property.BooleanComponent
 import net.replaceitem.integratedcircuit.client.IntegratedCircuitScreen;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
-import net.replaceitem.integratedcircuit.util.IntegratedCircuitIdentifier;
 import org.jetbrains.annotations.Nullable;
 
 public class ButtonComponent extends FacingComponent {
@@ -30,8 +30,8 @@ public class ButtonComponent extends FacingComponent {
         this.wooden = wooden;
     }
 
-    public static final Identifier TEXTURE_STONE = new IntegratedCircuitIdentifier("textures/integrated_circuit/button_stone.png");
-    public static final Identifier TEXTURE_WOOD = new IntegratedCircuitIdentifier("textures/integrated_circuit/button_wood.png");
+    public static final Identifier TEXTURE_STONE = IntegratedCircuit.id("textures/integrated_circuit/button_stone.png");
+    public static final Identifier TEXTURE_WOOD = IntegratedCircuit.id("textures/integrated_circuit/button_wood.png");
 
     @Override
     public @Nullable Identifier getItemTexture() {

@@ -5,11 +5,11 @@ import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
-import net.replaceitem.integratedcircuit.util.IntegratedCircuitIdentifier;
+import net.replaceitem.integratedcircuit.IntegratedCircuit;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 
 public class ComponentInteractionC2SPacket {
-    public static final Identifier ID = new IntegratedCircuitIdentifier("component_interaction_c2s_packet");
+    public static final Identifier ID = IntegratedCircuit.id("component_interaction_c2s_packet");
 
     public final ComponentPos pos;
     public final BlockPos blockPos;

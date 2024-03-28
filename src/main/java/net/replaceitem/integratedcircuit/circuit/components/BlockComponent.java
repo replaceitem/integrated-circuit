@@ -2,12 +2,12 @@ package net.replaceitem.integratedcircuit.circuit.components;
 
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.util.Identifier;
+import net.replaceitem.integratedcircuit.IntegratedCircuit;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
 import net.replaceitem.integratedcircuit.circuit.Component;
 import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
 import net.replaceitem.integratedcircuit.client.IntegratedCircuitScreen;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
-import net.replaceitem.integratedcircuit.util.IntegratedCircuitIdentifier;
 import org.jetbrains.annotations.Nullable;
 
 public class BlockComponent extends Component {
@@ -15,7 +15,7 @@ public class BlockComponent extends Component {
         super(id, settings);
     }
 
-    public static final Identifier TEXTURE = new IntegratedCircuitIdentifier("textures/integrated_circuit/block.png");
+    public static final Identifier TEXTURE = IntegratedCircuit.id("textures/integrated_circuit/block.png");
 
     @Override
     public @Nullable Identifier getItemTexture() {

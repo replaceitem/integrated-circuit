@@ -3,13 +3,13 @@ package net.replaceitem.integratedcircuit.circuit.components;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.replaceitem.integratedcircuit.IntegratedCircuit;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
 import net.replaceitem.integratedcircuit.circuit.Component;
 import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
 import net.replaceitem.integratedcircuit.client.IntegratedCircuitScreen;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
-import net.replaceitem.integratedcircuit.util.IntegratedCircuitIdentifier;
 import org.jetbrains.annotations.Nullable;
 
 public class RedstoneBlockComponent extends Component {
@@ -17,7 +17,7 @@ public class RedstoneBlockComponent extends Component {
         super(id, settings);
     }
 
-    public static final Identifier TEXTURE = new IntegratedCircuitIdentifier("textures/integrated_circuit/redstone_block.png");
+    public static final Identifier TEXTURE = IntegratedCircuit.id("textures/integrated_circuit/redstone_block.png");
 
     @Override
     public @Nullable Identifier getItemTexture() {

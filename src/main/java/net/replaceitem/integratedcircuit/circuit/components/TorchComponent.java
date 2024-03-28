@@ -7,13 +7,17 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.random.Random;
-import net.replaceitem.integratedcircuit.circuit.*;
-import net.replaceitem.integratedcircuit.circuit.state.property.BooleanComponentProperty;
+import net.replaceitem.integratedcircuit.IntegratedCircuit;
+import net.replaceitem.integratedcircuit.circuit.Circuit;
+import net.replaceitem.integratedcircuit.circuit.CircuitNeighborUpdater;
+import net.replaceitem.integratedcircuit.circuit.Component;
+import net.replaceitem.integratedcircuit.circuit.Components;
+import net.replaceitem.integratedcircuit.circuit.ServerCircuit;
 import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
+import net.replaceitem.integratedcircuit.circuit.state.property.BooleanComponentProperty;
 import net.replaceitem.integratedcircuit.client.IntegratedCircuitScreen;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
-import net.replaceitem.integratedcircuit.util.IntegratedCircuitIdentifier;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -31,8 +35,8 @@ public class TorchComponent extends FacingComponent {
 
     private static final Identifier ITEM_TEXTURE = new Identifier("textures/block/redstone_torch.png");
 
-    public static final Identifier TEXTURE = new IntegratedCircuitIdentifier("textures/integrated_circuit/torch.png");
-    public static final Identifier TEXTURE_OFF = new IntegratedCircuitIdentifier("textures/integrated_circuit/torch_off.png");
+    public static final Identifier TEXTURE = IntegratedCircuit.id("textures/integrated_circuit/torch.png");
+    public static final Identifier TEXTURE_OFF = IntegratedCircuit.id("textures/integrated_circuit/torch_off.png");
 
     private static final Map<ServerCircuit, List<BurnoutEntry>> BURNOUT_MAP = new WeakHashMap<>();
 

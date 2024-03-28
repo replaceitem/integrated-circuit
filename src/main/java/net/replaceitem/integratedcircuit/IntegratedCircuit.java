@@ -10,7 +10,6 @@ import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.block.piston.PistonBehavior;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroups;
-import net.minecraft.item.Items;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.SpecialRecipeSerializer;
 import net.minecraft.registry.Registries;
@@ -19,18 +18,18 @@ import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.util.DyeColor;
+import net.minecraft.util.Identifier;
 import net.replaceitem.integratedcircuit.network.ServerPacketHandler;
 import net.replaceitem.integratedcircuit.network.packet.ComponentInteractionC2SPacket;
-import net.replaceitem.integratedcircuit.network.packet.PlaceComponentC2SPacket;
 import net.replaceitem.integratedcircuit.network.packet.FinishEditingC2SPacket;
-import net.replaceitem.integratedcircuit.util.IntegratedCircuitIdentifier;
+import net.replaceitem.integratedcircuit.network.packet.PlaceComponentC2SPacket;
 
 public class IntegratedCircuit implements ModInitializer {
     public static final String MOD_ID = "integrated_circuit"; // TODO - maybe make this dynamic
 
-    public static final TagKey<Block> INTEGRATED_CIRCUITS_BLOCK_TAG = TagKey.of(RegistryKeys.BLOCK, new IntegratedCircuitIdentifier("integrated_circuits"));
-    public static final TagKey<Item> INTEGRATED_CIRCUITS_ITEM_TAG = TagKey.of(RegistryKeys.ITEM, new IntegratedCircuitIdentifier("integrated_circuits"));
-    public static final TagKey<Item> DYEABLE_INTEGRATED_CIRCUITS_ITEM_TAG = TagKey.of(RegistryKeys.ITEM, new IntegratedCircuitIdentifier("dyeable_integrated_circuits"));
+    public static final TagKey<Block> INTEGRATED_CIRCUITS_BLOCK_TAG = TagKey.of(RegistryKeys.BLOCK, id("integrated_circuits"));
+    public static final TagKey<Item> INTEGRATED_CIRCUITS_ITEM_TAG = TagKey.of(RegistryKeys.ITEM, id("integrated_circuits"));
+    public static final TagKey<Item> DYEABLE_INTEGRATED_CIRCUITS_ITEM_TAG = TagKey.of(RegistryKeys.ITEM, id("dyeable_integrated_circuits"));
 
     public static final IntegratedCircuitBlock INTEGRATED_CIRCUIT_BLOCK            = new IntegratedCircuitBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).pistonBehavior(PistonBehavior.DESTROY));
     public static final IntegratedCircuitBlock WHITE_INTEGRATED_CIRCUIT_BLOCK      = new IntegratedCircuitBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).pistonBehavior(PistonBehavior.DESTROY).mapColor(DyeColor.WHITE));
@@ -92,43 +91,47 @@ public class IntegratedCircuit implements ModInitializer {
     public static final SpecialRecipeSerializer<IntegratedCircuitCloningRecipe> CIRCUIT_CLONING_RECIPE = new SpecialRecipeSerializer<>(IntegratedCircuitCloningRecipe::new);
     public static final SpecialRecipeSerializer<IntegratedCircuitDyeingRecipe> CIRCUIT_DYEING_RECIPE = new SpecialRecipeSerializer<>(IntegratedCircuitDyeingRecipe::new);
 
+    public static Identifier id(String path) {
+        return new Identifier(MOD_ID, path);
+    }
+    
     @Override
     public void onInitialize() {
-        Registry.register(Registries.BLOCK, new IntegratedCircuitIdentifier("integrated_circuit"), INTEGRATED_CIRCUIT_BLOCK);
-        Registry.register(Registries.BLOCK, new IntegratedCircuitIdentifier("white_integrated_circuit"), WHITE_INTEGRATED_CIRCUIT_BLOCK);
-        Registry.register(Registries.BLOCK, new IntegratedCircuitIdentifier("orange_integrated_circuit"), ORANGE_INTEGRATED_CIRCUIT_BLOCK);
-        Registry.register(Registries.BLOCK, new IntegratedCircuitIdentifier("magenta_integrated_circuit"), MAGENTA_INTEGRATED_CIRCUIT_BLOCK);
-        Registry.register(Registries.BLOCK, new IntegratedCircuitIdentifier("light_blue_integrated_circuit"), LIGHT_BLUE_INTEGRATED_CIRCUIT_BLOCK);
-        Registry.register(Registries.BLOCK, new IntegratedCircuitIdentifier("yellow_integrated_circuit"), YELLOW_INTEGRATED_CIRCUIT_BLOCK);
-        Registry.register(Registries.BLOCK, new IntegratedCircuitIdentifier("lime_integrated_circuit"), LIME_INTEGRATED_CIRCUIT_BLOCK);
-        Registry.register(Registries.BLOCK, new IntegratedCircuitIdentifier("pink_integrated_circuit"), PINK_INTEGRATED_CIRCUIT_BLOCK);
-        Registry.register(Registries.BLOCK, new IntegratedCircuitIdentifier("gray_integrated_circuit"), GRAY_INTEGRATED_CIRCUIT_BLOCK);
-        Registry.register(Registries.BLOCK, new IntegratedCircuitIdentifier("light_gray_integrated_circuit"), LIGHT_GRAY_INTEGRATED_CIRCUIT_BLOCK);
-        Registry.register(Registries.BLOCK, new IntegratedCircuitIdentifier("cyan_integrated_circuit"), CYAN_INTEGRATED_CIRCUIT_BLOCK);
-        Registry.register(Registries.BLOCK, new IntegratedCircuitIdentifier("purple_integrated_circuit"), PURPLE_INTEGRATED_CIRCUIT_BLOCK);
-        Registry.register(Registries.BLOCK, new IntegratedCircuitIdentifier("blue_integrated_circuit"), BLUE_INTEGRATED_CIRCUIT_BLOCK);
-        Registry.register(Registries.BLOCK, new IntegratedCircuitIdentifier("brown_integrated_circuit"), BROWN_INTEGRATED_CIRCUIT_BLOCK);
-        Registry.register(Registries.BLOCK, new IntegratedCircuitIdentifier("green_integrated_circuit"), GREEN_INTEGRATED_CIRCUIT_BLOCK);
-        Registry.register(Registries.BLOCK, new IntegratedCircuitIdentifier("red_integrated_circuit"), RED_INTEGRATED_CIRCUIT_BLOCK);
-        Registry.register(Registries.BLOCK, new IntegratedCircuitIdentifier("black_integrated_circuit"), BLACK_INTEGRATED_CIRCUIT_BLOCK);
+        Registry.register(Registries.BLOCK, id("integrated_circuit"), INTEGRATED_CIRCUIT_BLOCK);
+        Registry.register(Registries.BLOCK, id("white_integrated_circuit"), WHITE_INTEGRATED_CIRCUIT_BLOCK);
+        Registry.register(Registries.BLOCK, id("orange_integrated_circuit"), ORANGE_INTEGRATED_CIRCUIT_BLOCK);
+        Registry.register(Registries.BLOCK, id("magenta_integrated_circuit"), MAGENTA_INTEGRATED_CIRCUIT_BLOCK);
+        Registry.register(Registries.BLOCK, id("light_blue_integrated_circuit"), LIGHT_BLUE_INTEGRATED_CIRCUIT_BLOCK);
+        Registry.register(Registries.BLOCK, id("yellow_integrated_circuit"), YELLOW_INTEGRATED_CIRCUIT_BLOCK);
+        Registry.register(Registries.BLOCK, id("lime_integrated_circuit"), LIME_INTEGRATED_CIRCUIT_BLOCK);
+        Registry.register(Registries.BLOCK, id("pink_integrated_circuit"), PINK_INTEGRATED_CIRCUIT_BLOCK);
+        Registry.register(Registries.BLOCK, id("gray_integrated_circuit"), GRAY_INTEGRATED_CIRCUIT_BLOCK);
+        Registry.register(Registries.BLOCK, id("light_gray_integrated_circuit"), LIGHT_GRAY_INTEGRATED_CIRCUIT_BLOCK);
+        Registry.register(Registries.BLOCK, id("cyan_integrated_circuit"), CYAN_INTEGRATED_CIRCUIT_BLOCK);
+        Registry.register(Registries.BLOCK, id("purple_integrated_circuit"), PURPLE_INTEGRATED_CIRCUIT_BLOCK);
+        Registry.register(Registries.BLOCK, id("blue_integrated_circuit"), BLUE_INTEGRATED_CIRCUIT_BLOCK);
+        Registry.register(Registries.BLOCK, id("brown_integrated_circuit"), BROWN_INTEGRATED_CIRCUIT_BLOCK);
+        Registry.register(Registries.BLOCK, id("green_integrated_circuit"), GREEN_INTEGRATED_CIRCUIT_BLOCK);
+        Registry.register(Registries.BLOCK, id("red_integrated_circuit"), RED_INTEGRATED_CIRCUIT_BLOCK);
+        Registry.register(Registries.BLOCK, id("black_integrated_circuit"), BLACK_INTEGRATED_CIRCUIT_BLOCK);
 
-        Registry.register(Registries.ITEM, new IntegratedCircuitIdentifier("integrated_circuit"), INTEGRATED_CIRCUIT_ITEM);
-        Registry.register(Registries.ITEM, new IntegratedCircuitIdentifier("white_integrated_circuit"), WHITE_INTEGRATED_CIRCUIT_ITEM);
-        Registry.register(Registries.ITEM, new IntegratedCircuitIdentifier("orange_integrated_circuit"), ORANGE_INTEGRATED_CIRCUIT_ITEM);
-        Registry.register(Registries.ITEM, new IntegratedCircuitIdentifier("magenta_integrated_circuit"), MAGENTA_INTEGRATED_CIRCUIT_ITEM);
-        Registry.register(Registries.ITEM, new IntegratedCircuitIdentifier("light_blue_integrated_circuit"), LIGHT_BLUE_INTEGRATED_CIRCUIT_ITEM);
-        Registry.register(Registries.ITEM, new IntegratedCircuitIdentifier("yellow_integrated_circuit"), YELLOW_INTEGRATED_CIRCUIT_ITEM);
-        Registry.register(Registries.ITEM, new IntegratedCircuitIdentifier("lime_integrated_circuit"), LIME_INTEGRATED_CIRCUIT_ITEM);
-        Registry.register(Registries.ITEM, new IntegratedCircuitIdentifier("pink_integrated_circuit"), PINK_INTEGRATED_CIRCUIT_ITEM);
-        Registry.register(Registries.ITEM, new IntegratedCircuitIdentifier("gray_integrated_circuit"), GRAY_INTEGRATED_CIRCUIT_ITEM);
-        Registry.register(Registries.ITEM, new IntegratedCircuitIdentifier("light_gray_integrated_circuit"), LIGHT_GRAY_INTEGRATED_CIRCUIT_ITEM);
-        Registry.register(Registries.ITEM, new IntegratedCircuitIdentifier("cyan_integrated_circuit"), CYAN_INTEGRATED_CIRCUIT_ITEM);
-        Registry.register(Registries.ITEM, new IntegratedCircuitIdentifier("purple_integrated_circuit"), PURPLE_INTEGRATED_CIRCUIT_ITEM);
-        Registry.register(Registries.ITEM, new IntegratedCircuitIdentifier("blue_integrated_circuit"), BLUE_INTEGRATED_CIRCUIT_ITEM);
-        Registry.register(Registries.ITEM, new IntegratedCircuitIdentifier("brown_integrated_circuit"), BROWN_INTEGRATED_CIRCUIT_ITEM);
-        Registry.register(Registries.ITEM, new IntegratedCircuitIdentifier("green_integrated_circuit"), GREEN_INTEGRATED_CIRCUIT_ITEM);
-        Registry.register(Registries.ITEM, new IntegratedCircuitIdentifier("red_integrated_circuit"), RED_INTEGRATED_CIRCUIT_ITEM);
-        Registry.register(Registries.ITEM, new IntegratedCircuitIdentifier("black_integrated_circuit"), BLACK_INTEGRATED_CIRCUIT_ITEM);
+        Registry.register(Registries.ITEM, id("integrated_circuit"), INTEGRATED_CIRCUIT_ITEM);
+        Registry.register(Registries.ITEM, id("white_integrated_circuit"), WHITE_INTEGRATED_CIRCUIT_ITEM);
+        Registry.register(Registries.ITEM, id("orange_integrated_circuit"), ORANGE_INTEGRATED_CIRCUIT_ITEM);
+        Registry.register(Registries.ITEM, id("magenta_integrated_circuit"), MAGENTA_INTEGRATED_CIRCUIT_ITEM);
+        Registry.register(Registries.ITEM, id("light_blue_integrated_circuit"), LIGHT_BLUE_INTEGRATED_CIRCUIT_ITEM);
+        Registry.register(Registries.ITEM, id("yellow_integrated_circuit"), YELLOW_INTEGRATED_CIRCUIT_ITEM);
+        Registry.register(Registries.ITEM, id("lime_integrated_circuit"), LIME_INTEGRATED_CIRCUIT_ITEM);
+        Registry.register(Registries.ITEM, id("pink_integrated_circuit"), PINK_INTEGRATED_CIRCUIT_ITEM);
+        Registry.register(Registries.ITEM, id("gray_integrated_circuit"), GRAY_INTEGRATED_CIRCUIT_ITEM);
+        Registry.register(Registries.ITEM, id("light_gray_integrated_circuit"), LIGHT_GRAY_INTEGRATED_CIRCUIT_ITEM);
+        Registry.register(Registries.ITEM, id("cyan_integrated_circuit"), CYAN_INTEGRATED_CIRCUIT_ITEM);
+        Registry.register(Registries.ITEM, id("purple_integrated_circuit"), PURPLE_INTEGRATED_CIRCUIT_ITEM);
+        Registry.register(Registries.ITEM, id("blue_integrated_circuit"), BLUE_INTEGRATED_CIRCUIT_ITEM);
+        Registry.register(Registries.ITEM, id("brown_integrated_circuit"), BROWN_INTEGRATED_CIRCUIT_ITEM);
+        Registry.register(Registries.ITEM, id("green_integrated_circuit"), GREEN_INTEGRATED_CIRCUIT_ITEM);
+        Registry.register(Registries.ITEM, id("red_integrated_circuit"), RED_INTEGRATED_CIRCUIT_ITEM);
+        Registry.register(Registries.ITEM, id("black_integrated_circuit"), BLACK_INTEGRATED_CIRCUIT_ITEM);
 
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.REDSTONE).register(entries -> {
             for(Item item : INTEGRATED_CIRCUIT_ITEMS) {
@@ -136,7 +139,7 @@ public class IntegratedCircuit implements ModInitializer {
             }
         });
 
-        Registry.register(Registries.BLOCK_ENTITY_TYPE, new IntegratedCircuitIdentifier("integrated_circuit_block_entity"), INTEGRATED_CIRCUIT_BLOCK_ENTITY);
+        Registry.register(Registries.BLOCK_ENTITY_TYPE, id("integrated_circuit_block_entity"), INTEGRATED_CIRCUIT_BLOCK_ENTITY);
 
         RecipeSerializer.register("integrated_circuit:crafting_special_circuit_cloning", CIRCUIT_CLONING_RECIPE);
         RecipeSerializer.register("integrated_circuit:crafting_special_circuit_dyeing", CIRCUIT_DYEING_RECIPE);
