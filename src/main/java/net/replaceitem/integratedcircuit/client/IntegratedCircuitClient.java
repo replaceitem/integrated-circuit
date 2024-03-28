@@ -1,8 +1,6 @@
 package net.replaceitem.integratedcircuit.client;
 
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
@@ -18,7 +16,6 @@ import net.replaceitem.integratedcircuit.network.packet.ComponentUpdateS2CPacket
 import net.replaceitem.integratedcircuit.network.packet.EditIntegratedCircuitS2CPacket;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
 
-@Environment(EnvType.CLIENT)
 public class IntegratedCircuitClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {

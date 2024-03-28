@@ -1,8 +1,6 @@
 package net.replaceitem.integratedcircuit.client;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.InputUtil;
@@ -26,8 +24,6 @@ import net.replaceitem.integratedcircuit.util.IntegratedCircuitIdentifier;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
-
-@Environment(EnvType.CLIENT)
 public class IntegratedCircuitScreen extends Screen {
     public static final Identifier BACKGROUND_TEXTURE = new IntegratedCircuitIdentifier("textures/gui/integrated_circuit_screen.png");
 

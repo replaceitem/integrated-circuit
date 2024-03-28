@@ -1,7 +1,5 @@
 package net.replaceitem.integratedcircuit;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -11,7 +9,6 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.Direction;
 
-@Environment(EnvType.CLIENT)
 public class IntegratedCircuitBlockEntityRenderer implements BlockEntityRenderer<IntegratedCircuitBlockEntity> {
     private final TextRenderer textRenderer;
     private static final float MAX_WIDTH = 7f/16; // black circuit box is 8 pixels, plus margin
