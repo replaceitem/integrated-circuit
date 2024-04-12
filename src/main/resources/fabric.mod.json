@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "id": "integrated-circuit",
+  "id": "integrated_circuit",
   "version": "${version}",
   "name": "Integrated Circuit",
   "description": "Adds an integrated circuit block",
@@ -23,7 +23,7 @@
     ]
   },
   "mixins": [
-    "integrated-circuit.mixins.json"
+    "integrated_circuit.mixins.json"
   ],
   "depends": {
     "minecraft": ">=1.20.3",
