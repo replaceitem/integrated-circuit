@@ -7,7 +7,11 @@
   "authors": [
     "replaceitem"
   ],
-  "contact": {},
+  "contact": {
+    "homepage": "https://modrinth.com/mod/integrated-circuit",
+    "issues": "https://github.com/replaceitem/integrated-circuit/issues",
+    "sources": "https://github.com/replaceitem/integrated-circuit"
+  },
   "license": "MIT",
   "icon": "assets/integrated_circuit/icon.png",
   "environment": "*",
