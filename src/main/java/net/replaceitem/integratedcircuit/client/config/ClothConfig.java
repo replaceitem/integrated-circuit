@@ -43,4 +43,10 @@ public class ClothConfig extends DefaultConfig implements ConfigData {
     public boolean getInvertScrollDirection() {
         return invert_scroll_direction;
     }
+
+    public boolean render_circuit_name = super.getRenderCircuitName();
+    @Override
+    public boolean getRenderCircuitName() {
+        return render_circuit_name;
+    }
 }

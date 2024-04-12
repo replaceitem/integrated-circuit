@@ -8,6 +8,7 @@ import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.Direction;
+import net.replaceitem.integratedcircuit.client.config.DefaultConfig;
 
 public class IntegratedCircuitBlockEntityRenderer implements BlockEntityRenderer<IntegratedCircuitBlockEntity> {
     private final TextRenderer textRenderer;
@@ -20,6 +21,7 @@ public class IntegratedCircuitBlockEntityRenderer implements BlockEntityRenderer
     
     @Override
     public void render(IntegratedCircuitBlockEntity entity, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
+        if(!DefaultConfig.config.getRenderCircuitName()) return;
         BlockState blockState = entity.getCachedState();
         Direction facing = blockState.get(IntegratedCircuitBlock.FACING);
         Text customName = entity.getCustomName();

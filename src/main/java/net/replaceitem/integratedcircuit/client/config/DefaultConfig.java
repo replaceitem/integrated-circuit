@@ -44,7 +44,10 @@ public class DefaultConfig {
     public boolean getInvertScrollDirection() {
         return false;
     }
-    
+    public boolean getRenderCircuitName() {
+        return true;
+    };
+
     public enum ScrollBehaviour {
         ROTATE("Rotate"),
         SELECT_COMPONENT("Select Component");
