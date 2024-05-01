@@ -161,13 +161,13 @@ public class IntegratedCircuitScreen extends Screen {
         drawContext.getMatrices().scale(RENDER_SCALE, RENDER_SCALE, 1);
         
         for (FlatDirection direction : FlatDirection.VALUES) {
-            ComponentState port = circuit.ports[direction.getIndex()];
+            ComponentState port = circuit.getPorts()[direction.getIndex()];
             ComponentPos pos = Circuit.PORT_POSITIONS.get(direction);
             renderComponentStateInGrid(drawContext, port, pos.getX(), pos.getY(), 1);
         }
         for (int i = 0; i < Circuit.SIZE; i++) {
             for (int j = 0; j < Circuit.SIZE; j++) {
-                ComponentState componentState = circuit.section.getComponentState(i, j);
+                ComponentState componentState = circuit.getSection().getComponentState(i, j);
                 renderComponentStateInGrid(drawContext, componentState, i, j, 1);
             }
         }

@@ -47,7 +47,15 @@ public abstract class Circuit implements CircuitAccess {
         this.ports = portStates;
         this.section = section;
     }
-    
+
+    public ComponentState[] getPorts() {
+        return ports;
+    }
+
+    public CircuitSection getSection() {
+        return section;
+    }
+
     public static ComponentState[] createDefaultPorts() {
         ComponentState[] ports = new ComponentState[4];
         for (int i = 0; i < ports.length; i++) {
