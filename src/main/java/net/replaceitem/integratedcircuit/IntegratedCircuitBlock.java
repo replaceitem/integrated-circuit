@@ -43,6 +43,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
+@SuppressWarnings("deprecation")
 public class IntegratedCircuitBlock extends HorizontalFacingBlock implements BlockEntityProvider {
     public static final MapCodec<IntegratedCircuitBlock> CODEC = createCodec(IntegratedCircuitBlock::new);
     protected static final VoxelShape SHAPE = Block.createCuboidShape(0.0, 0.0, 0.0, 16.0, 2.0, 16.0);
@@ -174,7 +175,7 @@ public class IntegratedCircuitBlock extends HorizontalFacingBlock implements Blo
     public int getWeakRedstonePower(BlockState state, BlockView view, BlockPos pos, Direction direction) {
         if(direction.getAxis().isVertical()) return 0;
         FlatDirection circuitDirection = FlatDirection.fromVanillaDirection(state, direction.getOpposite());
-        if(view.getBlockEntity(pos) instanceof IntegratedCircuitBlockEntity integratedCircuitBlockEntity)
+        if(view.getBlockEntity(pos) instanceof IntegratedCircuitBlockEntity integratedCircuitBlockEntity && integratedCircuitBlockEntity.getCircuit() != null)
             return integratedCircuitBlockEntity.getCircuit().getPortOutputStrength(circuitDirection);
         return 0;
     }
