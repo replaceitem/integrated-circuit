@@ -97,13 +97,13 @@ public class IntegratedCircuitBlock extends HorizontalFacingBlock implements Blo
                 integratedCircuitBlockEntity.getCircuit().getContext().readExternalPower(direction);
             }
         }
-        world.scheduleBlockTick(pos, state.getBlock(), 0);
+        ensureTicking(world, pos);
     }
 
     @Override
     public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean notify) {
         this.updateTargets(world, pos);
-        world.scheduleBlockTick(pos, state.getBlock(), 0);
+        ensureTicking(world, pos);
     }
 
     @Override
@@ -111,6 +111,12 @@ public class IntegratedCircuitBlock extends HorizontalFacingBlock implements Blo
         if (moved || state.isOf(newState.getBlock())) return;
         super.onStateReplaced(state, world, pos, newState, moved);
         this.updateTargets(world, pos);
+    }
+    
+    private void ensureTicking(World world, BlockPos pos) {
+        if(!world.getBlockTickScheduler().isQueued(pos, this)) {
+            world.scheduleBlockTick(pos, this, 0);
+        }
     }
     
     public void updateTarget(World world, BlockPos pos, Direction direction) {
