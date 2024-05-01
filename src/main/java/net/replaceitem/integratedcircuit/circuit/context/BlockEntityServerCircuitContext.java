@@ -94,7 +94,7 @@ public class BlockEntityServerCircuitContext implements ServerCircuitContext {
         if(world == null) return;
         BlockPos pos = getPos();
         BlockState state = world.getBlockState(pos);
-        if(state.getBlock() instanceof IntegratedCircuitBlock integratedCircuitBlock) {
+        if(state.getBlock() instanceof IntegratedCircuitBlock integratedCircuitBlock && blockEntity.getCircuit() != null) {
             int power = integratedCircuitBlock.getInputPower(world, pos, state, direction);
             blockEntity.getCircuit().onExternalPowerChanged(direction, power);
         }
