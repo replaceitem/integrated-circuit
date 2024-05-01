@@ -6,14 +6,17 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.state.StateManager;
+import net.minecraft.state.property.BooleanProperty;
+import net.minecraft.state.property.Properties;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.random.Random;
 import net.replaceitem.integratedcircuit.IntegratedCircuit;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
+import net.replaceitem.integratedcircuit.circuit.Component;
+import net.replaceitem.integratedcircuit.circuit.ComponentState;
 import net.replaceitem.integratedcircuit.circuit.ServerCircuit;
-import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
-import net.replaceitem.integratedcircuit.circuit.state.property.BooleanComponentProperty;
 import net.replaceitem.integratedcircuit.client.IntegratedCircuitScreen;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
@@ -21,13 +24,14 @@ import org.jetbrains.annotations.Nullable;
 
 public class ButtonComponent extends FacingComponent {
 
-    private static final BooleanComponentProperty POWERED = new BooleanComponentProperty("powered", 3);
+    public static final BooleanProperty POWERED = Properties.POWERED;
 
     private final boolean wooden;
 
-    public ButtonComponent(int id, Settings settings, boolean wooden) {
-        super(id, settings);
+    public ButtonComponent(Settings settings, boolean wooden) {
+        super(settings);
         this.wooden = wooden;
+        this.setDefaultState(this.getStateManager().getDefaultState().with(POWERED, false));
     }
 
     public static final Identifier TEXTURE_STONE = IntegratedCircuit.id("textures/integrated_circuit/button_stone.png");
@@ -106,8 +110,8 @@ public class ButtonComponent extends FacingComponent {
 
 
     @Override
-    public void appendProperties(ComponentState.PropertyBuilder builder) {
+    public void appendProperties(StateManager.Builder<Component, ComponentState> builder) {
         super.appendProperties(builder);
-        builder.append(POWERED);
+        builder.add(POWERED);
     }
 }

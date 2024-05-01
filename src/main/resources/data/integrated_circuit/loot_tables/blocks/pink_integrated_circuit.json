@@ -21,23 +21,18 @@
               "ops": [
                 {
                   "op": "replace",
-                  "source": "components",
-                  "target": "BlockEntityTag.components"
-                },
-                {
-                  "op": "replace",
-                  "source": "ports",
-                  "target": "BlockEntityTag.ports"
-                },
-                {
-                  "op": "replace",
-                  "source": "tickScheduler",
-                  "target": "BlockEntityTag.tickScheduler"
+                  "source": "circuit",
+                  "target": "BlockEntityTag.circuit"
                 },
                 {
                   "op": "replace",
                   "source": "outputStrengths",
                   "target": "BlockEntityTag.outputStrengths"
+                },
+                {
+                  "op": "replace",
+                  "source": "CircuitDataVersion",
+                  "target": "BlockEntityTag.CircuitDataVersion"
                 }
               ],
               "source": "block_entity"

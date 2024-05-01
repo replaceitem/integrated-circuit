@@ -5,14 +5,14 @@ import net.minecraft.util.Identifier;
 import net.replaceitem.integratedcircuit.IntegratedCircuit;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
 import net.replaceitem.integratedcircuit.circuit.Component;
-import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
+import net.replaceitem.integratedcircuit.circuit.ComponentState;
 import net.replaceitem.integratedcircuit.client.IntegratedCircuitScreen;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import org.jetbrains.annotations.Nullable;
 
 public class TargetComponent extends Component {
-    public TargetComponent(int id, Settings settings) {
-        super(id, settings);
+    public TargetComponent(Settings settings) {
+        super(settings);
     }
 
     public static final Identifier TEXTURE = IntegratedCircuit.id("textures/integrated_circuit/target.png");

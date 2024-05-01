@@ -1,11 +1,15 @@
 plugins {
-    id 'fabric-loom' version '1.5-SNAPSHOT'
+    id 'fabric-loom' version '1.6.9'
     id 'maven-publish'
     id "com.modrinth.minotaur" version "2.+"
 }
 
 version = project.minecraft_version+'-'+project.mod_version
 group = project.maven_group
+
+loom {
+    accessWidenerPath = file("src/main/resources/integrated_circuit.accesswidener")
+}
 
 repositories {
     repositories {

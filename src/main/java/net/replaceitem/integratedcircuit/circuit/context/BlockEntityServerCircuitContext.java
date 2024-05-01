@@ -15,7 +15,7 @@ import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
 import net.replaceitem.integratedcircuit.IntegratedCircuitBlock;
 import net.replaceitem.integratedcircuit.IntegratedCircuitBlockEntity;
-import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
+import net.replaceitem.integratedcircuit.circuit.ComponentState;
 import net.replaceitem.integratedcircuit.network.packet.ComponentUpdateS2CPacket;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;

@@ -12,8 +12,10 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Nameable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.replaceitem.integratedcircuit.circuit.CircuitSerializer;
 import net.replaceitem.integratedcircuit.circuit.ServerCircuit;
 import net.replaceitem.integratedcircuit.circuit.context.BlockEntityServerCircuitContext;
+import net.replaceitem.integratedcircuit.circuit.datafix.BlockEntityFixer;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,40 +23,66 @@ import java.util.Set;
 import java.util.WeakHashMap;
 
 public class IntegratedCircuitBlockEntity extends BlockEntity implements Nameable {
+    private static final Object DUMMY = new Object();
     protected WeakHashMap<ServerPlayerEntity, Object> editors;
+    
     @Nullable
     protected Text customName;
 
     @Nullable
     private ServerCircuit circuit;
+    @Nullable
+    private NbtCompound circuitNbt;
 
     protected byte[] renderSignalStrengths = new byte[] {0,0,0,0};
 
     public IntegratedCircuitBlockEntity(BlockPos pos, BlockState state) {
         super(IntegratedCircuit.INTEGRATED_CIRCUIT_BLOCK_ENTITY, pos, state);
-        this.circuit = null; // save some memory by only initializing this once accessed to not waste this space on the client block entities
+        this.circuit = null; // on server, this is only initialized once the world is present. On client this will always be null
         this.editors = new WeakHashMap<>(4);
+    }
+    
+    private void tryCreateCircuit() {
+        World world = this.getWorld();
+        if(world != null && !world.isClient) {
+            BlockEntityServerCircuitContext context = new BlockEntityServerCircuitContext(this);
+            if(this.circuitNbt != null) {
+                this.circuit = new CircuitSerializer(this.circuitNbt).readServerCircuit(context);
+                this.circuitNbt = null;
+            } else {
+                this.circuit = new ServerCircuit(context);
+            }
+        }
     }
 
     @Override
     public void readNbt(NbtCompound nbt) {
+        BlockEntityFixer.fix(nbt);
         if(nbt.contains("CustomName", NbtElement.STRING_TYPE)) {
             this.customName = Text.Serialization.fromJson(nbt.getString("CustomName"));
         }
         if(nbt.contains("outputStrengths")) {
             this.renderSignalStrengths = nbt.getByteArray("outputStrengths");
         }
-        this.getCircuit().readNbt(nbt);
+        if(nbt.contains("circuit", NbtElement.COMPOUND_TYPE)) {
+            this.circuitNbt = nbt.getCompound("circuit");
+        }
+        tryCreateCircuit();
     }
 
     @Override
     protected void writeNbt(NbtCompound nbt) {
+        IntegratedCircuit.putDataVersion(nbt);
         if(this.hasCustomName()) {
             nbt.putString("CustomName", Text.Serialization.toJsonString(this.customName));
         }
         nbt.putByteArray("outputStrengths", this.renderSignalStrengths.clone());
-
-        this.getCircuit().writeNbt(nbt);
+        
+        if(circuit != null) {
+            nbt.put("circuit", CircuitSerializer.writeCircuit(circuit));
+        } else if(circuitNbt != null) {
+            nbt.put("circuit", circuitNbt);
+        }
     }
 
     public void setCustomName(@Nullable Text name) {
@@ -73,8 +101,6 @@ public class IntegratedCircuitBlockEntity extends BlockEntity implements Nameabl
         if(hasCustomName()) return this.customName;
         return Text.translatable("block.integrated_circuit.integrated_circuit");
     }
-
-    private static final Object DUMMY = new Object();
 
     public Set<ServerPlayerEntity> getEditingPlayers() {
         return editors.keySet();
@@ -104,22 +130,15 @@ public class IntegratedCircuitBlockEntity extends BlockEntity implements Nameabl
         return this.renderSignalStrengths[direction.getIndex()];
     }
 
+    @Nullable
     public ServerCircuit getCircuit() {
-        if(this.circuit == null) {
-            this.circuit = new ServerCircuit(new BlockEntityServerCircuitContext(this));
-            if(this.hasWorld()) {
-                this.circuit.onWorldIsPresent();
-            }
-        }
         return this.circuit;
     }
 
     @Override
     public void setWorld(World world) {
         super.setWorld(world);
-        if(this.circuit != null) {
-            this.circuit.onWorldIsPresent();
-        }
+        tryCreateCircuit();
     }
 
     @Override

@@ -2,18 +2,19 @@ package net.replaceitem.integratedcircuit.circuit.components;
 
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.state.StateManager;
+import net.minecraft.state.property.BooleanProperty;
+import net.minecraft.state.property.IntProperty;
+import net.minecraft.state.property.Properties;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 import net.replaceitem.integratedcircuit.IntegratedCircuit;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
 import net.replaceitem.integratedcircuit.circuit.Component;
+import net.replaceitem.integratedcircuit.circuit.ComponentState;
 import net.replaceitem.integratedcircuit.circuit.ServerCircuit;
 import net.replaceitem.integratedcircuit.circuit.context.ServerCircuitContext;
-import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
-import net.replaceitem.integratedcircuit.circuit.state.property.BooleanComponentProperty;
-import net.replaceitem.integratedcircuit.circuit.state.property.ComponentProperty;
-import net.replaceitem.integratedcircuit.circuit.state.property.FlatDirectionComponentProperty;
-import net.replaceitem.integratedcircuit.circuit.state.property.IntComponentProperty;
+import net.replaceitem.integratedcircuit.circuit.state.FlatDirectionProperty;
 import net.replaceitem.integratedcircuit.client.IntegratedCircuitScreen;
 import net.replaceitem.integratedcircuit.mixin.RedstoneWireBlockAccessor;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
@@ -22,12 +23,13 @@ import org.jetbrains.annotations.Nullable;
 
 public class PortComponent extends AbstractWireComponent {
 
-    public static final FlatDirectionComponentProperty FACING = new FlatDirectionComponentProperty("facing", 0);
-    public static final IntComponentProperty POWER = new IntComponentProperty("power", 3, 4);
-    public static final BooleanComponentProperty IS_OUTPUT = new BooleanComponentProperty("is_output", 7);
+    public static final FlatDirectionProperty FACING = FlatDirectionProperty.of("facing");
+    public static final IntProperty POWER = Properties.POWER;
+    public static final BooleanProperty IS_OUTPUT = BooleanProperty.of("is_output");
 
-    public PortComponent(int id, Settings settings) {
-        super(id, settings);
+    public PortComponent(Settings settings) {
+        super(settings);
+        this.setDefaultState(this.getStateManager().getDefaultState().with(FACING, FlatDirection.NORTH).with(POWER, 0).with(IS_OUTPUT, false));
     }
 
     private static final Identifier TEXTURE_ARROW = IntegratedCircuit.id("textures/integrated_circuit/port.png");
@@ -85,7 +87,7 @@ public class PortComponent extends AbstractWireComponent {
     }
 
     @Override
-    protected ComponentProperty<Integer> getPowerProperty() {
+    protected IntProperty getPowerProperty() {
         return PortComponent.POWER;
     }
 
@@ -95,10 +97,10 @@ public class PortComponent extends AbstractWireComponent {
     }
 
     @Override
-    public void appendProperties(ComponentState.PropertyBuilder builder) {
+    public void appendProperties(StateManager.Builder<Component, ComponentState> builder) {
         super.appendProperties(builder);
-        builder.append(FACING);
-        builder.append(POWER);
-        builder.append(IS_OUTPUT);
+        builder.add(FACING);
+        builder.add(POWER);
+        builder.add(IS_OUTPUT);
     }
 }

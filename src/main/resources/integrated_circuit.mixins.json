@@ -1,16 +1,16 @@
 {
-  "required": true,
-  "minVersion": "0.8",
-  "package": "net.replaceitem.integratedcircuit.mixin",
-  "compatibilityLevel": "JAVA_17",
-  "mixins": [
-    "KeyBindingAccessor",
-    "RedstoneWireBlockAccessor"
-  ],
-  "client": [
-    "client.ClientPlayNetworkHandlerMixin"
-  ],
-  "injectors": {
-    "defaultRequire": 1
+    "required": true,
+    "minVersion": "0.8",
+    "package": "net.replaceitem.integratedcircuit.mixin",
+    "compatibilityLevel": "JAVA_17",
+    "mixins": [
+        "KeyBindingAccessor",
+        "RedstoneWireBlockAccessor"
+    ],
+    "client": [
+        "client.ClientPlayNetworkHandlerMixin"
+    ],
+    "injectors": {
+        "defaultRequire": 1
   }
 }

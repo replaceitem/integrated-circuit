@@ -4,25 +4,27 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.state.StateManager;
+import net.minecraft.state.property.BooleanProperty;
+import net.minecraft.state.property.Properties;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.replaceitem.integratedcircuit.IntegratedCircuit;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
 import net.replaceitem.integratedcircuit.circuit.Component;
-import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
-import net.replaceitem.integratedcircuit.circuit.state.property.BooleanComponentProperty;
+import net.replaceitem.integratedcircuit.circuit.ComponentState;
 import net.replaceitem.integratedcircuit.client.IntegratedCircuitScreen;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
 import org.jetbrains.annotations.Nullable;
 
 public class LeverComponent extends FacingComponent {
+    
+    public static final BooleanProperty POWERED = Properties.POWERED;
 
-
-    private static final BooleanComponentProperty POWERED = new BooleanComponentProperty("powered", 3);
-
-    public LeverComponent(int id, Settings settings) {
-        super(id, settings);
+    public LeverComponent(Settings settings) {
+        super(settings);
+        this.setDefaultState(this.getStateManager().getDefaultState().with(FACING, FlatDirection.NORTH).with(POWERED, false));
     }
 
     private static final Identifier ITEM_TEXTURE = new Identifier("textures/block/lever.png");
@@ -87,8 +89,8 @@ public class LeverComponent extends FacingComponent {
     }
 
     @Override
-    public void appendProperties(ComponentState.PropertyBuilder builder) {
+    public void appendProperties(StateManager.Builder<Component, ComponentState> builder) {
         super.appendProperties(builder);
-        builder.append(POWERED);
+        builder.add(POWERED);
     }
 }

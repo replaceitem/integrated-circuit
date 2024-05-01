@@ -1,48 +1,61 @@
 package net.replaceitem.integratedcircuit.circuit;
 
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.sound.BlockSoundGroup;
-import net.replaceitem.integratedcircuit.circuit.components.*;
-import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
-
-import java.util.HashMap;
-import java.util.Map;
+import net.replaceitem.integratedcircuit.IntegratedCircuit;
+import net.replaceitem.integratedcircuit.circuit.components.AirComponent;
+import net.replaceitem.integratedcircuit.circuit.components.BlockComponent;
+import net.replaceitem.integratedcircuit.circuit.components.ButtonComponent;
+import net.replaceitem.integratedcircuit.circuit.components.ComparatorComponent;
+import net.replaceitem.integratedcircuit.circuit.components.CrossoverComponent;
+import net.replaceitem.integratedcircuit.circuit.components.LampComponent;
+import net.replaceitem.integratedcircuit.circuit.components.LeverComponent;
+import net.replaceitem.integratedcircuit.circuit.components.ObserverComponent;
+import net.replaceitem.integratedcircuit.circuit.components.PortComponent;
+import net.replaceitem.integratedcircuit.circuit.components.RedstoneBlockComponent;
+import net.replaceitem.integratedcircuit.circuit.components.RepeaterComponent;
+import net.replaceitem.integratedcircuit.circuit.components.TargetComponent;
+import net.replaceitem.integratedcircuit.circuit.components.TorchComponent;
+import net.replaceitem.integratedcircuit.circuit.components.WireComponent;
 
 public class Components {
-
-    private static final Map<Integer, Component> COMPONENTS = new HashMap<>();
-
-
-    public static final AirComponent AIR = register(new AirComponent(0, new Component.Settings("air")));
-    public static final BlockComponent BLOCK = register(new BlockComponent(1, new Component.Settings("block").sounds(BlockSoundGroup.WOOL)));
-    public static final WireComponent WIRE = register(new WireComponent(2, new Component.Settings("wire")));
-    public static final TorchComponent TORCH = register(new TorchComponent(3, new Component.Settings("torch").sounds(BlockSoundGroup.WOOD)));
-    public static final RepeaterComponent REPEATER = register(new RepeaterComponent(4, new Component.Settings("repeater").sounds(BlockSoundGroup.WOOD)));
-    public static final ComparatorComponent COMPARATOR = register(new ComparatorComponent(5, new Component.Settings("comparator").sounds(BlockSoundGroup.WOOD)));
-    public static final ObserverComponent OBSERVER = register(new ObserverComponent(6, new Component.Settings("observer")));
-    public static final TargetComponent TARGET = register(new TargetComponent(7, new Component.Settings("target").sounds(BlockSoundGroup.GRASS)));
-    public static final RedstoneBlockComponent REDSTONE_BLOCK = register(new RedstoneBlockComponent(8, new Component.Settings("redstone_block").sounds(BlockSoundGroup.METAL)));
-    public static final PortComponent PORT = register(new PortComponent(9, new Component.Settings("port")));
-    public static final CrossoverComponent CROSSOVER = register(new CrossoverComponent(10, new Component.Settings("crossover")));
-    public static final LeverComponent LEVER = register(new LeverComponent(11, new Component.Settings("lever").sounds(BlockSoundGroup.WOOD)));
-    public static final ButtonComponent STONE_BUTTON = register(new ButtonComponent(12, new Component.Settings("stone_button"), false));
-    public static final ButtonComponent WOODEN_BUTTON = register(new ButtonComponent(13, new Component.Settings("wooden_button").sounds(BlockSoundGroup.WOOD), true));
-    public static final LampComponent LAMP = register(new LampComponent(14, new Component.Settings("lamp").sounds(BlockSoundGroup.GLASS)));
+    public static final AirComponent AIR = register("air", new AirComponent(new Component.Settings()));
+    public static final BlockComponent BLOCK = register("block", new BlockComponent(new Component.Settings().sounds(BlockSoundGroup.WOOL)));
+    public static final WireComponent WIRE = register("wire", new WireComponent(new Component.Settings()));
+    public static final TorchComponent TORCH = register("torch", new TorchComponent(new Component.Settings().sounds(BlockSoundGroup.WOOD)));
+    public static final RepeaterComponent REPEATER = register("repeater", new RepeaterComponent(new Component.Settings().sounds(BlockSoundGroup.WOOD)));
+    public static final ComparatorComponent COMPARATOR = register("comparator", new ComparatorComponent(new Component.Settings().sounds(BlockSoundGroup.WOOD)));
+    public static final ObserverComponent OBSERVER = register("observer", new ObserverComponent(new Component.Settings()));
+    public static final TargetComponent TARGET = register("target", new TargetComponent(new Component.Settings().sounds(BlockSoundGroup.GRASS)));
+    public static final RedstoneBlockComponent REDSTONE_BLOCK = register("redstone_block", new RedstoneBlockComponent(new Component.Settings().sounds(BlockSoundGroup.METAL)));
+    public static final PortComponent PORT = register("port", new PortComponent(new Component.Settings()));
+    public static final CrossoverComponent CROSSOVER = register("crossover", new CrossoverComponent(new Component.Settings()));
+    public static final LeverComponent LEVER = register("lever", new LeverComponent(new Component.Settings().sounds(BlockSoundGroup.WOOD)));
+    public static final ButtonComponent STONE_BUTTON = register("stone_button", new ButtonComponent(new Component.Settings(), false));
+    public static final ButtonComponent WOODEN_BUTTON = register("wooden_button", new ButtonComponent(new Component.Settings().sounds(BlockSoundGroup.WOOD), true));
+    public static final LampComponent LAMP = register("lamp", new LampComponent(new Component.Settings().sounds(BlockSoundGroup.GLASS)));
 
 
     public static final ComponentState AIR_DEFAULT_STATE = AIR.getDefaultState();
 
-    private static <C extends Component> C register(C component) {
-        COMPONENTS.put(component.getId(), component);
-        return component;
+    public static <T extends Component> T register(String id, T component) {
+        return Registry.register(IntegratedCircuit.COMPONENTS_REGISTRY, IntegratedCircuit.id(id), component);
     }
     
-    public static Component getComponentById(int id) {
-        Component component = COMPONENTS.get(id);
-        if(component == null) throw new IllegalArgumentException("Invalid component id: " + id);
-        return component;
+    public static  <T extends Component> T register(RegistryKey<Component> key, T component) {
+        return Registry.register(IntegratedCircuit.COMPONENTS_REGISTRY, key, component);
     }
 
-    public static ComponentState createComponentState(short data) {
-        return getComponentById(data & 0xFF).getState((byte) ((data >> 8) & 0xFF));
+    static {
+        for(Component component : IntegratedCircuit.COMPONENTS_REGISTRY) {
+            for(ComponentState componentState : component.getStateManager().getStates()) {
+                Component.STATE_IDS.add(componentState);
+            }
+        }
+    }
+
+    public static void register() {
+        // noop
     }
 }

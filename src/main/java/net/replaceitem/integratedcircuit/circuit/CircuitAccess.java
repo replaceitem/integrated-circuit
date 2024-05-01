@@ -1,7 +1,6 @@
 package net.replaceitem.integratedcircuit.circuit;
 
 import net.minecraft.world.tick.TickPriority;
-import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
 

@@ -1,26 +1,29 @@
 package net.replaceitem.integratedcircuit.circuit;
 
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.nbt.NbtList;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.replaceitem.integratedcircuit.circuit.components.PortComponent;
 import net.replaceitem.integratedcircuit.circuit.context.ServerCircuitContext;
-import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class ServerCircuit extends Circuit {
-    
     private final ServerCircuitContext context;
-    protected final CircuitTickScheduler circuitTickScheduler = new CircuitTickScheduler();
+    protected final CircuitTickScheduler circuitTickScheduler;
 
     public ServerCircuit(ServerCircuitContext context) {
         super(false);
         this.context = context;
+        this.circuitTickScheduler = new CircuitTickScheduler();
+    }
+
+    public ServerCircuit(@NotNull ServerCircuitContext context, @NotNull ComponentState[] portStates, @NotNull CircuitSection section, @NotNull CircuitTickScheduler tickScheduler) {
+        super(false, portStates, section);
+        this.context = context;
+        this.circuitTickScheduler = tickScheduler;
     }
 
     @Override
@@ -60,47 +63,9 @@ public class ServerCircuit extends Circuit {
         return state.get(PortComponent.POWER);
     }
 
-    public static ServerCircuit fromNbt(NbtCompound nbt, ServerCircuitContext context) {
-        if(nbt == null) return null;
-        ServerCircuit circuit = new ServerCircuit(context);
-        circuit.readNbt(nbt);
-        return circuit;
-    }
-
-    private NbtList tickSchedulerNbtBuffer;
-
-    @Override
-    public void readNbt(NbtCompound nbt) {
-        super.readNbt(nbt);
-        NbtList tickSchedulerNbt = nbt.getList("tickScheduler", NbtElement.COMPOUND_TYPE);
-        if(this.context.isReady()) {
-            loadTickScheduler(tickSchedulerNbt);
-        } else {
-            // this has to be stored until the context is ready, since the time is needed to get the correct triggerTime for scheduled ticks
-            this.tickSchedulerNbtBuffer = tickSchedulerNbt;
-        }
-    }
-
     @Override
     public long getTime() {
         return context.getTime();
-    }
-
-    @Override
-    public void writeNbt(NbtCompound nbt) {
-        super.writeNbt(nbt);
-        nbt.put("tickScheduler", this.circuitTickScheduler.toNbt(this.getTime()));
-    }
-
-    public void onWorldIsPresent() {
-        if(this.tickSchedulerNbtBuffer != null) {
-            loadTickScheduler(tickSchedulerNbtBuffer);
-            this.tickSchedulerNbtBuffer = null;
-        }
-    }
-    
-    private void loadTickScheduler(NbtList list) {
-        this.circuitTickScheduler.loadFromNbt(list, this.getTime());
     }
 
     @Override

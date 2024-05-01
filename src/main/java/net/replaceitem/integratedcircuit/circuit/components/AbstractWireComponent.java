@@ -1,11 +1,11 @@
 package net.replaceitem.integratedcircuit.circuit.components;
 
 import com.google.common.collect.Sets;
+import net.minecraft.state.property.IntProperty;
 import net.minecraft.text.Text;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
 import net.replaceitem.integratedcircuit.circuit.Component;
-import net.replaceitem.integratedcircuit.circuit.state.property.ComponentProperty;
-import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
+import net.replaceitem.integratedcircuit.circuit.ComponentState;
 import net.replaceitem.integratedcircuit.client.IntegratedCircuitScreen;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
@@ -13,8 +13,8 @@ import net.replaceitem.integratedcircuit.util.FlatDirection;
 import java.util.HashSet;
 
 public abstract class AbstractWireComponent extends AbstractConductingComponent {
-    public AbstractWireComponent(int id, Settings settings) {
-        super(id, settings);
+    public AbstractWireComponent(Settings settings) {
+        super(settings);
     }
 
     @Override
@@ -64,7 +64,7 @@ public abstract class AbstractWireComponent extends AbstractConductingComponent 
         }
     }
 
-    protected ComponentProperty<Integer> getPowerProperty() {
+    protected IntProperty getPowerProperty() {
         return WireComponent.POWER;
     }
 

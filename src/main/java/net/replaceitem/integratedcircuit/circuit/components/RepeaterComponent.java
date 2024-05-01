@@ -3,13 +3,16 @@ package net.replaceitem.integratedcircuit.circuit.components;
 import net.minecraft.block.Block;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.state.StateManager;
+import net.minecraft.state.property.BooleanProperty;
+import net.minecraft.state.property.IntProperty;
+import net.minecraft.state.property.Properties;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.replaceitem.integratedcircuit.IntegratedCircuit;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
-import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
-import net.replaceitem.integratedcircuit.circuit.state.property.BooleanComponentProperty;
-import net.replaceitem.integratedcircuit.circuit.state.property.IntComponentProperty;
+import net.replaceitem.integratedcircuit.circuit.Component;
+import net.replaceitem.integratedcircuit.circuit.ComponentState;
 import net.replaceitem.integratedcircuit.client.IntegratedCircuitScreen;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
@@ -17,11 +20,12 @@ import org.jetbrains.annotations.Nullable;
 
 public class RepeaterComponent extends AbstractRedstoneGateComponent {
 
-    private static final IntComponentProperty DELAY = new IntComponentProperty("delay", 3, 2);
-    private static final BooleanComponentProperty LOCKED = new BooleanComponentProperty("locked", 5);
+    public static final IntProperty DELAY = Properties.DELAY;
+    public static final BooleanProperty LOCKED = Properties.LOCKED;
 
-    public RepeaterComponent(int id, Settings settings) {
-        super(id, settings);
+    public RepeaterComponent(Settings settings) {
+        super(settings);
+        this.setDefaultState(this.getStateManager().getDefaultState().with(FACING, FlatDirection.NORTH).with(POWERED, false).with(DELAY, 1).with(LOCKED, false));
     }
 
     private static final Identifier ITEM_TEXTURE = new Identifier("textures/item/repeater.png");
@@ -53,7 +57,7 @@ public class RepeaterComponent extends AbstractRedstoneGateComponent {
 
         boolean locked = state.get(LOCKED);
         Identifier knobTexture = locked ? TEXTURE_BAR : torchTexture;
-        int knobOffsetAmount = state.get(DELAY) * 2;
+        int knobOffsetAmount = (state.get(DELAY)-1) * 2;
         if(locked) {
             IntegratedCircuitScreen.renderPartialTexture(drawContext, knobTexture, x, y, 2, 6 + knobOffsetAmount, 12, 2, renderedRotation.getIndex(),  1, 1, 1, a);
         } else {
@@ -68,7 +72,7 @@ public class RepeaterComponent extends AbstractRedstoneGateComponent {
 
     @Override
     protected int getUpdateDelayInternal(ComponentState state) {
-        return (state.get(DELAY) + 1) * 2;
+        return state.get(DELAY) * 2;
     }
 
     @Override
@@ -106,8 +110,8 @@ public class RepeaterComponent extends AbstractRedstoneGateComponent {
     }
 
     @Override
-    public void appendProperties(ComponentState.PropertyBuilder builder) {
+    public void appendProperties(StateManager.Builder<Component, ComponentState> builder) {
         super.appendProperties(builder);
-        builder.append(DELAY, LOCKED);
+        builder.add(DELAY, LOCKED);
     }
 }

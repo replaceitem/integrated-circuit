@@ -15,7 +15,7 @@ import net.replaceitem.integratedcircuit.circuit.ClientCircuit;
 import net.replaceitem.integratedcircuit.circuit.Component;
 import net.replaceitem.integratedcircuit.circuit.Components;
 import net.replaceitem.integratedcircuit.circuit.components.FacingComponent;
-import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
+import net.replaceitem.integratedcircuit.circuit.ComponentState;
 import net.replaceitem.integratedcircuit.client.config.DefaultConfig;
 import net.replaceitem.integratedcircuit.mixin.RedstoneWireBlockAccessor;
 import net.replaceitem.integratedcircuit.network.packet.FinishEditingC2SPacket;
@@ -165,10 +165,9 @@ public class IntegratedCircuitScreen extends Screen {
             ComponentPos pos = Circuit.PORT_POSITIONS.get(direction);
             renderComponentStateInGrid(drawContext, port, pos.getX(), pos.getY(), 1);
         }
-        for (int i = 0; i < circuit.components.length; i++) {
-            ComponentState[] row = circuit.components[i];
-            for (int j = 0; j < row.length; j++) {
-                ComponentState componentState = row[j];
+        for (int i = 0; i < Circuit.SIZE; i++) {
+            for (int j = 0; j < Circuit.SIZE; j++) {
+                ComponentState componentState = circuit.section.getComponentState(i, j);
                 renderComponentStateInGrid(drawContext, componentState, i, j, 1);
             }
         }

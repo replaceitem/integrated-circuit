@@ -5,14 +5,17 @@ import com.google.common.collect.Maps;
 import net.minecraft.block.Block;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.state.StateManager;
+import net.minecraft.state.property.BooleanProperty;
+import net.minecraft.state.property.IntProperty;
+import net.minecraft.state.property.Properties;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 import net.replaceitem.integratedcircuit.IntegratedCircuit;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
+import net.replaceitem.integratedcircuit.circuit.Component;
 import net.replaceitem.integratedcircuit.circuit.Components;
-import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
-import net.replaceitem.integratedcircuit.circuit.state.property.BooleanComponentProperty;
-import net.replaceitem.integratedcircuit.circuit.state.property.IntComponentProperty;
+import net.replaceitem.integratedcircuit.circuit.ComponentState;
 import net.replaceitem.integratedcircuit.client.IntegratedCircuitScreen;
 import net.replaceitem.integratedcircuit.mixin.RedstoneWireBlockAccessor;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
@@ -23,15 +26,15 @@ import java.util.Map;
 
 public class WireComponent extends AbstractWireComponent {
 
-    private static final BooleanComponentProperty CONNECTED_NORTH = new BooleanComponentProperty("connected_north", 0);
-    private static final BooleanComponentProperty CONNECTED_EAST = new BooleanComponentProperty("connected_east", 1);
-    private static final BooleanComponentProperty CONNECTED_SOUTH = new BooleanComponentProperty("connected_south", 2);
-    private static final BooleanComponentProperty CONNECTED_WEST = new BooleanComponentProperty("connected_west", 3);
+    public static final BooleanProperty CONNECTED_NORTH = BooleanProperty.of("connected_north");
+    public static final BooleanProperty CONNECTED_EAST = BooleanProperty.of("connected_east");
+    public static final BooleanProperty CONNECTED_SOUTH = BooleanProperty.of("connected_south");
+    public static final BooleanProperty CONNECTED_WEST = BooleanProperty.of("connected_west");
+    
+    public static final IntProperty POWER = Properties.POWER;
 
-    public static final IntComponentProperty POWER = new IntComponentProperty("power", 4, 4);
 
-
-    public static final Map<FlatDirection, BooleanComponentProperty> DIRECTION_TO_CONNECTION_PROPERTY = Maps.newEnumMap(ImmutableMap.of(
+    public static final Map<FlatDirection, BooleanProperty> DIRECTION_TO_CONNECTION_PROPERTY = Maps.newEnumMap(ImmutableMap.of(
             FlatDirection.NORTH, CONNECTED_NORTH,
             FlatDirection.EAST, CONNECTED_EAST,
             FlatDirection.SOUTH, CONNECTED_SOUTH,
@@ -41,16 +44,16 @@ public class WireComponent extends AbstractWireComponent {
     // yes, this name is confusing, since it returns the cross state, but for some reason RedstoneWireBlock.dotState (yarn) seems to be the same
     private final ComponentState dotState;
 
-    public WireComponent(int id, Settings settings) {
-        super(id, settings);
-        this.setDefaultState(this.getDefaultPropertyState()
+    public WireComponent(Settings settings) {
+        super(settings);
+        this.setDefaultState(this.getStateManager().getDefaultState()
                 .with(CONNECTED_NORTH, false)
                 .with(CONNECTED_EAST, false)
                 .with(CONNECTED_SOUTH, false)
                 .with(CONNECTED_WEST, false)
                 .with(POWER, 0)
         );
-        dotState = this.getDefaultPropertyState()
+        dotState = this.getDefaultState()
                 .with(CONNECTED_NORTH, true)
                 .with(CONNECTED_EAST, true)
                 .with(CONNECTED_SOUTH, true)
@@ -120,7 +123,7 @@ public class WireComponent extends AbstractWireComponent {
     private void updateForNewState(Circuit world, ComponentPos pos, ComponentState oldState, ComponentState newState) {
         for (FlatDirection direction : FlatDirection.VALUES) {
             ComponentPos blockPos = pos.offset(direction);
-            BooleanComponentProperty connectionProperty = DIRECTION_TO_CONNECTION_PROPERTY.get(direction);
+            BooleanProperty connectionProperty = DIRECTION_TO_CONNECTION_PROPERTY.get(direction);
             if (oldState.get(connectionProperty) == newState.get(connectionProperty) || !world.getComponentState(blockPos).isSolidBlock(world, blockPos)) continue;
             world.updateNeighborsExcept(blockPos, newState.getComponent(), direction.getOpposite());
         }
@@ -155,7 +158,7 @@ public class WireComponent extends AbstractWireComponent {
     
     private ComponentState getDefaultWireState(Circuit circuit, ComponentState state, ComponentPos pos) {
         for (FlatDirection direction : FlatDirection.VALUES) {
-            BooleanComponentProperty connectionProperty = DIRECTION_TO_CONNECTION_PROPERTY.get(direction);
+            BooleanProperty connectionProperty = DIRECTION_TO_CONNECTION_PROPERTY.get(direction);
             if (state.get(connectionProperty)) continue;
             boolean wireConnection = this.getRenderConnectionType(circuit, pos, direction);
             state = state.with(connectionProperty, wireConnection);
@@ -220,9 +223,9 @@ public class WireComponent extends AbstractWireComponent {
     }
 
     @Override
-    public void appendProperties(ComponentState.PropertyBuilder builder) {
+    public void appendProperties(StateManager.Builder<Component, ComponentState> builder) {
         super.appendProperties(builder);
-        builder.append(CONNECTED_NORTH, CONNECTED_EAST, CONNECTED_SOUTH, CONNECTED_WEST);
-        builder.append(POWER);
+        builder.add(CONNECTED_NORTH, CONNECTED_EAST, CONNECTED_SOUTH, CONNECTED_WEST);
+        builder.add(POWER);
     }
 }

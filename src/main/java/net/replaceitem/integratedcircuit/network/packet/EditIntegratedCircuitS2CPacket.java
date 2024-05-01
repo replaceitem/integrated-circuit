@@ -10,6 +10,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.replaceitem.integratedcircuit.IntegratedCircuit;
+import net.replaceitem.integratedcircuit.circuit.CircuitSerializer;
 import net.replaceitem.integratedcircuit.circuit.ClientCircuit;
 import net.replaceitem.integratedcircuit.circuit.context.ClientWorldClientCircuitContext;
 
@@ -19,12 +20,12 @@ public class EditIntegratedCircuitS2CPacket {
 
     public final BlockPos pos;
     public final Text name;
-    public final NbtCompound circuit;
+    public final NbtCompound circuitNbt;
 
-    public EditIntegratedCircuitS2CPacket(BlockPos pos, Text name, NbtCompound circuit) {
+    public EditIntegratedCircuitS2CPacket(BlockPos pos, Text name, NbtCompound circuitNbt) {
         this.pos = pos;
         this.name = name;
-        this.circuit = circuit;
+        this.circuitNbt = circuitNbt;
     }
 
     public EditIntegratedCircuitS2CPacket(PacketByteBuf buf) {
@@ -39,12 +40,12 @@ public class EditIntegratedCircuitS2CPacket {
         PacketByteBuf buf = PacketByteBufs.create();
         buf.writeBlockPos(pos);
         buf.writeText(name);
-        buf.writeNbt(circuit);
+        buf.writeNbt(circuitNbt);
         return buf;
     }
     
     public ClientCircuit getClientCircuit(ClientWorld world, BlockPos pos) {
-        return ClientCircuit.fromNbt(circuit, new ClientWorldClientCircuitContext(world, pos));
+        return new CircuitSerializer(circuitNbt).readClientCircuit(new ClientWorldClientCircuitContext(world, pos));
     }
 
     public void send(ServerPlayerEntity serverPlayerEntity) {

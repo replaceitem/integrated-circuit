@@ -5,19 +5,13 @@ import com.google.common.collect.EnumHashBiMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.replaceitem.integratedcircuit.circuit.components.PortComponent;
-import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Arrays;
 
 public abstract class Circuit implements CircuitAccess {
     public static final int SIZE = 15;
@@ -30,11 +24,11 @@ public abstract class Circuit implements CircuitAccess {
         PORT_POSITIONS.put(FlatDirection.SOUTH, new ComponentPos(7, 15));
         PORT_POSITIONS.put(FlatDirection.WEST, new ComponentPos(-1, 7));
     }
+    
+    protected final CircuitSection section;
+    protected final ComponentState[] ports;
 
-    public final ComponentState[][] components = new ComponentState[SIZE][SIZE];
-    public final ComponentState[] ports = new ComponentState[4];
-
-    protected final CircuitNeighborUpdater neighborUpdater;
+    protected final CircuitNeighborUpdater neighborUpdater = new CircuitNeighborUpdater(this);
     
     /**
      * @see net.minecraft.world.World#isClient
@@ -44,14 +38,22 @@ public abstract class Circuit implements CircuitAccess {
 
     public Circuit(boolean isClient) {
         this.isClient = isClient;
-        for (ComponentState[] componentState : components) {
-            Arrays.fill(componentState, Components.AIR.getDefaultState());
-        }
+        this.ports = createDefaultPorts();
+        this.section = new CircuitSection();
+    }
+    
+    public Circuit(boolean isClient, ComponentState[] portStates, CircuitSection section) {
+        this.isClient = isClient;
+        this.ports = portStates;
+        this.section = section;
+    }
+    
+    public static ComponentState[] createDefaultPorts() {
+        ComponentState[] ports = new ComponentState[4];
         for (int i = 0; i < ports.length; i++) {
             ports[i] = Components.PORT.getDefaultState().with(PortComponent.FACING, FlatDirection.VALUES[i].getOpposite());
         }
-
-        this.neighborUpdater = new CircuitNeighborUpdater(this);
+        return ports;
     }
 
     public boolean isInside(ComponentPos pos) {
@@ -66,7 +68,7 @@ public abstract class Circuit implements CircuitAccess {
 
     public ComponentState getComponentState(ComponentPos componentPos) {
         if (isInside(componentPos)) {
-            return this.components[componentPos.getX()][componentPos.getY()];
+            return this.section.getComponentState(componentPos.getX(), componentPos.getY());
         }
         FlatDirection portSide = getPortSide(componentPos);
         if(portSide != null) {
@@ -88,7 +90,7 @@ public abstract class Circuit implements CircuitAccess {
             if(!state.isOf(Components.PORT)) throw new RuntimeException("Cannot place non-port component at a port location");
             ports[portSide.getIndex()] = state;
         } else {
-            this.components[pos.getX()][pos.getY()] = state;
+            this.section.setComponentState(pos, state);
         }
         return oldState;
     }
@@ -148,59 +150,7 @@ public abstract class Circuit implements CircuitAccess {
                 return false;
             }
         }
-        for(int y = 0; y < SIZE; y++) {
-            for(int x = 0; x < SIZE; x++) {
-                if(this.components[x][y] != Components.AIR.getDefaultState()) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-    public void writeNbt(NbtCompound nbt) {
-        byte[] portBytes = new byte[4];
-        for (int i = 0; i < ports.length; i++) {
-            portBytes[i] = ports[i].encodeStateData();
-        }
-        nbt.putByteArray("ports", portBytes);
-
-        // Packing two shorts in an int
-        int componentDataSize = SIZE*SIZE;
-        int[] componentsData = new int[MathHelper.ceilDiv(componentDataSize, 2)];
-        for (int i = 0; i < componentDataSize; i++) {
-            int shift = (i % 2 == 0) ? 16 : 0;
-            componentsData[i/2] |= (components[i%SIZE][i/SIZE].encode() & 0xFFFF) << shift;
-        }
-        nbt.putIntArray("components", componentsData);
-    }
-
-    public void readNbt(NbtCompound nbt) {
-        if(nbt.contains("ports", NbtElement.BYTE_ARRAY_TYPE)) {
-            byte[] portBytes = nbt.getByteArray("ports");
-
-            if(portBytes.length != ports.length)
-                throw new IllegalArgumentException("Invalid ports length received");
-            for (int i = 0; i < portBytes.length; i++) {
-                ports[i] = Components.PORT.getState(portBytes[i]);
-            }
-        }
-        if(nbt.contains("components", NbtElement.INT_ARRAY_TYPE)) {
-            int componentDataSize = SIZE*SIZE;
-            int[] componentData = nbt.getIntArray("components");
-
-            if (componentData.length != MathHelper.ceilDiv(componentDataSize, 2))
-                throw new IllegalArgumentException("Invalid componentData length received");
-            for (int i = 0; i < componentDataSize; i++) {
-                int shift = (i % 2 == 0) ? 16 : 0;
-                components[i % SIZE][i / SIZE] = Components.createComponentState((short) (componentData[i / 2] >> shift & 0xFFFF));
-            }
-        }
-    }
-
-    public NbtCompound toNbt() {
-        NbtCompound nbt = new NbtCompound();
-        this.writeNbt(nbt);
-        return nbt;
+        return section.isEmpty();
     }
 
     protected abstract void updateListeners(ComponentPos pos, ComponentState oldState, ComponentState state, int flags);

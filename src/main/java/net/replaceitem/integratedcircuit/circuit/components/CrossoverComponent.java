@@ -2,14 +2,15 @@ package net.replaceitem.integratedcircuit.circuit.components;
 
 import com.google.common.collect.Sets;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.state.StateManager;
+import net.minecraft.state.property.IntProperty;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 import net.replaceitem.integratedcircuit.IntegratedCircuit;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
 import net.replaceitem.integratedcircuit.circuit.Component;
-import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
-import net.replaceitem.integratedcircuit.circuit.state.property.IntComponentProperty;
+import net.replaceitem.integratedcircuit.circuit.ComponentState;
 import net.replaceitem.integratedcircuit.client.IntegratedCircuitScreen;
 import net.replaceitem.integratedcircuit.mixin.RedstoneWireBlockAccessor;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
@@ -20,12 +21,13 @@ import java.util.HashSet;
 
 public class CrossoverComponent extends AbstractConductingComponent {
 
-    private static final IntComponentProperty POWER_X = new IntComponentProperty("power_x", 0, 4);
-    private static final IntComponentProperty POWER_Y = new IntComponentProperty("power_y", 4, 4);
+    public static final IntProperty POWER_X = IntProperty.of("power_x", 0, 15);
+    public static final IntProperty POWER_Y = IntProperty.of("power_y", 0, 15);
 
 
-    public CrossoverComponent(int id, Settings settings) {
-        super(id, settings);
+    public CrossoverComponent(Settings settings) {
+        super(settings);
+        this.setDefaultState(this.getStateManager().getDefaultState().with(POWER_X, 0).with(POWER_Y, 0));
     }
 
     protected static final Identifier TEXTURE_BRIDGE = IntegratedCircuit.id("textures/integrated_circuit/wire_bridge.png");
@@ -132,9 +134,9 @@ public class CrossoverComponent extends AbstractConductingComponent {
     }
 
     @Override
-    public void appendProperties(ComponentState.PropertyBuilder builder) {
+    public void appendProperties(StateManager.Builder<Component, ComponentState> builder) {
         super.appendProperties(builder);
-        builder.append(POWER_X);
-        builder.append(POWER_Y);
+        builder.add(POWER_X);
+        builder.add(POWER_Y);
     }
 }

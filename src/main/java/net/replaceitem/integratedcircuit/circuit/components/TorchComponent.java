@@ -4,6 +4,9 @@ import com.google.common.collect.Lists;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.state.StateManager;
+import net.minecraft.state.property.BooleanProperty;
+import net.minecraft.state.property.Properties;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.random.Random;
@@ -11,10 +14,9 @@ import net.replaceitem.integratedcircuit.IntegratedCircuit;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
 import net.replaceitem.integratedcircuit.circuit.CircuitNeighborUpdater;
 import net.replaceitem.integratedcircuit.circuit.Component;
+import net.replaceitem.integratedcircuit.circuit.ComponentState;
 import net.replaceitem.integratedcircuit.circuit.Components;
 import net.replaceitem.integratedcircuit.circuit.ServerCircuit;
-import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
-import net.replaceitem.integratedcircuit.circuit.state.property.BooleanComponentProperty;
 import net.replaceitem.integratedcircuit.client.IntegratedCircuitScreen;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
@@ -26,11 +28,11 @@ import java.util.WeakHashMap;
 
 public class TorchComponent extends FacingComponent {
 
-    private static final BooleanComponentProperty LIT = new BooleanComponentProperty("lit", 2);
+    public static final BooleanProperty LIT = Properties.LIT;
 
-    public TorchComponent(int id, Settings settings) {
-        super(id, settings);
-        this.setDefaultState(this.getDefaultPropertyState().with(LIT, true));
+    public TorchComponent(Settings settings) {
+        super(settings);
+        this.setDefaultState(this.getDefaultState().with(LIT, true));
     }
 
     private static final Identifier ITEM_TEXTURE = new Identifier("textures/block/redstone_torch.png");
@@ -171,8 +173,8 @@ public class TorchComponent extends FacingComponent {
     }
 
     @Override
-    public void appendProperties(ComponentState.PropertyBuilder builder) {
+    public void appendProperties(StateManager.Builder<Component, ComponentState> builder) {
         super.appendProperties(builder);
-        builder.append(LIT);
+        builder.add(LIT);
     }
 }

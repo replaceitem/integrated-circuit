@@ -1,31 +1,37 @@
 package net.replaceitem.integratedcircuit.circuit.components;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.enums.ComparatorMode;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.state.StateManager;
+import net.minecraft.state.property.EnumProperty;
+import net.minecraft.state.property.IntProperty;
+import net.minecraft.state.property.Properties;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.tick.TickPriority;
 import net.replaceitem.integratedcircuit.IntegratedCircuit;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
+import net.replaceitem.integratedcircuit.circuit.Component;
 import net.replaceitem.integratedcircuit.circuit.ServerCircuit;
-import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
-import net.replaceitem.integratedcircuit.circuit.state.property.BooleanComponentProperty;
-import net.replaceitem.integratedcircuit.circuit.state.property.IntComponentProperty;
+import net.replaceitem.integratedcircuit.circuit.ComponentState;
 import net.replaceitem.integratedcircuit.client.IntegratedCircuitScreen;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
+import net.replaceitem.integratedcircuit.util.FlatDirection;
 import org.jetbrains.annotations.Nullable;
 
 public class ComparatorComponent extends AbstractRedstoneGateComponent {
 
-    private static final BooleanComponentProperty SUBTRACT_MODE = new BooleanComponentProperty("subtract_mode", 3);
-    private static final IntComponentProperty OUTPUT_POWER = new IntComponentProperty("output_power", 4, 4);
+    public static final EnumProperty<ComparatorMode> MODE = Properties.COMPARATOR_MODE;
+    public static final IntProperty OUTPUT_POWER = Properties.POWER;
 
-    public ComparatorComponent(int id, Settings settings) {
-        super(id, settings);
+    public ComparatorComponent(Settings settings) {
+        super(settings);
+        this.setDefaultState(this.getStateManager().getDefaultState().with(FACING, FlatDirection.NORTH).with(POWERED, false).with(MODE, ComparatorMode.COMPARE).with(OUTPUT_POWER, 0));
     }
 
     private static final Identifier ITEM_TEXTURE = new Identifier("textures/item/comparator.png");
@@ -58,7 +64,7 @@ public class ComparatorComponent extends AbstractRedstoneGateComponent {
         IntegratedCircuitScreen.renderPartialTexture(drawContext, torchTexture, x, y, 3, 10, 4, 4, rot, 1, 1, 1, a);
         IntegratedCircuitScreen.renderPartialTexture(drawContext, torchTexture, x, y, 9, 10, 4, 4, rot, 1, 1, 1, a);
 
-        Identifier modeTorchTexture = state.get(SUBTRACT_MODE) ? TEXTURE_TORCH_ON : TEXTURE_TORCH_OFF;
+        Identifier modeTorchTexture = state.get(MODE) == ComparatorMode.SUBTRACT ? TEXTURE_TORCH_ON : TEXTURE_TORCH_OFF;
         IntegratedCircuitScreen.renderPartialTexture(drawContext, modeTorchTexture, x, y, 6, 1, 4, 4, rot, 1, 1, 1, a);
     }
 
@@ -82,7 +88,7 @@ public class ComparatorComponent extends AbstractRedstoneGateComponent {
         if (j > i) {
             return 0;
         }
-        if (state.get(SUBTRACT_MODE)) {
+        if (state.get(MODE) == ComparatorMode.SUBTRACT) {
             return i - j;
         }
         return i;
@@ -98,7 +104,7 @@ public class ComparatorComponent extends AbstractRedstoneGateComponent {
         if (i > j) {
             return true;
         }
-        return i == j && !state.get(SUBTRACT_MODE);
+        return i == j && state.get(MODE) == ComparatorMode.COMPARE;
     }
 
 
@@ -110,10 +116,10 @@ public class ComparatorComponent extends AbstractRedstoneGateComponent {
 
     @Override
     public void onUse(ComponentState state, Circuit circuit, ComponentPos pos, PlayerEntity player) {
-        state = state.cycle(SUBTRACT_MODE);
+        state = state.cycle(MODE);
         circuit.setComponentState(pos, state, Block.NOTIFY_LISTENERS);
         this.update(circuit, pos, state);
-        float f = state.get(SUBTRACT_MODE) ? 0.55f : 0.5f;
+        float f = state.get(MODE) == ComparatorMode.SUBTRACT ? 0.55f : 0.5f;
         circuit.playSound(player, SoundEvents.BLOCK_COMPARATOR_CLICK, SoundCategory.BLOCKS, 0.3f, f);
     }
 
@@ -134,7 +140,7 @@ public class ComparatorComponent extends AbstractRedstoneGateComponent {
         int i = this.calculateOutputSignal(world, pos, state);
         int j = state.get(OUTPUT_POWER);
         state = state.with(OUTPUT_POWER, i); // this is done in a BE in vanilla, so in this case we need to re-place the state, which is done below
-        if (j != i || !state.get(SUBTRACT_MODE)) {
+        if (j != i || state.get(MODE) == ComparatorMode.COMPARE) {
             boolean hasPower = this.hasPower(world, pos, state);
             boolean powered = state.get(POWERED);
             if (powered && !hasPower) {
@@ -159,9 +165,9 @@ public class ComparatorComponent extends AbstractRedstoneGateComponent {
     }
 
     @Override
-    public void appendProperties(ComponentState.PropertyBuilder builder) {
+    public void appendProperties(StateManager.Builder<Component, ComponentState> builder) {
         super.appendProperties(builder);
-        builder.append(SUBTRACT_MODE);
-        builder.append(OUTPUT_POWER);
+        builder.add(MODE);
+        builder.add(OUTPUT_POWER);
     }
 }

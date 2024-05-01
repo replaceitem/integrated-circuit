@@ -2,12 +2,10 @@ package net.replaceitem.integratedcircuit.circuit;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.replaceitem.integratedcircuit.circuit.context.ClientCircuitContext;
-import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
 import net.replaceitem.integratedcircuit.network.packet.ComponentInteractionC2SPacket;
 import net.replaceitem.integratedcircuit.network.packet.PlaceComponentC2SPacket;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
@@ -23,6 +21,11 @@ public class ClientCircuit extends Circuit {
         this.context = context;
     }
 
+    public ClientCircuit(ClientCircuitContext context, ComponentState[] portStates, CircuitSection section) {
+        super(true, portStates, section);
+        this.context = context;
+    }
+
     public ClientCircuitContext getContext() {
         return context;
     }
@@ -30,13 +33,6 @@ public class ClientCircuit extends Circuit {
     @Override
     public CircuitTickScheduler getCircuitTickScheduler() {
         return CircuitTickScheduler.getClientTickScheduler();
-    }
-
-    public static ClientCircuit fromNbt(NbtCompound nbt, ClientCircuitContext context) {
-        if(nbt == null) return null;
-        ClientCircuit circuit = new ClientCircuit(context);
-        circuit.readNbt(nbt);
-        return circuit;
     }
 
     public void onComponentUpdateFromServer(ComponentState state, ComponentPos pos) {

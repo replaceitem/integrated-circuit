@@ -1,23 +1,25 @@
 package net.replaceitem.integratedcircuit.circuit.components;
 
 import net.minecraft.block.Block;
+import net.minecraft.state.StateManager;
+import net.minecraft.state.property.BooleanProperty;
+import net.minecraft.state.property.Properties;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.tick.TickPriority;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
 import net.replaceitem.integratedcircuit.circuit.Component;
+import net.replaceitem.integratedcircuit.circuit.ComponentState;
 import net.replaceitem.integratedcircuit.circuit.Components;
 import net.replaceitem.integratedcircuit.circuit.ServerCircuit;
-import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
-import net.replaceitem.integratedcircuit.circuit.state.property.BooleanComponentProperty;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
 
 public abstract class AbstractRedstoneGateComponent extends FacingComponent {
 
-    protected static final BooleanComponentProperty POWERED = new BooleanComponentProperty("powered", 2);
+    public static final BooleanProperty POWERED = Properties.POWERED;
 
-    public AbstractRedstoneGateComponent(int id, Settings settings) {
-        super(id, settings);
+    public AbstractRedstoneGateComponent(Settings settings) {
+        super(settings);
     }
 
     @Override
@@ -185,8 +187,8 @@ public abstract class AbstractRedstoneGateComponent extends FacingComponent {
     }
 
     @Override
-    public void appendProperties(ComponentState.PropertyBuilder builder) {
+    public void appendProperties(StateManager.Builder<Component, ComponentState> builder) {
         super.appendProperties(builder);
-        builder.append(POWERED);
+        builder.add(POWERED);
     }
 }

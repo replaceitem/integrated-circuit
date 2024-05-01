@@ -7,7 +7,6 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.replaceitem.integratedcircuit.IntegratedCircuit;
 import net.replaceitem.integratedcircuit.circuit.Component;
-import net.replaceitem.integratedcircuit.circuit.Components;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
 
@@ -30,7 +29,7 @@ public class PlaceComponentC2SPacket {
         this(
                 new ComponentPos(buf.readByte(), buf.readByte()),
                 buf.readBlockPos(),
-                Components.getComponentById(buf.readByte()),
+                IntegratedCircuit.COMPONENTS_REGISTRY.get(buf.readIdentifier()),
                 FlatDirection.VALUES[buf.readByte()]
         );
     }
@@ -40,7 +39,7 @@ public class PlaceComponentC2SPacket {
         buf.writeByte(pos.getX());
         buf.writeByte(pos.getY());
         buf.writeBlockPos(blockPos);
-        buf.writeByte(component.getId());
+        buf.writeIdentifier(IntegratedCircuit.COMPONENTS_REGISTRY.getId(component));
         buf.writeByte(rotation.getIndex());
         return buf;
     }

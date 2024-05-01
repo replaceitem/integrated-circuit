@@ -1,24 +1,32 @@
 package net.replaceitem.integratedcircuit.circuit;
 
-import it.unimi.dsi.fastutil.bytes.Byte2ObjectMap;
-import it.unimi.dsi.fastutil.bytes.Byte2ObjectOpenHashMap;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.sound.BlockSoundGroup;
+import net.minecraft.state.StateManager;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.collection.IdList;
 import net.minecraft.util.math.random.Random;
+import net.replaceitem.integratedcircuit.IntegratedCircuit;
 import net.replaceitem.integratedcircuit.circuit.components.FacingComponent;
-import net.replaceitem.integratedcircuit.circuit.state.property.ComponentProperty;
-import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Set;
+import java.util.function.Function;
 
 public abstract class Component {
+
+
+    //public static final MapCodec<Component> CODEC = createCodec(settings1 -> new Component(settings1));
+    private final RegistryEntry.Reference<Component> registryEntry = IntegratedCircuit.COMPONENTS_REGISTRY.createEntry(this);
+    public static final IdList<ComponentState> STATE_IDS = new IdList<>();
     
     // copy from Block, only few are needed, but all kept for future
     public static final int NOTIFY_NEIGHBORS = 1;
@@ -32,28 +40,18 @@ public abstract class Component {
 
     public static final int NOTIFY_ALL = 3;
     
-    private final int id;
     private final Settings settings;
-
     private ComponentState defaultState;
-
-    private final Set<ComponentProperty<?>> properties;
-    private final Byte2ObjectMap<ComponentState> stateMap = new Byte2ObjectOpenHashMap<>();
-
+    private final StateManager<Component, ComponentState> stateManager;
+    
     public static final FlatDirection[] DIRECTIONS = new FlatDirection[]{FlatDirection.WEST, FlatDirection.EAST, FlatDirection.NORTH, FlatDirection.SOUTH};
 
-    public Component(int id, Settings settings) {
-        this.id = id;
+    public Component(Settings settings) {
         this.settings = settings;
-        ComponentState.PropertyBuilder builder = new ComponentState.PropertyBuilder();
+        StateManager.Builder<Component, ComponentState> builder = new StateManager.Builder<>(this);
         this.appendProperties(builder);
-        this.properties = builder.getProperties();
-        createStateMap();
-        this.defaultState = stateMap.get((byte) 0);
-    }
-
-    public int getId() {
-        return id;
+        this.stateManager = builder.build(Component::getDefaultState, ComponentState::new);
+        this.setDefaultState(this.stateManager.getDefaultState());
     }
 
     public Settings getSettings() {
@@ -61,36 +59,11 @@ public abstract class Component {
     }
 
     public Text getName() {
-        return this.settings.name;
-    }
-    public void appendProperties(ComponentState.PropertyBuilder builder) {
-
+        return Text.translatable(IntegratedCircuit.COMPONENTS_REGISTRY.getId(this).toTranslationKey("component"));
     }
 
-    public Set<ComponentProperty<?>> getProperties() {
-        return properties;
-    }
-
-    private void createStateMap() {
-        for (int i = 0; i <= 0xFF; i++) {
-            ComponentState state = new ComponentState(this, (byte) i);
-            stateMap.put(state.encodeStateData(), state);
-        }
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return obj instanceof Component component && this.id == component.getId();
-    }
-
-    public ComponentState getDefaultPropertyState() {
-        return getState((byte) 0);
-    }
-
-    public final ComponentState getState(byte data) {
-        ComponentState componentState = this.stateMap.get(data);
-        if(componentState == null) throw new RuntimeException("Invalid state data received: " + data);
-        return componentState;
+    public void appendProperties(StateManager.Builder<Component, ComponentState> builder) {
+        
     }
 
     public void setDefaultState(ComponentState defaultState) {
@@ -103,9 +76,10 @@ public abstract class Component {
     
     public ComponentState getPlacementState(Circuit circuit, ComponentPos pos, FlatDirection rotation) {
         ComponentState defaultState = this.getDefaultState();
-        if(this.properties.contains(FacingComponent.FACING)) return defaultState.with(FacingComponent.FACING, rotation);
+        if(this.stateManager.getProperties().contains(FacingComponent.FACING)) return defaultState.with(FacingComponent.FACING, rotation);
         return defaultState;
     }
+
     public abstract @Nullable Identifier getItemTexture();
     public abstract void render(DrawContext drawContext, int x, int y, float a, ComponentState state);
 
@@ -187,7 +161,16 @@ public abstract class Component {
 
     @Override
     public String toString() {
-        return this.settings.name.getString();
+        return IntegratedCircuit.COMPONENTS_REGISTRY.getId(this).toString();
+    }
+
+
+    protected static <C extends Component> RecordCodecBuilder<C, Component.Settings> createSettingsCodec() {
+        return Component.Settings.CODEC.fieldOf("properties").forGetter(Component::getSettings);
+    }
+
+    public static <C extends Component> MapCodec<C> createCodec(Function<Component.Settings, C> componentFromSetting) {
+        return RecordCodecBuilder.mapCodec(instance -> instance.group(createSettingsCodec()).apply(instance, componentFromSetting));
     }
 
     public boolean emitsRedstonePower(ComponentState state) {
@@ -198,11 +181,17 @@ public abstract class Component {
         return Text.empty();
     }
 
+    public StateManager<Component, ComponentState> getStateManager() {
+        return stateManager;
+    }
+
 
     public static class Settings {
 
-        public Settings(String key) {
-            this.name = Text.translatable(key);
+        public static final Codec<Settings> CODEC = Codec.unit(Settings::new);
+        
+        public Settings() {
+            
         }
 
         public Settings sounds(BlockSoundGroup soundGroup) {
@@ -211,7 +200,5 @@ public abstract class Component {
         }
 
         public BlockSoundGroup soundGroup = BlockSoundGroup.STONE;
-
-        Text name;
     }
 }

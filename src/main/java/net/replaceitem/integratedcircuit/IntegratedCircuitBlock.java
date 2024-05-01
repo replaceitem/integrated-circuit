@@ -35,6 +35,8 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import net.minecraft.world.WorldView;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
+import net.replaceitem.integratedcircuit.circuit.CircuitSerializer;
+import net.replaceitem.integratedcircuit.circuit.ServerCircuit;
 import net.replaceitem.integratedcircuit.network.packet.EditIntegratedCircuitS2CPacket;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
 import org.jetbrains.annotations.Nullable;
@@ -72,7 +74,7 @@ public class IntegratedCircuitBlock extends HorizontalFacingBlock implements Blo
     
     @Override
     public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
-        if(world.getBlockEntity(pos) instanceof IntegratedCircuitBlockEntity integratedCircuitBlockEntity) {
+        if(world.getBlockEntity(pos) instanceof IntegratedCircuitBlockEntity integratedCircuitBlockEntity && integratedCircuitBlockEntity.getCircuit() != null) {
             integratedCircuitBlockEntity.getCircuit().tick();
         }
         world.scheduleBlockTick(pos, state.getBlock(), 1);
@@ -89,7 +91,7 @@ public class IntegratedCircuitBlock extends HorizontalFacingBlock implements Blo
     public void neighborUpdate(BlockState state, World world, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
         super.neighborUpdate(state, world, pos, sourceBlock, sourcePos, notify);
         if(world.isClient) return;
-        if(world.getBlockEntity(pos) instanceof IntegratedCircuitBlockEntity integratedCircuitBlockEntity) {
+        if(world.getBlockEntity(pos) instanceof IntegratedCircuitBlockEntity integratedCircuitBlockEntity && integratedCircuitBlockEntity.getCircuit() != null) {
             for (FlatDirection direction : FlatDirection.VALUES) {
                 integratedCircuitBlockEntity.getCircuit().getContext().readExternalPower(direction);
             }
@@ -125,8 +127,10 @@ public class IntegratedCircuitBlock extends HorizontalFacingBlock implements Blo
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         if(!world.isClient() && player instanceof ServerPlayerEntity serverPlayerEntity && world.getBlockEntity(pos) instanceof IntegratedCircuitBlockEntity integratedCircuitBlockEntity) {
+            ServerCircuit circuit = integratedCircuitBlockEntity.getCircuit();
+            if(circuit == null) return ActionResult.FAIL;
             integratedCircuitBlockEntity.addEditor(serverPlayerEntity);
-            new EditIntegratedCircuitS2CPacket(pos, integratedCircuitBlockEntity.getName(), integratedCircuitBlockEntity.getCircuit().toNbt()).send(serverPlayerEntity);
+            new EditIntegratedCircuitS2CPacket(pos, integratedCircuitBlockEntity.getName(), CircuitSerializer.writeCircuit(circuit)).send(serverPlayerEntity);
         }
         return ActionResult.SUCCESS;
     }
@@ -179,7 +183,8 @@ public class IntegratedCircuitBlock extends HorizontalFacingBlock implements Blo
     public BlockState onBreak(World world, BlockPos pos, BlockState state, PlayerEntity player) {
         BlockEntity blockEntity = world.getBlockEntity(pos);
         if (blockEntity instanceof IntegratedCircuitBlockEntity integratedCircuitBlockEntity) {
-            if (!world.isClient && player.isCreative() && !integratedCircuitBlockEntity.getCircuit().isEmpty()) {
+            ServerCircuit circuit = integratedCircuitBlockEntity.getCircuit();
+            if (!world.isClient && player.isCreative() && circuit != null && !circuit.isEmpty()) {
                 dropStacks(state, world, pos, blockEntity, player, player.getMainHandStack());
             }
         }
@@ -194,7 +199,7 @@ public class IntegratedCircuitBlock extends HorizontalFacingBlock implements Blo
         if (blockEntity instanceof IntegratedCircuitBlockEntity integratedCircuitBlockEntity) {
             Circuit circuit = integratedCircuitBlockEntity.getCircuit();
 
-            if(circuit.isEmpty()) { // If it's empty, get rid of the NBT data so it stacks with other empty circuits
+            if(circuit == null || circuit.isEmpty()) { // If it's empty, get rid of the NBT data so it stacks with other empty circuits
                 for(ItemStack stack : list) {
                     stack.removeSubNbt(BlockItem.BLOCK_ENTITY_TAG_KEY);
                 }

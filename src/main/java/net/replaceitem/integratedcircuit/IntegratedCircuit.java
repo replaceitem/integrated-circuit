@@ -1,6 +1,10 @@
 package net.replaceitem.integratedcircuit;
 
+import com.mojang.logging.LogUtils;
+import com.mojang.serialization.Lifecycle;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
+import net.fabricmc.fabric.api.event.registry.RegistryAttribute;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
@@ -10,22 +14,38 @@ import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.block.piston.PistonBehavior;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroups;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.SpecialRecipeSerializer;
+import net.minecraft.registry.DefaultedRegistry;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.SimpleDefaultedRegistry;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
+import net.replaceitem.integratedcircuit.circuit.Component;
+import net.replaceitem.integratedcircuit.circuit.Components;
 import net.replaceitem.integratedcircuit.network.ServerPacketHandler;
 import net.replaceitem.integratedcircuit.network.packet.ComponentInteractionC2SPacket;
 import net.replaceitem.integratedcircuit.network.packet.FinishEditingC2SPacket;
 import net.replaceitem.integratedcircuit.network.packet.PlaceComponentC2SPacket;
+import org.slf4j.Logger;
 
 public class IntegratedCircuit implements ModInitializer {
+    public static final Logger LOGGER = LogUtils.getLogger();
     public static final String MOD_ID = "integrated_circuit"; // TODO - maybe make this dynamic
+    public static final int DATA_VERSION = 1;
+
+    public static final RegistryKey<Registry<Component>> COMPONENTS_REGISTRY_KEY = RegistryKey.ofRegistry(IntegratedCircuit.id("components"));
+    public static final DefaultedRegistry<Component> COMPONENTS_REGISTRY = FabricRegistryBuilder
+            .from(new SimpleDefaultedRegistry<>(IntegratedCircuit.id("air").toString(), COMPONENTS_REGISTRY_KEY, Lifecycle.stable(), true))
+            .attribute(RegistryAttribute.SYNCED)
+            .buildAndRegister();
 
     public static final TagKey<Block> INTEGRATED_CIRCUITS_BLOCK_TAG = TagKey.of(RegistryKeys.BLOCK, id("integrated_circuits"));
     public static final TagKey<Item> INTEGRATED_CIRCUITS_ITEM_TAG = TagKey.of(RegistryKeys.ITEM, id("integrated_circuits"));
@@ -97,6 +117,8 @@ public class IntegratedCircuit implements ModInitializer {
     
     @Override
     public void onInitialize() {
+        Components.register();
+        
         Registry.register(Registries.BLOCK, id("integrated_circuit"), INTEGRATED_CIRCUIT_BLOCK);
         Registry.register(Registries.BLOCK, id("white_integrated_circuit"), WHITE_INTEGRATED_CIRCUIT_BLOCK);
         Registry.register(Registries.BLOCK, id("orange_integrated_circuit"), ORANGE_INTEGRATED_CIRCUIT_BLOCK);
@@ -147,5 +169,19 @@ public class IntegratedCircuit implements ModInitializer {
         ServerPlayNetworking.registerGlobalReceiver(PlaceComponentC2SPacket.ID, ServerPacketHandler::receivePlaceComponentPacket);
         ServerPlayNetworking.registerGlobalReceiver(FinishEditingC2SPacket.ID, ServerPacketHandler::receiveFinishEditingPacket);
         ServerPlayNetworking.registerGlobalReceiver(ComponentInteractionC2SPacket.ID, ServerPacketHandler::receiveComponentInteraction);
+    }
+
+
+    public static NbtCompound putDataVersion(NbtCompound nbt) {
+        return putDataVersion(nbt, IntegratedCircuit.DATA_VERSION);
+    }
+
+    public static NbtCompound putDataVersion(NbtCompound nbt, int dataVersion) {
+        nbt.putInt("CircuitDataVersion", dataVersion);
+        return nbt;
+    }
+
+    public static int getDataVersion(NbtCompound nbt, int fallback) {
+        return nbt.contains("CircuitDataVersion", NbtElement.NUMBER_TYPE) ? nbt.getInt("CircuitDataVersion") : fallback;
     }
 }

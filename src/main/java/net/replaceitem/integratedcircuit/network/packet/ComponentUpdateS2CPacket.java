@@ -6,8 +6,8 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.replaceitem.integratedcircuit.IntegratedCircuit;
-import net.replaceitem.integratedcircuit.circuit.Components;
-import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
+import net.replaceitem.integratedcircuit.circuit.Component;
+import net.replaceitem.integratedcircuit.circuit.ComponentState;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 
 import java.util.Collection;
@@ -26,7 +26,7 @@ public class ComponentUpdateS2CPacket {
     public ComponentUpdateS2CPacket(PacketByteBuf buf) {
         this(
                 new ComponentPos(buf.readByte(), buf.readByte()),
-                Components.createComponentState(buf.readShort())
+                buf.readRegistryValue(Component.STATE_IDS)
         );
     }
 
@@ -34,7 +34,7 @@ public class ComponentUpdateS2CPacket {
         PacketByteBuf buf = PacketByteBufs.create();
         buf.writeByte(pos.getX());
         buf.writeByte(pos.getY());
-        buf.writeShort(state.encode());
+        buf.writeRegistryValue(Component.STATE_IDS, state);
         return buf;
     }
 

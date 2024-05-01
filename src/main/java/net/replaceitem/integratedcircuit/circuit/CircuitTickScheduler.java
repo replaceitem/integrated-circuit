@@ -1,9 +1,6 @@
 package net.replaceitem.integratedcircuit.circuit;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.nbt.NbtList;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,6 +33,11 @@ public class CircuitTickScheduler {
 
 
     private final Set<OrderedCircuitTick> queuedTicks = new ObjectOpenCustomHashSet<>(OrderedCircuitTick.HASH_STRATEGY);
+
+    public Queue<OrderedCircuitTick> getTickQueue() {
+        return tickQueue;
+    }
+
     private final Queue<OrderedCircuitTick> tickQueue = new PriorityQueue<>(OrderedCircuitTick.TRIGGER_TICK_COMPARATOR);
     
     public CircuitTickScheduler() {
@@ -48,7 +50,7 @@ public class CircuitTickScheduler {
         }
     }
 
-    private void queueTick(OrderedCircuitTick orderedTick) {
+    public void queueTick(OrderedCircuitTick orderedTick) {
         this.tickQueue.add(orderedTick);
     }
 
@@ -80,21 +82,5 @@ public class CircuitTickScheduler {
 
     public boolean isQueued(ComponentPos pos, Component component) {
         return this.queuedTicks.contains(OrderedCircuitTick.create(component, pos));
-    }
-
-    public void loadFromNbt(NbtList tickQueue, long time) {
-        for (NbtElement nbtElement : tickQueue) {
-            if(!(nbtElement instanceof NbtCompound nbtCompound)) continue;
-            OrderedCircuitTick orderedCircuitTick = OrderedCircuitTick.fromNbt(nbtCompound, time);
-            this.queueTick(orderedCircuitTick);
-        }
-    }
-    
-    public NbtList toNbt(long time) {
-        NbtList nbtList = new NbtList();
-        for (OrderedCircuitTick orderedTick : this.tickQueue) {
-            nbtList.add(orderedTick.toNbt(time));
-        }
-        return nbtList;
     }
 }

@@ -6,15 +6,15 @@ import net.minecraft.util.Identifier;
 import net.replaceitem.integratedcircuit.IntegratedCircuit;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
 import net.replaceitem.integratedcircuit.circuit.Component;
-import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
+import net.replaceitem.integratedcircuit.circuit.ComponentState;
 import net.replaceitem.integratedcircuit.client.IntegratedCircuitScreen;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
 import org.jetbrains.annotations.Nullable;
 
 public class RedstoneBlockComponent extends Component {
-    public RedstoneBlockComponent(int id, Settings settings) {
-        super(id, settings);
+    public RedstoneBlockComponent(Settings settings) {
+        super(settings);
     }
 
     public static final Identifier TEXTURE = IntegratedCircuit.id("textures/integrated_circuit/redstone_block.png");

@@ -2,14 +2,17 @@ package net.replaceitem.integratedcircuit.circuit.components;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.state.StateManager;
+import net.minecraft.state.property.BooleanProperty;
+import net.minecraft.state.property.Properties;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.random.Random;
 import net.replaceitem.integratedcircuit.IntegratedCircuit;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
+import net.replaceitem.integratedcircuit.circuit.Component;
 import net.replaceitem.integratedcircuit.circuit.ServerCircuit;
-import net.replaceitem.integratedcircuit.circuit.state.ComponentState;
-import net.replaceitem.integratedcircuit.circuit.state.property.BooleanComponentProperty;
+import net.replaceitem.integratedcircuit.circuit.ComponentState;
 import net.replaceitem.integratedcircuit.client.IntegratedCircuitScreen;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
@@ -17,10 +20,11 @@ import org.jetbrains.annotations.Nullable;
 
 public class ObserverComponent extends FacingComponent {
 
-    private static final BooleanComponentProperty POWERED = new BooleanComponentProperty("powered", 3);
+    public static final BooleanProperty POWERED = Properties.POWERED;
 
-    public ObserverComponent(int id, Settings settings) {
-        super(id, settings);
+    public ObserverComponent(Settings settings) {
+        super(settings);
+        this.setDefaultState(this.getStateManager().getDefaultState().with(FACING, FlatDirection.NORTH).with(POWERED, false));
     }
     
     public static final Identifier TEXTURE = IntegratedCircuit.id("textures/integrated_circuit/observer.png");
@@ -124,8 +128,8 @@ public class ObserverComponent extends FacingComponent {
     }
 
     @Override
-    public void appendProperties(ComponentState.PropertyBuilder builder) {
+    public void appendProperties(StateManager.Builder<Component, ComponentState> builder) {
         super.appendProperties(builder);
-        builder.append(POWERED);
+        builder.add(POWERED);
     }
 }

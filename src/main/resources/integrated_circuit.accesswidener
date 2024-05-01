@@ -1,0 +1,3 @@
+accessWidener   v1      named
+accessible method net/minecraft/world/chunk/PalettedContainer$PaletteProvider <init> (I)V
+accessible class net/minecraft/world/chunk/PalettedContainer$DataProvider

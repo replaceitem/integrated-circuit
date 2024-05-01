@@ -1,39 +1,33 @@
-package net.replaceitem.integratedcircuit.circuit.state;
+package net.replaceitem.integratedcircuit.circuit;
 
+import com.google.common.collect.ImmutableMap;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.state.State;
+import net.minecraft.state.property.Property;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
-import net.replaceitem.integratedcircuit.circuit.*;
-import net.replaceitem.integratedcircuit.circuit.state.property.ComponentProperty;
+import net.replaceitem.integratedcircuit.IntegratedCircuit;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
 
-import java.util.Set;
+public class ComponentState extends State<Component,ComponentState> {
 
-public class ComponentState extends AbstractComponentState {
-
-    public ComponentState(Component component, byte data) {
-        super(data, component);
-    }
-
-    @Override
-    protected Set<ComponentProperty<?>> getProperties() {
-        return component.getProperties();
-    }
-
-    @Override
-    protected int getComponentId() {
-        return component.getId();
+    public static final Codec<ComponentState> CODEC = createCodec(IntegratedCircuit.COMPONENTS_REGISTRY.getCodec(), Component::getDefaultState).stable();
+    
+    protected ComponentState(Component owner, ImmutableMap<Property<?>, Comparable<?>> entries, MapCodec<ComponentState> codec) {
+        super(owner, entries, codec);
     }
 
     public Component getComponent() {
-        return component;
+        return owner;
     }
 
     public boolean isAir() {
@@ -41,59 +35,29 @@ public class ComponentState extends AbstractComponentState {
     }
 
     public boolean isOf(Component component) {
-        return this.component == component;
+        return this.owner == component;
     }
-
-    public <T> T get(ComponentProperty<T> property) {
-        assertValidProperty(property);
-        return this.propertyMap.get(property);
-    }
-
-    public <T> ComponentState with(ComponentProperty<T> property, T value) {
-        assertValidProperty(property);
-        PropertyMap newPropertyMap = this.propertyMap.with(property, value);
-        byte newData = newPropertyMap.encode();
-        return component.getState(newData);
-    }
-
-    public <T> ComponentState cycle(ComponentProperty<T> property) {
-        return with(property, property.cycle(this.get(property)));
-    }
-
-    private void assertValidProperty(ComponentProperty<?> property) {
-        if(!this.component.getProperties().contains(property)) throw new RuntimeException(String.format("%s '%s' cannot be applied to component '%s'", property.getClass().getSimpleName(), property, this.component));
-    }
-
-
-
-
-
 
     public void onUse(Circuit circuit, ComponentPos pos, PlayerEntity player) {
-        this.component.onUse(this, circuit, pos, player);
-    }
-
-    @Deprecated(forRemoval = true)
-    public ComponentState copy() {
-        return Components.createComponentState(this.encode());
+        this.owner.onUse(this, circuit, pos, player);
     }
 
     public boolean emitsRedstonePower() {
-        return this.component.emitsRedstonePower(this);
+        return this.owner.emitsRedstonePower(this);
     }
 
     /**
      * {@link AbstractBlock.AbstractBlockState#getStateForNeighborUpdate(net.minecraft.util.math.Direction, BlockState, WorldAccess, BlockPos, BlockPos)}
      */
     public ComponentState getStateForNeighborUpdate(FlatDirection direction, ComponentState neighborState, Circuit circuit, ComponentPos pos, ComponentPos neighborPos) {
-        return this.component.getStateForNeighborUpdate(this, direction, neighborState, circuit, pos, neighborPos);
+        return this.owner.getStateForNeighborUpdate(this, direction, neighborState, circuit, pos, neighborPos);
     }
 
     /**
      * {@link AbstractBlock.AbstractBlockState#neighborUpdate(World, BlockPos, Block, BlockPos, boolean)}
      */
     public void neighborUpdate(Circuit world, ComponentPos pos, Component sourceBlock, ComponentPos sourcePos, boolean notify) {
-        this.component.neighborUpdate(this, world, pos, sourceBlock, sourcePos, notify);
+        this.owner.neighborUpdate(this, world, pos, sourceBlock, sourcePos, notify);
     }
 
     public void updateNeighbors(CircuitAccess circuit, ComponentPos pos, int flags) {
@@ -108,46 +72,45 @@ public class ComponentState extends AbstractComponentState {
     }
 
     public void onStateReplaced(Circuit circuit, ComponentPos pos, ComponentState newState) {
-        this.component.onStateReplaced(this, circuit, pos, newState);
+        this.owner.onStateReplaced(this, circuit, pos, newState);
     }
 
     public void scheduledTick(ServerCircuit circuit, ComponentPos pos, Random random) {
-        this.getComponent().scheduledTick(this, circuit, pos, random);
+        this.owner.scheduledTick(this, circuit, pos, random);
     }
 
     public void onBlockAdded(Circuit circuit, ComponentPos pos, ComponentState oldState) {
-        this.component.onBlockAdded(this, circuit, pos, oldState);
+        this.owner.onBlockAdded(this, circuit, pos, oldState);
     }
-
 
     public void prepare(CircuitAccess circuit, ComponentPos pos, int flags) {
         this.prepare(circuit, pos, flags, 512);
     }
     public void prepare(CircuitAccess circuit, ComponentPos pos, int flags, int maxUpdateDepth) {
-        this.component.prepare(this, circuit, pos, flags, maxUpdateDepth);
+        this.owner.prepare(this, circuit, pos, flags, maxUpdateDepth);
     }
 
     public int getWeakRedstonePower(Circuit circuit, ComponentPos pos, FlatDirection direction) {
-        return this.component.getWeakRedstonePower(this, circuit, pos, direction);
+        return this.owner.getWeakRedstonePower(this, circuit, pos, direction);
     }
 
     public int getStrongRedstonePower(Circuit circuit, ComponentPos pos, FlatDirection direction) {
-        return this.component.getStrongRedstonePower(this, circuit, pos, direction);
+        return this.owner.getStrongRedstonePower(this, circuit, pos, direction);
     }
 
     public int increasePower(FlatDirection side) {
-        return this.component.increasePower(this, side);
+        return this.owner.increasePower(this, side);
     }
 
     public boolean isSolidBlock(Circuit circuit, ComponentPos pos) {
-        return this.component.isSolidBlock(circuit, pos);
+        return this.owner.isSolidBlock(circuit, pos);
     }
 
     public boolean canPlaceAt(Circuit circuit, ComponentPos pos) {
-        return this.component.canPlaceAt(this, circuit, pos);
+        return this.owner.canPlaceAt(this, circuit, pos);
     }
 
     public Text getHoverInfoText() {
-        return this.component.getHoverInfoText(this);
+        return this.owner.getHoverInfoText(this);
     }
 }
