@@ -1,5 +1,6 @@
 package net.replaceitem.integratedcircuit.circuit.context;
 
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
@@ -45,12 +46,7 @@ public class BlockEntityServerCircuitContext implements ServerCircuitContext {
         if(world == null) return Random.create();
         return world.getRandom();
     }
-
-    @Override
-    public boolean isReady() {
-        return this.blockEntity.hasWorld();
-    }
-
+    
     @Override
     public void markDirty() {
         World world = getWorld();
@@ -73,7 +69,10 @@ public class BlockEntityServerCircuitContext implements ServerCircuitContext {
     @Override
     public void onComponentUpdate(ComponentPos pos, ComponentState state) {
         Set<ServerPlayerEntity> editors = this.blockEntity.getEditingPlayers();
-        new ComponentUpdateS2CPacket(pos, state).send(editors);
+        ComponentUpdateS2CPacket packet = new ComponentUpdateS2CPacket(pos, state);
+        for (ServerPlayerEntity player : editors) {
+            ServerPlayNetworking.send(player, packet);
+        }
     }
 
     @Override

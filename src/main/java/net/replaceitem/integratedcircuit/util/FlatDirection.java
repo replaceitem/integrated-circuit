@@ -1,6 +1,9 @@
 package net.replaceitem.integratedcircuit.util;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.block.BlockState;
+import net.minecraft.network.codec.PacketCodec;
+import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.util.StringIdentifiable;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3i;
@@ -21,6 +24,8 @@ public enum FlatDirection implements StringIdentifiable {
     public static final FlatDirection[] VALUES = FlatDirection.values();
     public static final FlatDirection[] VALUES_X = {EAST, WEST};
     public static final FlatDirection[] VALUES_Y = {NORTH, SOUTH};
+
+    public static final PacketCodec<ByteBuf,FlatDirection> PACKET_CODEC = PacketCodecs.indexed(value -> VALUES[value], FlatDirection::getIndex);
 
     FlatDirection(int index, String name, int dx, int dy, Axis axis, Direction vanillaDirection) {
         this.index = index;

@@ -11,7 +11,6 @@ import org.jetbrains.annotations.Nullable;
 
 public interface ServerCircuitContext extends CircuitContext {
     Random getRandom();
-    boolean isReady();
     void onComponentUpdate(ComponentPos pos, ComponentState state);
     void playSound(@Nullable PlayerEntity except, SoundEvent sound, SoundCategory category, float volume, float pitch);
     void updateExternal(FlatDirection portSide);

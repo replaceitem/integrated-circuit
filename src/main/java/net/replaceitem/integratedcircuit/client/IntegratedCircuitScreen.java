@@ -1,6 +1,7 @@
 package net.replaceitem.integratedcircuit.client;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.InputUtil;
@@ -90,7 +91,7 @@ public class IntegratedCircuitScreen extends Screen {
 
     @Override
     public void close() {
-        new FinishEditingC2SPacket(this.circuit.getContext().getBlockPos()).send();
+        ClientPlayNetworking.send(new FinishEditingC2SPacket(this.circuit.getContext().getBlockPos()));
         super.close();
     }
 

@@ -1,7 +1,7 @@
 package net.replaceitem.integratedcircuit.circuit;
 
 import com.mojang.logging.LogUtils;
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
@@ -39,10 +39,6 @@ public class CircuitSerializer {
     public static final String PORTS_TAG = "ports";
     public static final String TICK_SCHEDULER_TAG = "tickScheduler";
     
-    private static final Codec<PalettedContainer<ComponentState>> PALETTE_CODEC = PalettedContainer.createPalettedContainerCodec(
-            Component.STATE_IDS, ComponentState.CODEC, CircuitSection.COMPONENT_STATE_PALETTE_PROVIDER, Components.AIR.getDefaultState()
-    );
-    
     private final int dataVersion;
     private final NbtCompound root;
 
@@ -52,12 +48,8 @@ public class CircuitSerializer {
     }
 
     public ServerCircuit readServerCircuit(ServerCircuitContext context) {
-        return new ServerCircuit(
-                context,
-                readPortStates(),
-                readSection(),
-                readTickScheduler(context)
-        );
+        if(dataVersion < 1) return LegacyCircuitDeserializer.readLegacyServerCircuit(context, root);
+        return ServerCircuit.CODEC.parse(context, NbtOps.INSTANCE, root).result().orElseGet(() -> new ServerCircuit(context));
     }
 
     public ClientCircuit readClientCircuit(ClientCircuitContext context) {
@@ -107,26 +99,25 @@ public class CircuitSerializer {
         NbtCompound sectionNbt = root.getCompound(SECTION_TAG);
         if(!sectionNbt.contains(COMPONENT_STATES_TAG, NbtElement.COMPOUND_TYPE)) return new CircuitSection();
         PalettedContainer<ComponentState> palettedContainer;
-        palettedContainer = PALETTE_CODEC.parse(NbtOps.INSTANCE, sectionNbt.getCompound(COMPONENT_STATES_TAG))
+        palettedContainer = CircuitSection.PALETTE_CODEC.parse(NbtOps.INSTANCE, sectionNbt.getCompound(COMPONENT_STATES_TAG))
                 .promotePartial(errorMessage -> CircuitSerializer.LOGGER.error("Could not load circuit: {}", errorMessage))
-                .getOrThrow(false, CircuitSerializer.LOGGER::error);
+                .result()
+                .orElseGet(CircuitSection::createContainer);
         return new CircuitSection(palettedContainer);
     }
 
-    public static NbtCompound writeCircuit(ServerCircuit circuit) {
-        NbtCompound nbt = new NbtCompound();
-        IntegratedCircuit.putDataVersion(nbt);
-        nbt.put(PORTS_TAG, writePortStates(circuit.ports));
-        nbt.put(SECTION_TAG, writeSection(circuit.section));
-        nbt.put(TICK_SCHEDULER_TAG, writeTickScheduler(circuit.getCircuitTickScheduler(), circuit.getTime())); // todo this is currently also sent to client but unneeded
-        return nbt;
+    public static DataResult<NbtElement> writeCircuit(ServerCircuit circuit) {
+        return ServerCircuit.CODEC.encodeStart(circuit.getContext(), NbtOps.INSTANCE, circuit)
+                .ifSuccess(nbtElement -> {
+                    if(nbtElement instanceof NbtCompound compound) IntegratedCircuit.putDataVersion(compound);
+                });
     }
 
     private static NbtElement writePortStates(ComponentState[] portStates) {
         return NbtOps.INSTANCE.createList(
                 Arrays.stream(portStates)
                         .map(componentState -> ComponentState.CODEC.encodeStart(NbtOps.INSTANCE, componentState))
-                        .map(nbtElementDataResult -> nbtElementDataResult.getOrThrow(false, LOGGER::error))
+                        .map(DataResult::getOrThrow)
         );
     }
 
@@ -152,7 +143,7 @@ public class CircuitSerializer {
 
     public static NbtCompound writeSection(CircuitSection section) {
         NbtCompound nbt = new NbtCompound();
-        nbt.put(COMPONENT_STATES_TAG, PALETTE_CODEC.encodeStart(NbtOps.INSTANCE, section.getComponentStateContainer()).getOrThrow(false, LOGGER::error));
+        nbt.put(COMPONENT_STATES_TAG, CircuitSection.PALETTE_CODEC.encodeStart(NbtOps.INSTANCE, section.getComponentStateContainer()).getOrThrow());
         return nbt;
     }
 }

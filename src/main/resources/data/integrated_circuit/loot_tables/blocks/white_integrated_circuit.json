@@ -17,23 +17,9 @@
               "source": "block_entity"
             },
             {
-              "function": "minecraft:copy_nbt",
-              "ops": [
-                {
-                  "op": "replace",
-                  "source": "circuit",
-                  "target": "BlockEntityTag.circuit"
-                },
-                {
-                  "op": "replace",
-                  "source": "outputStrengths",
-                  "target": "BlockEntityTag.outputStrengths"
-                },
-                {
-                  "op": "replace",
-                  "source": "CircuitDataVersion",
-                  "target": "BlockEntityTag.CircuitDataVersion"
-                }
+              "function": "minecraft:copy_components",
+              "include": [
+                "minecraft:block_entity_data"
               ],
               "source": "block_entity"
             }

@@ -1,12 +1,12 @@
 package net.replaceitem.integratedcircuit;
 
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.inventory.RecipeInputInventory;
-import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.SpecialCraftingRecipe;
 import net.minecraft.recipe.book.CraftingRecipeCategory;
-import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.world.World;
 
@@ -26,10 +26,10 @@ public class IntegratedCircuitCloningRecipe extends SpecialCraftingRecipe {
             if(stack.isEmpty()) continue;
             if(!(stack.getItem() instanceof IntegratedCircuitItem)) return false;
 
-            if(stack.hasNbt() && stack.getNbt().contains(BlockItem.BLOCK_ENTITY_TAG_KEY)) {
-                if(sourceIndex != -1) return false;// Only one should have NBT data
+            if(stack.contains(DataComponentTypes.BLOCK_ENTITY_DATA)) {
+                if(sourceIndex != -1) return false;// Only one should have data
                 sourceIndex = i;
-            } else if(!stack.hasNbt()) {
+            } else {
                if(destIndex != -1) return false;
                destIndex = i;
             }
@@ -39,7 +39,7 @@ public class IntegratedCircuitCloningRecipe extends SpecialCraftingRecipe {
     }
 
     @Override
-    public ItemStack craft(RecipeInputInventory inventory, DynamicRegistryManager registryManager) {
+    public ItemStack craft(RecipeInputInventory inventory, RegistryWrapper.WrapperLookup wrapperLookup) {
         int sourceIndex = -1;
         int destIndex = -1;
 
@@ -49,10 +49,10 @@ public class IntegratedCircuitCloningRecipe extends SpecialCraftingRecipe {
             if(stack.isEmpty()) continue;
             if(!(stack.getItem() instanceof IntegratedCircuitItem)) return ItemStack.EMPTY;
 
-            if(stack.hasNbt() && stack.getNbt().contains(BlockItem.BLOCK_ENTITY_TAG_KEY)) {
+            if(stack.contains(DataComponentTypes.BLOCK_ENTITY_DATA)) {
                 if(sourceIndex != -1) return ItemStack.EMPTY; // Only one should have NBT data
                 sourceIndex = i;
-            } else if(!stack.hasNbt()) {
+            } else {
                 if(destIndex != -1) return ItemStack.EMPTY;
                 destIndex = i;
             }
@@ -63,7 +63,7 @@ public class IntegratedCircuitCloningRecipe extends SpecialCraftingRecipe {
             ItemStack dest = inventory.getStack(destIndex);
 
             ItemStack craftedStack = dest.copyWithCount(1);
-            craftedStack.setNbt(source.getNbt());
+            craftedStack.set(DataComponentTypes.BLOCK_ENTITY_DATA, source.get(DataComponentTypes.BLOCK_ENTITY_DATA));
             return craftedStack;
         }
         return ItemStack.EMPTY;
@@ -79,7 +79,7 @@ public class IntegratedCircuitCloningRecipe extends SpecialCraftingRecipe {
             if(stack.isEmpty()) continue;
             if(!(stack.getItem() instanceof IntegratedCircuitItem)) return remainder;
 
-            if(stack.hasNbt() && stack.getNbt().contains(BlockItem.BLOCK_ENTITY_TAG_KEY)) {
+            if(stack.contains(DataComponentTypes.BLOCK_ENTITY_DATA)) {
                 remainder.set(i, stack.copyWithCount(1));
                 return remainder;
             }

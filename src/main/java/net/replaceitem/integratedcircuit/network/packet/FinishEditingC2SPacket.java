@@ -1,35 +1,20 @@
 package net.replaceitem.integratedcircuit.network.packet;
 
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.util.Identifier;
+import net.minecraft.network.RegistryByteBuf;
+import net.minecraft.network.codec.PacketCodec;
+import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.util.math.BlockPos;
 import net.replaceitem.integratedcircuit.IntegratedCircuit;
 
-public class FinishEditingC2SPacket {
+public record FinishEditingC2SPacket(BlockPos pos) implements CustomPayload {
+    public static final CustomPayload.Id<FinishEditingC2SPacket> ID = new CustomPayload.Id<>(IntegratedCircuit.id("finish_editing_c2s_packet"));
+    
+    public static final PacketCodec<RegistryByteBuf, FinishEditingC2SPacket> PACKET_CODEC = PacketCodec.tuple(
+            BlockPos.PACKET_CODEC, FinishEditingC2SPacket::pos, FinishEditingC2SPacket::new
+    );
 
-    public static final Identifier ID = IntegratedCircuit.id("finish_editing_c2s_packet");
-
-    public final BlockPos pos;
-
-    public FinishEditingC2SPacket(BlockPos pos) {
-        this.pos = pos;
-    }
-
-    public FinishEditingC2SPacket(PacketByteBuf buf) {
-        this(
-                buf.readBlockPos()
-        );
-    }
-
-    public PacketByteBuf getBuffer() {
-        PacketByteBuf buf = PacketByteBufs.create();
-        buf.writeBlockPos(pos);
-        return buf;
-    }
-
-    public void send() {
-        ClientPlayNetworking.send(ID, this.getBuffer());
+    @Override
+    public Id<? extends CustomPayload> getId() {
+        return ID;
     }
 }

@@ -1,17 +1,23 @@
 package net.replaceitem.integratedcircuit.circuit;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
+import net.replaceitem.integratedcircuit.circuit.context.CircuitContext;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
+import net.replaceitem.integratedcircuit.util.ContextCodec;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
 import java.util.function.BiConsumer;
 
 public class CircuitTickScheduler {
-
-
+    
+    public static final ContextCodec<CircuitContext, CircuitTickScheduler> CODEC = context -> OrderedCircuitTick.CODEC.withContext(context)
+            .listOf()
+            .xmap(CircuitTickScheduler::new, circuitTickScheduler -> circuitTickScheduler.getTickQueue().stream().toList());
+    
     private static final CircuitTickScheduler EMPTY_SCHEDULER = new CircuitTickScheduler() {
         @Override
         public void scheduleTick(OrderedCircuitTick orderedTick) {}
@@ -42,6 +48,10 @@ public class CircuitTickScheduler {
     
     public CircuitTickScheduler() {
         
+    }
+    
+    private CircuitTickScheduler(Collection<OrderedCircuitTick> ticks) {
+        ticks.forEach(this::queueTick);
     }
     
     public void scheduleTick(OrderedCircuitTick orderedTick) {

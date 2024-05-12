@@ -11,11 +11,21 @@ import net.replaceitem.integratedcircuit.circuit.CircuitSection;
 import net.replaceitem.integratedcircuit.circuit.CircuitTickScheduler;
 import net.replaceitem.integratedcircuit.circuit.ComponentState;
 import net.replaceitem.integratedcircuit.circuit.OrderedCircuitTick;
+import net.replaceitem.integratedcircuit.circuit.ServerCircuit;
 import net.replaceitem.integratedcircuit.circuit.context.ServerCircuitContext;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 
 public class LegacyCircuitDeserializer {
 
+    public static ServerCircuit readLegacyServerCircuit(ServerCircuitContext context, NbtCompound root) {
+        return new ServerCircuit(
+                context,
+                readLegacyPortStates(root),
+                readLegacySection(root),
+                readLegacyTickScheduler(root, context)
+        );
+    }
+    
     public static ComponentState[] readLegacyPortStates(NbtCompound root) {
         if(!root.contains("ports")) return Circuit.createDefaultPorts();
         byte[] ports = root.getByteArray("ports");

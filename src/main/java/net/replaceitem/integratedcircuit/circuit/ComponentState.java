@@ -1,8 +1,8 @@
 package net.replaceitem.integratedcircuit.circuit;
 
-import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
+import it.unimi.dsi.fastutil.objects.Reference2ObjectArrayMap;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -22,7 +22,7 @@ public class ComponentState extends State<Component,ComponentState> {
 
     public static final Codec<ComponentState> CODEC = createCodec(IntegratedCircuit.COMPONENTS_REGISTRY.getCodec(), Component::getDefaultState).stable();
     
-    protected ComponentState(Component owner, ImmutableMap<Property<?>, Comparable<?>> entries, MapCodec<ComponentState> codec) {
+    protected ComponentState(Component owner, Reference2ObjectArrayMap<Property<?>, Comparable<?>> entries, MapCodec<ComponentState> codec) {
         super(owner, entries, codec);
     }
 

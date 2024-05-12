@@ -6,6 +6,9 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.network.RegistryByteBuf;
+import net.minecraft.network.codec.PacketCodec;
+import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.state.StateManager;
@@ -22,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.function.Function;
 
 public abstract class Component {
-
+    public static final PacketCodec<RegistryByteBuf, Component> PACKET_CODEC = PacketCodecs.registryValue(IntegratedCircuit.COMPONENTS_REGISTRY_KEY);
 
     //public static final MapCodec<Component> CODEC = createCodec(settings1 -> new Component(settings1));
     private final RegistryEntry.Reference<Component> registryEntry = IntegratedCircuit.COMPONENTS_REGISTRY.createEntry(this);

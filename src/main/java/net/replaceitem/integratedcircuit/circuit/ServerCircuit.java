@@ -1,16 +1,26 @@
 package net.replaceitem.integratedcircuit.circuit;
 
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.replaceitem.integratedcircuit.circuit.components.PortComponent;
 import net.replaceitem.integratedcircuit.circuit.context.ServerCircuitContext;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
+import net.replaceitem.integratedcircuit.util.ContextCodec;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class ServerCircuit extends Circuit {
+    public static final ContextCodec<ServerCircuitContext,ServerCircuit> CODEC = context -> RecordCodecBuilder.create(instance -> instance.group(
+            MapCodec.unit(context).forGetter(ServerCircuit::getContext),
+            PORTS_CODEC.fieldOf("ports").forGetter(ServerCircuit::getPorts),
+            CircuitSection.CODEC.fieldOf("section").forGetter(ServerCircuit::getSection),
+            CircuitTickScheduler.CODEC.withContext(context).fieldOf("tickScheduler").forGetter(ServerCircuit::getCircuitTickScheduler)
+    ).apply(instance, ServerCircuit::new));
+    
     private final ServerCircuitContext context;
     protected final CircuitTickScheduler circuitTickScheduler;
 

@@ -6,7 +6,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.SpecialCraftingRecipe;
 import net.minecraft.recipe.book.CraftingRecipeCategory;
-import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.world.World;
 
 public class IntegratedCircuitDyeingRecipe extends SpecialCraftingRecipe {
@@ -39,7 +39,7 @@ public class IntegratedCircuitDyeingRecipe extends SpecialCraftingRecipe {
     }
 
     @Override
-    public ItemStack craft(RecipeInputInventory inventory, DynamicRegistryManager registryManager) {
+    public ItemStack craft(RecipeInputInventory inventory, RegistryWrapper.WrapperLookup wrapperLookup) {
         int circuitIndex = -1;
         int dyeIndex = -1;
 
@@ -64,9 +64,8 @@ public class IntegratedCircuitDyeingRecipe extends SpecialCraftingRecipe {
             ItemStack circuit = inventory.getStack(circuitIndex);
             ItemStack dye = inventory.getStack(dyeIndex);
 
-            ItemStack craftedStack = new ItemStack(IntegratedCircuitBlock.fromColor(((DyeItem)dye.getItem()).getColor()));
-            craftedStack.setNbt(circuit.getNbt());
-            return craftedStack;
+            IntegratedCircuitBlock block = IntegratedCircuitBlock.fromColor(((DyeItem) dye.getItem()).getColor());
+            return circuit.copyComponentsToNewStack(block, 1);
         }
         return ItemStack.EMPTY;
     }

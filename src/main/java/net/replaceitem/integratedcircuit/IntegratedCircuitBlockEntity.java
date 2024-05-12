@@ -7,6 +7,7 @@ import net.minecraft.nbt.NbtElement;
 import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Nameable;
@@ -54,12 +55,14 @@ public class IntegratedCircuitBlockEntity extends BlockEntity implements Nameabl
             }
         }
     }
+    
+    // TODO: Use addComponents, readComponents, removeFromCopiesStackNbt wherever possible. See: https://fabricmc.net/2024/04/19/1205.html
 
     @Override
-    public void readNbt(NbtCompound nbt) {
+    public void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
         BlockEntityFixer.fix(nbt);
         if(nbt.contains("CustomName", NbtElement.STRING_TYPE)) {
-            this.customName = Text.Serialization.fromJson(nbt.getString("CustomName"));
+            this.customName = Text.Serialization.fromJson(nbt.getString("CustomName"), registryLookup);
         }
         if(nbt.contains("outputStrengths")) {
             this.renderSignalStrengths = nbt.getByteArray("outputStrengths");
@@ -71,15 +74,15 @@ public class IntegratedCircuitBlockEntity extends BlockEntity implements Nameabl
     }
 
     @Override
-    protected void writeNbt(NbtCompound nbt) {
+    protected void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
         IntegratedCircuit.putDataVersion(nbt);
         if(this.hasCustomName()) {
-            nbt.putString("CustomName", Text.Serialization.toJsonString(this.customName));
+            nbt.putString("CustomName", Text.Serialization.toJsonString(this.customName, registryLookup));
         }
         nbt.putByteArray("outputStrengths", this.renderSignalStrengths.clone());
         
         if(circuit != null) {
-            nbt.put("circuit", CircuitSerializer.writeCircuit(circuit));
+            CircuitSerializer.writeCircuit(circuit).ifSuccess(nbtElement -> nbt.put("circuit", nbtElement));
         } else if(circuitNbt != null) {
             nbt.put("circuit", circuitNbt);
         }
@@ -142,11 +145,11 @@ public class IntegratedCircuitBlockEntity extends BlockEntity implements Nameabl
     }
 
     @Override
-    public NbtCompound toInitialChunkDataNbt() {
+    public NbtCompound toInitialChunkDataNbt(RegistryWrapper.WrapperLookup registryLookup) {
         NbtCompound nbt = new NbtCompound();
         nbt.putByteArray("outputStrengths", this.renderSignalStrengths.clone());
         if(this.hasCustomName()) {
-            nbt.putString("CustomName", Text.Serialization.toJsonString(this.customName));
+            nbt.putString("CustomName", Text.Serialization.toJsonString(this.customName, registryLookup));
         }
         return nbt;
     }

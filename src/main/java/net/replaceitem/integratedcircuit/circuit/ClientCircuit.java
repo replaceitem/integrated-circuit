@@ -1,5 +1,6 @@
 package net.replaceitem.integratedcircuit.circuit;
 
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.sound.BlockSoundGroup;
@@ -41,7 +42,7 @@ public class ClientCircuit extends Circuit {
 
     @Override
     public void placeComponentState(ComponentPos pos, Component component, FlatDirection placementRotation) {
-        new PlaceComponentC2SPacket(pos, this.context.getBlockPos(), component, placementRotation).send();
+        ClientPlayNetworking.send(new PlaceComponentC2SPacket(pos, this.context.getBlockPos(), component, placementRotation));
         ComponentState placementState = component.getPlacementState(this, pos, placementRotation);
         boolean breaking = component == Components.AIR;
         BlockSoundGroup soundGroup = (breaking ? getComponentState(pos).getComponent() : component).getSettings().soundGroup;
@@ -62,7 +63,7 @@ public class ClientCircuit extends Circuit {
 
     @Override
     public void useComponent(ComponentPos pos, PlayerEntity player) {
-        new ComponentInteractionC2SPacket(pos, this.context.getBlockPos()).send();
+        ClientPlayNetworking.send(new ComponentInteractionC2SPacket(pos, this.context.getBlockPos()));
         super.useComponent(pos, player);
     }
 

@@ -22,7 +22,7 @@
     }
   },
   "result": {
-    "item": "integrated_circuit:integrated_circuit",
+    "id": "integrated_circuit:integrated_circuit",
     "count": 1
   }
 }

@@ -22,7 +22,7 @@
     }
   },
   "result": {
-    "item": "integrated_circuit:orange_integrated_circuit",
+    "id": "integrated_circuit:orange_integrated_circuit",
     "count": 1
   }
 }

@@ -2,6 +2,7 @@ package net.replaceitem.integratedcircuit.circuit;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.EnumHashBiMap;
+import com.mojang.serialization.Codec;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
@@ -13,7 +14,12 @@ import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
+
 public abstract class Circuit implements CircuitAccess {
+    public static final Codec<ComponentState[]> PORTS_CODEC = ComponentState.CODEC.listOf(4,4).xmap(componentStates -> componentStates.toArray(ComponentState[]::new), Arrays::asList);
+    
+    
     public static final int SIZE = 15;
     
     public static final BiMap<FlatDirection, ComponentPos> PORT_POSITIONS = EnumHashBiMap.create(FlatDirection.class);
