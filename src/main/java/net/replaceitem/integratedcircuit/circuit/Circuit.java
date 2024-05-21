@@ -17,10 +17,10 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Arrays;
 
 public abstract class Circuit implements CircuitAccess {
-    public static final Codec<ComponentState[]> PORTS_CODEC = ComponentState.CODEC.listOf(4,4).xmap(componentStates -> componentStates.toArray(ComponentState[]::new), Arrays::asList);
-    
-    
     public static final int SIZE = 15;
+    public static final int PORT_COUNT = FlatDirection.VALUES.length;
+
+    public static final Codec<ComponentState[]> PORTS_CODEC = ComponentState.CODEC.listOf(PORT_COUNT, PORT_COUNT).xmap(componentStates -> componentStates.toArray(ComponentState[]::new), Arrays::asList);
     
     public static final BiMap<FlatDirection, ComponentPos> PORT_POSITIONS = EnumHashBiMap.create(FlatDirection.class);
     
@@ -63,7 +63,7 @@ public abstract class Circuit implements CircuitAccess {
     }
 
     public static ComponentState[] createDefaultPorts() {
-        ComponentState[] ports = new ComponentState[4];
+        ComponentState[] ports = new ComponentState[PORT_COUNT];
         for (int i = 0; i < ports.length; i++) {
             ports[i] = Components.PORT.getDefaultState().with(PortComponent.FACING, FlatDirection.VALUES[i].getOpposite());
         }

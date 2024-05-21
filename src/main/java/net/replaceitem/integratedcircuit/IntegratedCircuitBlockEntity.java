@@ -17,8 +17,10 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Nameable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.replaceitem.integratedcircuit.circuit.Circuit;
 import net.replaceitem.integratedcircuit.circuit.CircuitSerializer;
 import net.replaceitem.integratedcircuit.circuit.ServerCircuit;
+import net.replaceitem.integratedcircuit.circuit.components.PortComponent;
 import net.replaceitem.integratedcircuit.circuit.context.BlockEntityServerCircuitContext;
 import net.replaceitem.integratedcircuit.circuit.datafix.BlockEntityFixer;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
@@ -55,6 +57,9 @@ public class IntegratedCircuitBlockEntity extends BlockEntity implements Nameabl
             if(this.circuitNbt != null) {
                 this.circuit = new CircuitSerializer(this.circuitNbt).readServerCircuit(context);
                 this.circuitNbt = null;
+                for (int i = 0; i < Circuit.PORT_COUNT; i++) {
+                    renderSignalStrengths[i] = circuit.getPorts()[i].get(PortComponent.POWER).byteValue();
+                }
             } else {
                 this.circuit = new ServerCircuit(context);
             }
@@ -94,7 +99,6 @@ public class IntegratedCircuitBlockEntity extends BlockEntity implements Nameabl
     public void removeFromCopiedStackNbt(NbtCompound nbt) {
         super.removeFromCopiedStackNbt(nbt);
         nbt.remove("CustomName");
-        nbt.remove("outputStrengths"); // TODO needed?
         nbt.remove("circuit");
     }
 
@@ -104,13 +108,15 @@ public class IntegratedCircuitBlockEntity extends BlockEntity implements Nameabl
         if(nbt.contains("CustomName", NbtElement.STRING_TYPE)) {
             this.customName = Text.Serialization.fromJson(nbt.getString("CustomName"), registryLookup);
         }
-        if(nbt.contains("outputStrengths")) {
-            this.renderSignalStrengths = nbt.getByteArray("outputStrengths");
-        }
         if(nbt.contains("circuit", NbtElement.COMPOUND_TYPE)) {
             this.circuitNbt = nbt.getCompound("circuit");
         }
         tryCreateCircuit();
+
+        // only received from toInitialChunkDataNbt on the client
+        if(nbt.contains("outputStrengths")) {
+            this.renderSignalStrengths = nbt.getByteArray("outputStrengths");
+        }
     }
 
     @Override
@@ -119,7 +125,6 @@ public class IntegratedCircuitBlockEntity extends BlockEntity implements Nameabl
         if(this.hasCustomName()) {
             nbt.putString("CustomName", Text.Serialization.toJsonString(this.customName, registryLookup));
         }
-        nbt.putByteArray("outputStrengths", this.renderSignalStrengths.clone());
         
         if(circuit != null) {
             CircuitSerializer.writeCircuit(circuit).ifSuccess(nbtElement -> nbt.put("circuit", nbtElement));
