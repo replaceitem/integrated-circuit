@@ -13,6 +13,8 @@ import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.block.piston.PistonBehavior;
+import net.minecraft.component.DataComponentType;
+import net.minecraft.component.type.NbtComponent;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroups;
 import net.minecraft.nbt.NbtCompound;
@@ -49,7 +51,13 @@ public class IntegratedCircuit implements ModInitializer {
             .from(new SimpleDefaultedRegistry<>(IntegratedCircuit.id("air").toString(), COMPONENTS_REGISTRY_KEY, Lifecycle.stable(), true))
             .attribute(RegistryAttribute.SYNCED)
             .buildAndRegister();
-
+    
+    @SuppressWarnings("deprecation")
+    public static final DataComponentType<NbtComponent> CIRCUIT_DATA = DataComponentType.<NbtComponent>builder()
+            .codec(NbtComponent.CODEC)
+            .packetCodec(NbtComponent.PACKET_CODEC)
+            .build();
+    
     public static final TagKey<Block> INTEGRATED_CIRCUITS_BLOCK_TAG = TagKey.of(RegistryKeys.BLOCK, id("integrated_circuits"));
     public static final TagKey<Item> INTEGRATED_CIRCUITS_ITEM_TAG = TagKey.of(RegistryKeys.ITEM, id("integrated_circuits"));
     public static final TagKey<Item> DYEABLE_INTEGRATED_CIRCUITS_ITEM_TAG = TagKey.of(RegistryKeys.ITEM, id("dyeable_integrated_circuits"));
@@ -121,6 +129,8 @@ public class IntegratedCircuit implements ModInitializer {
     @Override
     public void onInitialize() {
         Components.register();
+        
+        Registry.register(Registries.DATA_COMPONENT_TYPE, id("circuit"), CIRCUIT_DATA);
         
         Registry.register(Registries.BLOCK, id("integrated_circuit"), INTEGRATED_CIRCUIT_BLOCK);
         Registry.register(Registries.BLOCK, id("white_integrated_circuit"), WHITE_INTEGRATED_CIRCUIT_BLOCK);

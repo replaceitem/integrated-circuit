@@ -1,7 +1,11 @@
 package net.replaceitem.integratedcircuit;
 
+import com.mojang.serialization.DataResult;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.component.ComponentMap;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.NbtComponent;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.network.listener.ClientPlayPacketListener;
@@ -20,6 +24,7 @@ import net.replaceitem.integratedcircuit.circuit.datafix.BlockEntityFixer;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Optional;
 import java.util.Set;
 import java.util.WeakHashMap;
 
@@ -56,7 +61,42 @@ public class IntegratedCircuitBlockEntity extends BlockEntity implements Nameabl
         }
     }
     
-    // TODO: Use addComponents, readComponents, removeFromCopiesStackNbt wherever possible. See: https://fabricmc.net/2024/04/19/1205.html
+    @Override
+    protected void addComponents(ComponentMap.Builder componentMapBuilder) {
+        super.addComponents(componentMapBuilder);
+
+        componentMapBuilder.add(DataComponentTypes.CUSTOM_NAME, this.customName);
+        
+        Optional.ofNullable(circuit)
+                .map(CircuitSerializer::writeCircuit)
+                .or(() -> Optional.ofNullable(circuitNbt).map(DataResult::success))
+                .orElseGet(() -> DataResult.error(() -> "No circuit or circuitNbt to serialize"))
+                .ifSuccess(nbtElement -> {
+                    if (nbtElement instanceof NbtCompound compound)
+                        componentMapBuilder.add(IntegratedCircuit.CIRCUIT_DATA, NbtComponent.of(compound));
+                });
+    }
+
+    @Override
+    protected void readComponents(ComponentsAccess components) {
+        super.readComponents(components);
+        
+        this.customName = components.get(DataComponentTypes.CUSTOM_NAME);
+        
+        NbtComponent circuitComponent = components.get(IntegratedCircuit.CIRCUIT_DATA);
+        if(circuitComponent != null) {
+            this.circuitNbt = circuitComponent.getNbt();
+        }
+        tryCreateCircuit();
+    }
+
+    @Override
+    public void removeFromCopiedStackNbt(NbtCompound nbt) {
+        super.removeFromCopiedStackNbt(nbt);
+        nbt.remove("CustomName");
+        nbt.remove("outputStrengths"); // TODO needed?
+        nbt.remove("circuit");
+    }
 
     @Override
     public void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {

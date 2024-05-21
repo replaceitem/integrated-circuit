@@ -19,7 +19,8 @@
             {
               "function": "minecraft:copy_components",
               "include": [
-                "minecraft:block_entity_data"
+                "integrated_circuit:circuit",
+                "minecraft:custom_name"
               ],
               "source": "block_entity"
             }
