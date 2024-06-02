@@ -6,7 +6,6 @@ import net.minecraft.datafixer.Schemas;
 import net.minecraft.datafixer.TypeReferences;
 import net.minecraft.datafixer.fix.ChoiceTypesFix;
 import net.minecraft.datafixer.fix.RenameBlockEntityFix;
-import net.minecraft.datafixer.fix.WriteAndReadFix;
 import net.replaceitem.integratedcircuit.datafix.CircuitBlockEntityFix;
 import net.replaceitem.integratedcircuit.datafix.Schema3120;
 import net.replaceitem.integratedcircuit.datafix.Schema3800_1;
@@ -44,9 +43,6 @@ public abstract class SchemasMixin {
         //Schema schema3800_3 = builder.addSchema(3800, 3, EMPTY_IDENTIFIER_NORMALIZE);
         //builder.addFixer(new CircuitItemFix(schema3800_3));
         Schema schema3800_4 = builder.addSchema(3800, 3, Schema3800_4::new); // TODO remove if not needed
-        builder.addFixer(new WriteAndReadFix(schema3800_4, "Inject data component types", TypeReferences.DATA_COMPONENTS));
-        
-        //TODO
-        // items arent converted, because item->BE mapping isnt properly working (should it map to ic:ic or ic:icbe?
+        //builder.addFixer(new WriteAndReadFix(schema3800_4, "MY CUSTOM WRITEANDREAD TESTING", TypeReferences.DATA_COMPONENTS));
     }
 }
