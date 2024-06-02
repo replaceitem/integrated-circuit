@@ -12,7 +12,6 @@ import net.minecraft.world.tick.TickPriority;
 import net.replaceitem.integratedcircuit.IntegratedCircuit;
 import net.replaceitem.integratedcircuit.circuit.context.ClientCircuitContext;
 import net.replaceitem.integratedcircuit.circuit.context.ServerCircuitContext;
-import net.replaceitem.integratedcircuit.circuit.datafix.LegacyCircuitDeserializer;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import org.slf4j.Logger;
 
@@ -48,7 +47,6 @@ public class CircuitSerializer {
     }
 
     public ServerCircuit readServerCircuit(ServerCircuitContext context) {
-        if(dataVersion < 1) return LegacyCircuitDeserializer.readLegacyServerCircuit(context, root);
         return ServerCircuit.CODEC.parse(context, NbtOps.INSTANCE, root).result().orElseGet(() -> new ServerCircuit(context));
     }
 
@@ -61,7 +59,6 @@ public class CircuitSerializer {
     }
     
     private CircuitTickScheduler readTickScheduler(ServerCircuitContext context) {
-        if(dataVersion < 1) return LegacyCircuitDeserializer.readLegacyTickScheduler(root, context);
         if(!root.contains(TICK_SCHEDULER_TAG, NbtElement.LIST_TYPE)) return new CircuitTickScheduler();
         NbtList tickSchedulerNbt = root.getList(TICK_SCHEDULER_TAG, NbtElement.COMPOUND_TYPE);
         CircuitTickScheduler circuitTickScheduler = new CircuitTickScheduler();
@@ -86,7 +83,6 @@ public class CircuitSerializer {
     }
 
     private ComponentState[] readPortStates() {
-        if(dataVersion < 1) return LegacyCircuitDeserializer.readLegacyPortStates(root);
         if(!root.contains(PORTS_TAG)) return Circuit.createDefaultPorts();
         NbtList ports = root.getList(PORTS_TAG, NbtElement.COMPOUND_TYPE);
         if(ports.size() != 4) return Circuit.createDefaultPorts();
@@ -94,7 +90,6 @@ public class CircuitSerializer {
     }
 
     public CircuitSection readSection() {
-        if(dataVersion < 1) return LegacyCircuitDeserializer.readLegacySection(root);
         if(!root.contains(SECTION_TAG, NbtElement.COMPOUND_TYPE)) return new CircuitSection();
         NbtCompound sectionNbt = root.getCompound(SECTION_TAG);
         if(!sectionNbt.contains(COMPONENT_STATES_TAG, NbtElement.COMPOUND_TYPE)) return new CircuitSection();

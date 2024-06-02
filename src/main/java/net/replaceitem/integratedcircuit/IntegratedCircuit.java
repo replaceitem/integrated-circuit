@@ -174,7 +174,7 @@ public class IntegratedCircuit implements ModInitializer {
             }
         });
 
-        Registry.register(Registries.BLOCK_ENTITY_TYPE, id("integrated_circuit_block_entity"), INTEGRATED_CIRCUIT_BLOCK_ENTITY);
+        Registry.register(Registries.BLOCK_ENTITY_TYPE, id("integrated_circuit"), INTEGRATED_CIRCUIT_BLOCK_ENTITY);
 
         RecipeSerializer.register("integrated_circuit:crafting_special_circuit_cloning", CIRCUIT_CLONING_RECIPE);
         RecipeSerializer.register("integrated_circuit:crafting_special_circuit_dyeing", CIRCUIT_DYEING_RECIPE);

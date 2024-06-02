@@ -1,4 +1,4 @@
-package net.replaceitem.integratedcircuit.circuit.datafix;
+package net.replaceitem.integratedcircuit.datafix;
 
 import com.mojang.logging.LogUtils;
 import net.minecraft.block.enums.ComparatorMode;
@@ -20,7 +20,7 @@ import org.slf4j.Logger;
 
 import static net.replaceitem.integratedcircuit.circuit.Components.*;
 
-public class LegacyComponentStates {
+public class ComponentStateFixer {
 
     public static final Logger LOGGER = LogUtils.getLogger();
 
@@ -40,19 +40,19 @@ public class LegacyComponentStates {
     private static final Mapping[] MAPPINGS = {
             new Mapping(AIR),
             new Mapping(BLOCK),
-            new Mapping(WIRE, LegacyComponentStates::convertWireState),
-            new Mapping(TORCH, LegacyComponentStates::convertTorchState),
-            new Mapping(REPEATER, LegacyComponentStates::convertRepeaterState),
-            new Mapping(COMPARATOR, LegacyComponentStates::convertComparatorState),
-            new Mapping(OBSERVER, LegacyComponentStates::convertObserverState),
+            new Mapping(WIRE, ComponentStateFixer::convertWireState),
+            new Mapping(TORCH, ComponentStateFixer::convertTorchState),
+            new Mapping(REPEATER, ComponentStateFixer::convertRepeaterState),
+            new Mapping(COMPARATOR, ComponentStateFixer::convertComparatorState),
+            new Mapping(OBSERVER, ComponentStateFixer::convertObserverState),
             new Mapping(TARGET),
             new Mapping(REDSTONE_BLOCK),
-            new Mapping(PORT, LegacyComponentStates::convertPortState),
-            new Mapping(CROSSOVER, LegacyComponentStates::convertCrossoverState),
-            new Mapping(LEVER, LegacyComponentStates::convertLeverState),
-            new Mapping(STONE_BUTTON, LegacyComponentStates::convertButtonState),
-            new Mapping(WOODEN_BUTTON, LegacyComponentStates::convertButtonState),
-            new Mapping(LAMP, LegacyComponentStates::convertLampState)
+            new Mapping(PORT, ComponentStateFixer::convertPortState),
+            new Mapping(CROSSOVER, ComponentStateFixer::convertCrossoverState),
+            new Mapping(LEVER, ComponentStateFixer::convertLeverState),
+            new Mapping(STONE_BUTTON, ComponentStateFixer::convertButtonState),
+            new Mapping(WOODEN_BUTTON, ComponentStateFixer::convertButtonState),
+            new Mapping(LAMP, ComponentStateFixer::convertLampState)
     };
     
     public static ComponentState convertPort(byte portData) {
