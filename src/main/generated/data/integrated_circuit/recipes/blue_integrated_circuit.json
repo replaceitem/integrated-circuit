@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "group": "integrated_circuit:integrated_circuit",
+  "key": {
+    "C": {
+      "item": "minecraft:blue_concrete"
+    },
+    "Q": {
+      "item": "minecraft:quartz"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    },
+    "T": {
+      "item": "minecraft:black_terracotta"
+    }
+  },
+  "pattern": [
+    " T ",
+    "RQR",
+    "CCC"
+  ],
+  "result": {
+    "count": 1,
+    "id": "integrated_circuit:blue_integrated_circuit"
+  }
+}

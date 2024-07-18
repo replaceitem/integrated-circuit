@@ -24,6 +24,9 @@
     ],
     "modmenu": [
       "net.replaceitem.integratedcircuit.client.ModMenuApiImpl"
+    ],
+    "fabric-datagen": [
+      "net.replaceitem.integratedcircuit.datagen.IntegratedCircuitDataGenerator"
     ]
   },
   "mixins": [
