@@ -46,7 +46,7 @@ public class DefaultConfig {
     }
     public boolean getRenderCircuitName() {
         return true;
-    };
+    }
 
     public enum ScrollBehaviour {
         ROTATE("Rotate"),

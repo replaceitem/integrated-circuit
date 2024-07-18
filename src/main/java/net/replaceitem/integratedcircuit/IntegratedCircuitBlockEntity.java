@@ -22,7 +22,6 @@ import net.replaceitem.integratedcircuit.circuit.CircuitSerializer;
 import net.replaceitem.integratedcircuit.circuit.ServerCircuit;
 import net.replaceitem.integratedcircuit.circuit.components.PortComponent;
 import net.replaceitem.integratedcircuit.circuit.context.BlockEntityServerCircuitContext;
-import net.replaceitem.integratedcircuit.circuit.datafix.BlockEntityFixer;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
 import org.jetbrains.annotations.Nullable;
 
@@ -90,7 +89,7 @@ public class IntegratedCircuitBlockEntity extends BlockEntity implements Nameabl
         
         NbtComponent circuitComponent = components.get(IntegratedCircuit.CIRCUIT_DATA);
         if(circuitComponent != null) {
-            this.circuitNbt = circuitComponent.getNbt();
+            this.circuitNbt = circuitComponent.copyNbt();
         }
         tryCreateCircuit();
     }
@@ -104,7 +103,6 @@ public class IntegratedCircuitBlockEntity extends BlockEntity implements Nameabl
 
     @Override
     public void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
-        BlockEntityFixer.fix(nbt);
         if(nbt.contains("CustomName", NbtElement.STRING_TYPE)) {
             this.customName = Text.Serialization.fromJson(nbt.getString("CustomName"), registryLookup);
         }
@@ -121,7 +119,6 @@ public class IntegratedCircuitBlockEntity extends BlockEntity implements Nameabl
 
     @Override
     protected void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
-        IntegratedCircuit.putDataVersion(nbt);
         if(this.hasCustomName()) {
             nbt.putString("CustomName", Text.Serialization.toJsonString(this.customName, registryLookup));
         }
