@@ -19,7 +19,7 @@ import net.replaceitem.integratedcircuit.util.FlatDirection;
 public class IntegratedCircuitClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
-        BlockRenderLayerMap.INSTANCE.putBlocks(RenderLayer.getCutoutMipped(), IntegratedCircuit.INTEGRATED_CIRCUIT_BLOCKS);
+        BlockRenderLayerMap.INSTANCE.putBlocks(RenderLayer.getCutoutMipped(), IntegratedCircuit.Blocks.CIRCUITS);
 
         ColorProviderRegistry.BLOCK.register((state, view, pos, tintIndex) -> {
             if(view == null || pos == null || !(state.getBlock() instanceof IntegratedCircuitBlock block) || tintIndex > 3)
@@ -30,8 +30,8 @@ public class IntegratedCircuitClient implements ClientModInitializer {
             return RedstoneWireBlock.getWireColor(
                 block.getPortRenderStrength(view, pos, circuitDirection)
             );
-        }, IntegratedCircuit.INTEGRATED_CIRCUIT_BLOCKS);
-        ColorProviderRegistry.ITEM.register((stack, tintIndex) -> RedstoneWireBlock.getWireColor(0), IntegratedCircuit.INTEGRATED_CIRCUIT_ITEMS);
+        }, IntegratedCircuit.Blocks.CIRCUITS);
+        ColorProviderRegistry.ITEM.register((stack, tintIndex) -> RedstoneWireBlock.getWireColor(0), IntegratedCircuit.Items.CIRCUITS);
         
         BlockEntityRendererFactories.register(IntegratedCircuit.INTEGRATED_CIRCUIT_BLOCK_ENTITY, IntegratedCircuitBlockEntityRenderer::new);
 

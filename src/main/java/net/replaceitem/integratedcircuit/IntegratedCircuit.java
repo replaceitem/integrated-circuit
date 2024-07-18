@@ -45,66 +45,72 @@ public class IntegratedCircuit implements ModInitializer {
             .packetCodec(NbtComponent.PACKET_CODEC)
             .build();
     
-    public static final TagKey<Block> INTEGRATED_CIRCUITS_BLOCK_TAG = TagKey.of(RegistryKeys.BLOCK, id("integrated_circuits"));
-    public static final TagKey<Item> INTEGRATED_CIRCUITS_ITEM_TAG = TagKey.of(RegistryKeys.ITEM, id("integrated_circuits"));
-    public static final TagKey<Item> DYEABLE_INTEGRATED_CIRCUITS_ITEM_TAG = TagKey.of(RegistryKeys.ITEM, id("dyeable_integrated_circuits"));
+    public static class Tags {
+        public static final TagKey<Block> INTEGRATED_CIRCUITS_BLOCK_TAG = TagKey.of(RegistryKeys.BLOCK, id("integrated_circuits"));
+        public static final TagKey<Item> INTEGRATED_CIRCUITS_ITEM_TAG = TagKey.of(RegistryKeys.ITEM, id("integrated_circuits"));
+        public static final TagKey<Item> DYEABLE_INTEGRATED_CIRCUITS_ITEM_TAG = TagKey.of(RegistryKeys.ITEM, id("dyeable_integrated_circuits"));
+    }
 
-    public static final IntegratedCircuitBlock INTEGRATED_CIRCUIT_BLOCK            = new IntegratedCircuitBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).pistonBehavior(PistonBehavior.DESTROY));
-    public static final IntegratedCircuitBlock WHITE_INTEGRATED_CIRCUIT_BLOCK      = new IntegratedCircuitBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).pistonBehavior(PistonBehavior.DESTROY).mapColor(DyeColor.WHITE));
-    public static final IntegratedCircuitBlock ORANGE_INTEGRATED_CIRCUIT_BLOCK     = new IntegratedCircuitBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).pistonBehavior(PistonBehavior.DESTROY).mapColor(DyeColor.ORANGE));
-    public static final IntegratedCircuitBlock MAGENTA_INTEGRATED_CIRCUIT_BLOCK    = new IntegratedCircuitBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).pistonBehavior(PistonBehavior.DESTROY).mapColor(DyeColor.MAGENTA));
-    public static final IntegratedCircuitBlock LIGHT_BLUE_INTEGRATED_CIRCUIT_BLOCK = new IntegratedCircuitBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).pistonBehavior(PistonBehavior.DESTROY).mapColor(DyeColor.LIGHT_BLUE));
-    public static final IntegratedCircuitBlock YELLOW_INTEGRATED_CIRCUIT_BLOCK     = new IntegratedCircuitBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).pistonBehavior(PistonBehavior.DESTROY).mapColor(DyeColor.YELLOW));
-    public static final IntegratedCircuitBlock LIME_INTEGRATED_CIRCUIT_BLOCK       = new IntegratedCircuitBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).pistonBehavior(PistonBehavior.DESTROY).mapColor(DyeColor.LIME));
-    public static final IntegratedCircuitBlock PINK_INTEGRATED_CIRCUIT_BLOCK       = new IntegratedCircuitBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).pistonBehavior(PistonBehavior.DESTROY).mapColor(DyeColor.PINK));
-    public static final IntegratedCircuitBlock GRAY_INTEGRATED_CIRCUIT_BLOCK       = new IntegratedCircuitBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).pistonBehavior(PistonBehavior.DESTROY).mapColor(DyeColor.GRAY));
-    public static final IntegratedCircuitBlock LIGHT_GRAY_INTEGRATED_CIRCUIT_BLOCK = new IntegratedCircuitBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).pistonBehavior(PistonBehavior.DESTROY).mapColor(DyeColor.LIGHT_GRAY));
-    public static final IntegratedCircuitBlock CYAN_INTEGRATED_CIRCUIT_BLOCK       = new IntegratedCircuitBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).pistonBehavior(PistonBehavior.DESTROY).mapColor(DyeColor.CYAN));
-    public static final IntegratedCircuitBlock PURPLE_INTEGRATED_CIRCUIT_BLOCK     = new IntegratedCircuitBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).pistonBehavior(PistonBehavior.DESTROY).mapColor(DyeColor.PURPLE));
-    public static final IntegratedCircuitBlock BLUE_INTEGRATED_CIRCUIT_BLOCK       = new IntegratedCircuitBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).pistonBehavior(PistonBehavior.DESTROY).mapColor(DyeColor.BLUE));
-    public static final IntegratedCircuitBlock BROWN_INTEGRATED_CIRCUIT_BLOCK      = new IntegratedCircuitBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).pistonBehavior(PistonBehavior.DESTROY).mapColor(DyeColor.BROWN));
-    public static final IntegratedCircuitBlock GREEN_INTEGRATED_CIRCUIT_BLOCK      = new IntegratedCircuitBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).pistonBehavior(PistonBehavior.DESTROY).mapColor(DyeColor.GREEN));
-    public static final IntegratedCircuitBlock RED_INTEGRATED_CIRCUIT_BLOCK        = new IntegratedCircuitBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).pistonBehavior(PistonBehavior.DESTROY).mapColor(DyeColor.RED));
-    public static final IntegratedCircuitBlock BLACK_INTEGRATED_CIRCUIT_BLOCK      = new IntegratedCircuitBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).pistonBehavior(PistonBehavior.DESTROY).mapColor(DyeColor.BLACK));
+    public static class Blocks {
+        public static final IntegratedCircuitBlock INTEGRATED_CIRCUIT = new IntegratedCircuitBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).pistonBehavior(PistonBehavior.DESTROY));
+        public static final IntegratedCircuitBlock WHITE_INTEGRATED_CIRCUIT = new IntegratedCircuitBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).pistonBehavior(PistonBehavior.DESTROY).mapColor(DyeColor.WHITE));
+        public static final IntegratedCircuitBlock ORANGE_INTEGRATED_CIRCUIT = new IntegratedCircuitBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).pistonBehavior(PistonBehavior.DESTROY).mapColor(DyeColor.ORANGE));
+        public static final IntegratedCircuitBlock MAGENTA_INTEGRATED_CIRCUIT = new IntegratedCircuitBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).pistonBehavior(PistonBehavior.DESTROY).mapColor(DyeColor.MAGENTA));
+        public static final IntegratedCircuitBlock LIGHT_BLUE_INTEGRATED_CIRCUIT = new IntegratedCircuitBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).pistonBehavior(PistonBehavior.DESTROY).mapColor(DyeColor.LIGHT_BLUE));
+        public static final IntegratedCircuitBlock YELLOW_INTEGRATED_CIRCUIT = new IntegratedCircuitBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).pistonBehavior(PistonBehavior.DESTROY).mapColor(DyeColor.YELLOW));
+        public static final IntegratedCircuitBlock LIME_INTEGRATED_CIRCUIT = new IntegratedCircuitBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).pistonBehavior(PistonBehavior.DESTROY).mapColor(DyeColor.LIME));
+        public static final IntegratedCircuitBlock PINK_INTEGRATED_CIRCUIT = new IntegratedCircuitBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).pistonBehavior(PistonBehavior.DESTROY).mapColor(DyeColor.PINK));
+        public static final IntegratedCircuitBlock GRAY_INTEGRATED_CIRCUIT = new IntegratedCircuitBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).pistonBehavior(PistonBehavior.DESTROY).mapColor(DyeColor.GRAY));
+        public static final IntegratedCircuitBlock LIGHT_GRAY_INTEGRATED_CIRCUIT = new IntegratedCircuitBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).pistonBehavior(PistonBehavior.DESTROY).mapColor(DyeColor.LIGHT_GRAY));
+        public static final IntegratedCircuitBlock CYAN_INTEGRATED_CIRCUIT = new IntegratedCircuitBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).pistonBehavior(PistonBehavior.DESTROY).mapColor(DyeColor.CYAN));
+        public static final IntegratedCircuitBlock PURPLE_INTEGRATED_CIRCUIT = new IntegratedCircuitBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).pistonBehavior(PistonBehavior.DESTROY).mapColor(DyeColor.PURPLE));
+        public static final IntegratedCircuitBlock BLUE_INTEGRATED_CIRCUIT = new IntegratedCircuitBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).pistonBehavior(PistonBehavior.DESTROY).mapColor(DyeColor.BLUE));
+        public static final IntegratedCircuitBlock BROWN_INTEGRATED_CIRCUIT = new IntegratedCircuitBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).pistonBehavior(PistonBehavior.DESTROY).mapColor(DyeColor.BROWN));
+        public static final IntegratedCircuitBlock GREEN_INTEGRATED_CIRCUIT = new IntegratedCircuitBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).pistonBehavior(PistonBehavior.DESTROY).mapColor(DyeColor.GREEN));
+        public static final IntegratedCircuitBlock RED_INTEGRATED_CIRCUIT = new IntegratedCircuitBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).pistonBehavior(PistonBehavior.DESTROY).mapColor(DyeColor.RED));
+        public static final IntegratedCircuitBlock BLACK_INTEGRATED_CIRCUIT = new IntegratedCircuitBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.WOOD).pistonBehavior(PistonBehavior.DESTROY).mapColor(DyeColor.BLACK));
 
-    public static final IntegratedCircuitBlock[] INTEGRATED_CIRCUIT_BLOCKS = {
-            INTEGRATED_CIRCUIT_BLOCK, WHITE_INTEGRATED_CIRCUIT_BLOCK, LIGHT_GRAY_INTEGRATED_CIRCUIT_BLOCK,
-            GRAY_INTEGRATED_CIRCUIT_BLOCK, BLACK_INTEGRATED_CIRCUIT_BLOCK, BROWN_INTEGRATED_CIRCUIT_BLOCK,
-            RED_INTEGRATED_CIRCUIT_BLOCK, ORANGE_INTEGRATED_CIRCUIT_BLOCK, YELLOW_INTEGRATED_CIRCUIT_BLOCK,
-            LIME_INTEGRATED_CIRCUIT_BLOCK, GREEN_INTEGRATED_CIRCUIT_BLOCK, CYAN_INTEGRATED_CIRCUIT_BLOCK,
-            LIGHT_BLUE_INTEGRATED_CIRCUIT_BLOCK, BLUE_INTEGRATED_CIRCUIT_BLOCK, PURPLE_INTEGRATED_CIRCUIT_BLOCK,
-            MAGENTA_INTEGRATED_CIRCUIT_BLOCK, PINK_INTEGRATED_CIRCUIT_BLOCK
-    };
+        public static final IntegratedCircuitBlock[] CIRCUITS = {
+                INTEGRATED_CIRCUIT, WHITE_INTEGRATED_CIRCUIT, LIGHT_GRAY_INTEGRATED_CIRCUIT,
+                GRAY_INTEGRATED_CIRCUIT, BLACK_INTEGRATED_CIRCUIT, BROWN_INTEGRATED_CIRCUIT,
+                RED_INTEGRATED_CIRCUIT, ORANGE_INTEGRATED_CIRCUIT, YELLOW_INTEGRATED_CIRCUIT,
+                LIME_INTEGRATED_CIRCUIT, GREEN_INTEGRATED_CIRCUIT, CYAN_INTEGRATED_CIRCUIT,
+                LIGHT_BLUE_INTEGRATED_CIRCUIT, BLUE_INTEGRATED_CIRCUIT, PURPLE_INTEGRATED_CIRCUIT,
+                MAGENTA_INTEGRATED_CIRCUIT, PINK_INTEGRATED_CIRCUIT
+        };
+    }
+    
+    public static class Items {
+        public static final IntegratedCircuitItem INTEGRATED_CIRCUIT            = new IntegratedCircuitItem(Blocks.INTEGRATED_CIRCUIT);
+        public static final IntegratedCircuitItem WHITE_INTEGRATED_CIRCUIT      = new IntegratedCircuitItem(Blocks.WHITE_INTEGRATED_CIRCUIT);
+        public static final IntegratedCircuitItem ORANGE_INTEGRATED_CIRCUIT     = new IntegratedCircuitItem(Blocks.ORANGE_INTEGRATED_CIRCUIT);
+        public static final IntegratedCircuitItem MAGENTA_INTEGRATED_CIRCUIT    = new IntegratedCircuitItem(Blocks.MAGENTA_INTEGRATED_CIRCUIT);
+        public static final IntegratedCircuitItem LIGHT_BLUE_INTEGRATED_CIRCUIT = new IntegratedCircuitItem(Blocks.LIGHT_BLUE_INTEGRATED_CIRCUIT);
+        public static final IntegratedCircuitItem YELLOW_INTEGRATED_CIRCUIT     = new IntegratedCircuitItem(Blocks.YELLOW_INTEGRATED_CIRCUIT);
+        public static final IntegratedCircuitItem LIME_INTEGRATED_CIRCUIT       = new IntegratedCircuitItem(Blocks.LIME_INTEGRATED_CIRCUIT);
+        public static final IntegratedCircuitItem PINK_INTEGRATED_CIRCUIT       = new IntegratedCircuitItem(Blocks.PINK_INTEGRATED_CIRCUIT);
+        public static final IntegratedCircuitItem GRAY_INTEGRATED_CIRCUIT       = new IntegratedCircuitItem(Blocks.GRAY_INTEGRATED_CIRCUIT);
+        public static final IntegratedCircuitItem LIGHT_GRAY_INTEGRATED_CIRCUIT = new IntegratedCircuitItem(Blocks.LIGHT_GRAY_INTEGRATED_CIRCUIT);
+        public static final IntegratedCircuitItem CYAN_INTEGRATED_CIRCUIT       = new IntegratedCircuitItem(Blocks.CYAN_INTEGRATED_CIRCUIT);
+        public static final IntegratedCircuitItem PURPLE_INTEGRATED_CIRCUIT     = new IntegratedCircuitItem(Blocks.PURPLE_INTEGRATED_CIRCUIT);
+        public static final IntegratedCircuitItem BLUE_INTEGRATED_CIRCUIT       = new IntegratedCircuitItem(Blocks.BLUE_INTEGRATED_CIRCUIT);
+        public static final IntegratedCircuitItem BROWN_INTEGRATED_CIRCUIT      = new IntegratedCircuitItem(Blocks.BROWN_INTEGRATED_CIRCUIT);
+        public static final IntegratedCircuitItem GREEN_INTEGRATED_CIRCUIT      = new IntegratedCircuitItem(Blocks.GREEN_INTEGRATED_CIRCUIT);
+        public static final IntegratedCircuitItem RED_INTEGRATED_CIRCUIT        = new IntegratedCircuitItem(Blocks.RED_INTEGRATED_CIRCUIT);
+        public static final IntegratedCircuitItem BLACK_INTEGRATED_CIRCUIT      = new IntegratedCircuitItem(Blocks.BLACK_INTEGRATED_CIRCUIT);
 
-    public static final IntegratedCircuitItem INTEGRATED_CIRCUIT_ITEM            = new IntegratedCircuitItem(INTEGRATED_CIRCUIT_BLOCK);
-    public static final IntegratedCircuitItem WHITE_INTEGRATED_CIRCUIT_ITEM      = new IntegratedCircuitItem(WHITE_INTEGRATED_CIRCUIT_BLOCK);
-    public static final IntegratedCircuitItem ORANGE_INTEGRATED_CIRCUIT_ITEM     = new IntegratedCircuitItem(ORANGE_INTEGRATED_CIRCUIT_BLOCK);
-    public static final IntegratedCircuitItem MAGENTA_INTEGRATED_CIRCUIT_ITEM    = new IntegratedCircuitItem(MAGENTA_INTEGRATED_CIRCUIT_BLOCK);
-    public static final IntegratedCircuitItem LIGHT_BLUE_INTEGRATED_CIRCUIT_ITEM = new IntegratedCircuitItem(LIGHT_BLUE_INTEGRATED_CIRCUIT_BLOCK);
-    public static final IntegratedCircuitItem YELLOW_INTEGRATED_CIRCUIT_ITEM     = new IntegratedCircuitItem(YELLOW_INTEGRATED_CIRCUIT_BLOCK);
-    public static final IntegratedCircuitItem LIME_INTEGRATED_CIRCUIT_ITEM       = new IntegratedCircuitItem(LIME_INTEGRATED_CIRCUIT_BLOCK);
-    public static final IntegratedCircuitItem PINK_INTEGRATED_CIRCUIT_ITEM       = new IntegratedCircuitItem(PINK_INTEGRATED_CIRCUIT_BLOCK);
-    public static final IntegratedCircuitItem GRAY_INTEGRATED_CIRCUIT_ITEM       = new IntegratedCircuitItem(GRAY_INTEGRATED_CIRCUIT_BLOCK);
-    public static final IntegratedCircuitItem LIGHT_GRAY_INTEGRATED_CIRCUIT_ITEM = new IntegratedCircuitItem(LIGHT_GRAY_INTEGRATED_CIRCUIT_BLOCK);
-    public static final IntegratedCircuitItem CYAN_INTEGRATED_CIRCUIT_ITEM       = new IntegratedCircuitItem(CYAN_INTEGRATED_CIRCUIT_BLOCK);
-    public static final IntegratedCircuitItem PURPLE_INTEGRATED_CIRCUIT_ITEM     = new IntegratedCircuitItem(PURPLE_INTEGRATED_CIRCUIT_BLOCK);
-    public static final IntegratedCircuitItem BLUE_INTEGRATED_CIRCUIT_ITEM       = new IntegratedCircuitItem(BLUE_INTEGRATED_CIRCUIT_BLOCK);
-    public static final IntegratedCircuitItem BROWN_INTEGRATED_CIRCUIT_ITEM      = new IntegratedCircuitItem(BROWN_INTEGRATED_CIRCUIT_BLOCK);
-    public static final IntegratedCircuitItem GREEN_INTEGRATED_CIRCUIT_ITEM      = new IntegratedCircuitItem(GREEN_INTEGRATED_CIRCUIT_BLOCK);
-    public static final IntegratedCircuitItem RED_INTEGRATED_CIRCUIT_ITEM        = new IntegratedCircuitItem(RED_INTEGRATED_CIRCUIT_BLOCK);
-    public static final IntegratedCircuitItem BLACK_INTEGRATED_CIRCUIT_ITEM      = new IntegratedCircuitItem(BLACK_INTEGRATED_CIRCUIT_BLOCK);
-
-    public static final IntegratedCircuitItem[] INTEGRATED_CIRCUIT_ITEMS = {
-            INTEGRATED_CIRCUIT_ITEM, WHITE_INTEGRATED_CIRCUIT_ITEM, LIGHT_GRAY_INTEGRATED_CIRCUIT_ITEM,
-            GRAY_INTEGRATED_CIRCUIT_ITEM, BLACK_INTEGRATED_CIRCUIT_ITEM, BROWN_INTEGRATED_CIRCUIT_ITEM,
-            RED_INTEGRATED_CIRCUIT_ITEM, ORANGE_INTEGRATED_CIRCUIT_ITEM, YELLOW_INTEGRATED_CIRCUIT_ITEM,
-            LIME_INTEGRATED_CIRCUIT_ITEM, GREEN_INTEGRATED_CIRCUIT_ITEM, CYAN_INTEGRATED_CIRCUIT_ITEM,
-            LIGHT_BLUE_INTEGRATED_CIRCUIT_ITEM, BLUE_INTEGRATED_CIRCUIT_ITEM, PURPLE_INTEGRATED_CIRCUIT_ITEM,
-            MAGENTA_INTEGRATED_CIRCUIT_ITEM, PINK_INTEGRATED_CIRCUIT_ITEM
-    };
+        public static final IntegratedCircuitItem[] CIRCUITS = {
+                INTEGRATED_CIRCUIT, WHITE_INTEGRATED_CIRCUIT, LIGHT_GRAY_INTEGRATED_CIRCUIT,
+                GRAY_INTEGRATED_CIRCUIT, BLACK_INTEGRATED_CIRCUIT, BROWN_INTEGRATED_CIRCUIT,
+                RED_INTEGRATED_CIRCUIT, ORANGE_INTEGRATED_CIRCUIT, YELLOW_INTEGRATED_CIRCUIT,
+                LIME_INTEGRATED_CIRCUIT, GREEN_INTEGRATED_CIRCUIT, CYAN_INTEGRATED_CIRCUIT,
+                LIGHT_BLUE_INTEGRATED_CIRCUIT, BLUE_INTEGRATED_CIRCUIT, PURPLE_INTEGRATED_CIRCUIT,
+                MAGENTA_INTEGRATED_CIRCUIT, PINK_INTEGRATED_CIRCUIT
+        };
+    }
 
     public static final BlockEntityType<IntegratedCircuitBlockEntity> INTEGRATED_CIRCUIT_BLOCK_ENTITY = 
-        BlockEntityType.Builder.create(IntegratedCircuitBlockEntity::new, INTEGRATED_CIRCUIT_BLOCKS).build();
+        BlockEntityType.Builder.create(IntegratedCircuitBlockEntity::new, Blocks.CIRCUITS).build();
 
     public static final SpecialRecipeSerializer<IntegratedCircuitCloningRecipe> CIRCUIT_CLONING_RECIPE = new SpecialRecipeSerializer<>(IntegratedCircuitCloningRecipe::new);
     public static final SpecialRecipeSerializer<IntegratedCircuitDyeingRecipe> CIRCUIT_DYEING_RECIPE = new SpecialRecipeSerializer<>(IntegratedCircuitDyeingRecipe::new);
@@ -119,44 +125,44 @@ public class IntegratedCircuit implements ModInitializer {
         
         Registry.register(Registries.DATA_COMPONENT_TYPE, id("circuit"), CIRCUIT_DATA);
         
-        Registry.register(Registries.BLOCK, id("integrated_circuit"), INTEGRATED_CIRCUIT_BLOCK);
-        Registry.register(Registries.BLOCK, id("white_integrated_circuit"), WHITE_INTEGRATED_CIRCUIT_BLOCK);
-        Registry.register(Registries.BLOCK, id("orange_integrated_circuit"), ORANGE_INTEGRATED_CIRCUIT_BLOCK);
-        Registry.register(Registries.BLOCK, id("magenta_integrated_circuit"), MAGENTA_INTEGRATED_CIRCUIT_BLOCK);
-        Registry.register(Registries.BLOCK, id("light_blue_integrated_circuit"), LIGHT_BLUE_INTEGRATED_CIRCUIT_BLOCK);
-        Registry.register(Registries.BLOCK, id("yellow_integrated_circuit"), YELLOW_INTEGRATED_CIRCUIT_BLOCK);
-        Registry.register(Registries.BLOCK, id("lime_integrated_circuit"), LIME_INTEGRATED_CIRCUIT_BLOCK);
-        Registry.register(Registries.BLOCK, id("pink_integrated_circuit"), PINK_INTEGRATED_CIRCUIT_BLOCK);
-        Registry.register(Registries.BLOCK, id("gray_integrated_circuit"), GRAY_INTEGRATED_CIRCUIT_BLOCK);
-        Registry.register(Registries.BLOCK, id("light_gray_integrated_circuit"), LIGHT_GRAY_INTEGRATED_CIRCUIT_BLOCK);
-        Registry.register(Registries.BLOCK, id("cyan_integrated_circuit"), CYAN_INTEGRATED_CIRCUIT_BLOCK);
-        Registry.register(Registries.BLOCK, id("purple_integrated_circuit"), PURPLE_INTEGRATED_CIRCUIT_BLOCK);
-        Registry.register(Registries.BLOCK, id("blue_integrated_circuit"), BLUE_INTEGRATED_CIRCUIT_BLOCK);
-        Registry.register(Registries.BLOCK, id("brown_integrated_circuit"), BROWN_INTEGRATED_CIRCUIT_BLOCK);
-        Registry.register(Registries.BLOCK, id("green_integrated_circuit"), GREEN_INTEGRATED_CIRCUIT_BLOCK);
-        Registry.register(Registries.BLOCK, id("red_integrated_circuit"), RED_INTEGRATED_CIRCUIT_BLOCK);
-        Registry.register(Registries.BLOCK, id("black_integrated_circuit"), BLACK_INTEGRATED_CIRCUIT_BLOCK);
+        Registry.register(Registries.BLOCK, id("integrated_circuit"), Blocks.INTEGRATED_CIRCUIT);
+        Registry.register(Registries.BLOCK, id("white_integrated_circuit"), Blocks.WHITE_INTEGRATED_CIRCUIT);
+        Registry.register(Registries.BLOCK, id("orange_integrated_circuit"), Blocks.ORANGE_INTEGRATED_CIRCUIT);
+        Registry.register(Registries.BLOCK, id("magenta_integrated_circuit"), Blocks.MAGENTA_INTEGRATED_CIRCUIT);
+        Registry.register(Registries.BLOCK, id("light_blue_integrated_circuit"), Blocks.LIGHT_BLUE_INTEGRATED_CIRCUIT);
+        Registry.register(Registries.BLOCK, id("yellow_integrated_circuit"), Blocks.YELLOW_INTEGRATED_CIRCUIT);
+        Registry.register(Registries.BLOCK, id("lime_integrated_circuit"), Blocks.LIME_INTEGRATED_CIRCUIT);
+        Registry.register(Registries.BLOCK, id("pink_integrated_circuit"), Blocks.PINK_INTEGRATED_CIRCUIT);
+        Registry.register(Registries.BLOCK, id("gray_integrated_circuit"), Blocks.GRAY_INTEGRATED_CIRCUIT);
+        Registry.register(Registries.BLOCK, id("light_gray_integrated_circuit"), Blocks.LIGHT_GRAY_INTEGRATED_CIRCUIT);
+        Registry.register(Registries.BLOCK, id("cyan_integrated_circuit"), Blocks.CYAN_INTEGRATED_CIRCUIT);
+        Registry.register(Registries.BLOCK, id("purple_integrated_circuit"), Blocks.PURPLE_INTEGRATED_CIRCUIT);
+        Registry.register(Registries.BLOCK, id("blue_integrated_circuit"), Blocks.BLUE_INTEGRATED_CIRCUIT);
+        Registry.register(Registries.BLOCK, id("brown_integrated_circuit"), Blocks.BROWN_INTEGRATED_CIRCUIT);
+        Registry.register(Registries.BLOCK, id("green_integrated_circuit"), Blocks.GREEN_INTEGRATED_CIRCUIT);
+        Registry.register(Registries.BLOCK, id("red_integrated_circuit"), Blocks.RED_INTEGRATED_CIRCUIT);
+        Registry.register(Registries.BLOCK, id("black_integrated_circuit"), Blocks.BLACK_INTEGRATED_CIRCUIT);
 
-        Registry.register(Registries.ITEM, id("integrated_circuit"), INTEGRATED_CIRCUIT_ITEM);
-        Registry.register(Registries.ITEM, id("white_integrated_circuit"), WHITE_INTEGRATED_CIRCUIT_ITEM);
-        Registry.register(Registries.ITEM, id("orange_integrated_circuit"), ORANGE_INTEGRATED_CIRCUIT_ITEM);
-        Registry.register(Registries.ITEM, id("magenta_integrated_circuit"), MAGENTA_INTEGRATED_CIRCUIT_ITEM);
-        Registry.register(Registries.ITEM, id("light_blue_integrated_circuit"), LIGHT_BLUE_INTEGRATED_CIRCUIT_ITEM);
-        Registry.register(Registries.ITEM, id("yellow_integrated_circuit"), YELLOW_INTEGRATED_CIRCUIT_ITEM);
-        Registry.register(Registries.ITEM, id("lime_integrated_circuit"), LIME_INTEGRATED_CIRCUIT_ITEM);
-        Registry.register(Registries.ITEM, id("pink_integrated_circuit"), PINK_INTEGRATED_CIRCUIT_ITEM);
-        Registry.register(Registries.ITEM, id("gray_integrated_circuit"), GRAY_INTEGRATED_CIRCUIT_ITEM);
-        Registry.register(Registries.ITEM, id("light_gray_integrated_circuit"), LIGHT_GRAY_INTEGRATED_CIRCUIT_ITEM);
-        Registry.register(Registries.ITEM, id("cyan_integrated_circuit"), CYAN_INTEGRATED_CIRCUIT_ITEM);
-        Registry.register(Registries.ITEM, id("purple_integrated_circuit"), PURPLE_INTEGRATED_CIRCUIT_ITEM);
-        Registry.register(Registries.ITEM, id("blue_integrated_circuit"), BLUE_INTEGRATED_CIRCUIT_ITEM);
-        Registry.register(Registries.ITEM, id("brown_integrated_circuit"), BROWN_INTEGRATED_CIRCUIT_ITEM);
-        Registry.register(Registries.ITEM, id("green_integrated_circuit"), GREEN_INTEGRATED_CIRCUIT_ITEM);
-        Registry.register(Registries.ITEM, id("red_integrated_circuit"), RED_INTEGRATED_CIRCUIT_ITEM);
-        Registry.register(Registries.ITEM, id("black_integrated_circuit"), BLACK_INTEGRATED_CIRCUIT_ITEM);
+        Registry.register(Registries.ITEM, id("integrated_circuit"), Items.INTEGRATED_CIRCUIT);
+        Registry.register(Registries.ITEM, id("white_integrated_circuit"), Items.WHITE_INTEGRATED_CIRCUIT);
+        Registry.register(Registries.ITEM, id("orange_integrated_circuit"), Items.ORANGE_INTEGRATED_CIRCUIT);
+        Registry.register(Registries.ITEM, id("magenta_integrated_circuit"), Items.MAGENTA_INTEGRATED_CIRCUIT);
+        Registry.register(Registries.ITEM, id("light_blue_integrated_circuit"), Items.LIGHT_BLUE_INTEGRATED_CIRCUIT);
+        Registry.register(Registries.ITEM, id("yellow_integrated_circuit"), Items.YELLOW_INTEGRATED_CIRCUIT);
+        Registry.register(Registries.ITEM, id("lime_integrated_circuit"), Items.LIME_INTEGRATED_CIRCUIT);
+        Registry.register(Registries.ITEM, id("pink_integrated_circuit"), Items.PINK_INTEGRATED_CIRCUIT);
+        Registry.register(Registries.ITEM, id("gray_integrated_circuit"), Items.GRAY_INTEGRATED_CIRCUIT);
+        Registry.register(Registries.ITEM, id("light_gray_integrated_circuit"), Items.LIGHT_GRAY_INTEGRATED_CIRCUIT);
+        Registry.register(Registries.ITEM, id("cyan_integrated_circuit"), Items.CYAN_INTEGRATED_CIRCUIT);
+        Registry.register(Registries.ITEM, id("purple_integrated_circuit"), Items.PURPLE_INTEGRATED_CIRCUIT);
+        Registry.register(Registries.ITEM, id("blue_integrated_circuit"), Items.BLUE_INTEGRATED_CIRCUIT);
+        Registry.register(Registries.ITEM, id("brown_integrated_circuit"), Items.BROWN_INTEGRATED_CIRCUIT);
+        Registry.register(Registries.ITEM, id("green_integrated_circuit"), Items.GREEN_INTEGRATED_CIRCUIT);
+        Registry.register(Registries.ITEM, id("red_integrated_circuit"), Items.RED_INTEGRATED_CIRCUIT);
+        Registry.register(Registries.ITEM, id("black_integrated_circuit"), Items.BLACK_INTEGRATED_CIRCUIT);
 
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.REDSTONE).register(entries -> {
-            for(Item item : INTEGRATED_CIRCUIT_ITEMS) {
+            for(Item item : Items.CIRCUITS) {
                 entries.add(item);
             }
         });

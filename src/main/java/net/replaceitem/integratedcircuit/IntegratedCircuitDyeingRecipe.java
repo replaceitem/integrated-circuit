@@ -27,7 +27,7 @@ public class IntegratedCircuitDyeingRecipe extends SpecialCraftingRecipe {
             if(stack.getItem() instanceof DyeItem) {
                 if(dyeIndex != -1) return false;
                 dyeIndex = i;
-            } else if(stack.getItem() instanceof IntegratedCircuitItem && stack.isIn(IntegratedCircuit.DYEABLE_INTEGRATED_CIRCUITS_ITEM_TAG)) {
+            } else if(stack.getItem() instanceof IntegratedCircuitItem && stack.isIn(IntegratedCircuit.Tags.DYEABLE_INTEGRATED_CIRCUITS_ITEM_TAG)) {
                 if(circuitIndex != -1) return false;
                 circuitIndex = i;
             } else {
@@ -52,7 +52,7 @@ public class IntegratedCircuitDyeingRecipe extends SpecialCraftingRecipe {
             if(stack.getItem() instanceof DyeItem) {
                 if(dyeIndex != -1) return ItemStack.EMPTY;
                 dyeIndex = i;
-            } else if(stack.getItem() instanceof IntegratedCircuitItem && stack.isIn(IntegratedCircuit.DYEABLE_INTEGRATED_CIRCUITS_ITEM_TAG)) {
+            } else if(stack.getItem() instanceof IntegratedCircuitItem && stack.isIn(IntegratedCircuit.Tags.DYEABLE_INTEGRATED_CIRCUITS_ITEM_TAG)) {
                 if(circuitIndex != -1) return ItemStack.EMPTY;
                 circuitIndex = i;
             } else {

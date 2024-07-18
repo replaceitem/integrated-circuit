@@ -239,22 +239,22 @@ public class IntegratedCircuitBlock extends HorizontalFacingBlock implements Blo
 
     public static IntegratedCircuitBlock fromColor(DyeColor color) {
         return switch (color) {
-            case WHITE -> IntegratedCircuit.WHITE_INTEGRATED_CIRCUIT_BLOCK;
-            case ORANGE -> IntegratedCircuit.ORANGE_INTEGRATED_CIRCUIT_BLOCK;
-            case MAGENTA -> IntegratedCircuit.MAGENTA_INTEGRATED_CIRCUIT_BLOCK;
-            case LIGHT_BLUE -> IntegratedCircuit.LIGHT_BLUE_INTEGRATED_CIRCUIT_BLOCK;
-            case YELLOW -> IntegratedCircuit.YELLOW_INTEGRATED_CIRCUIT_BLOCK;
-            case LIME -> IntegratedCircuit.LIME_INTEGRATED_CIRCUIT_BLOCK;
-            case PINK -> IntegratedCircuit.PINK_INTEGRATED_CIRCUIT_BLOCK;
-            case GRAY -> IntegratedCircuit.GRAY_INTEGRATED_CIRCUIT_BLOCK;
-            case LIGHT_GRAY -> IntegratedCircuit.LIGHT_GRAY_INTEGRATED_CIRCUIT_BLOCK;
-            case CYAN -> IntegratedCircuit.CYAN_INTEGRATED_CIRCUIT_BLOCK;
-            case PURPLE -> IntegratedCircuit.PURPLE_INTEGRATED_CIRCUIT_BLOCK;
-            case BLUE -> IntegratedCircuit.BLUE_INTEGRATED_CIRCUIT_BLOCK;
-            case BROWN -> IntegratedCircuit.BROWN_INTEGRATED_CIRCUIT_BLOCK;
-            case GREEN -> IntegratedCircuit.GREEN_INTEGRATED_CIRCUIT_BLOCK;
-            case RED -> IntegratedCircuit.RED_INTEGRATED_CIRCUIT_BLOCK;
-            case BLACK -> IntegratedCircuit.BLACK_INTEGRATED_CIRCUIT_BLOCK;
+            case WHITE -> IntegratedCircuit.Blocks.WHITE_INTEGRATED_CIRCUIT;
+            case ORANGE -> IntegratedCircuit.Blocks.ORANGE_INTEGRATED_CIRCUIT;
+            case MAGENTA -> IntegratedCircuit.Blocks.MAGENTA_INTEGRATED_CIRCUIT;
+            case LIGHT_BLUE -> IntegratedCircuit.Blocks.LIGHT_BLUE_INTEGRATED_CIRCUIT;
+            case YELLOW -> IntegratedCircuit.Blocks.YELLOW_INTEGRATED_CIRCUIT;
+            case LIME -> IntegratedCircuit.Blocks.LIME_INTEGRATED_CIRCUIT;
+            case PINK -> IntegratedCircuit.Blocks.PINK_INTEGRATED_CIRCUIT;
+            case GRAY -> IntegratedCircuit.Blocks.GRAY_INTEGRATED_CIRCUIT;
+            case LIGHT_GRAY -> IntegratedCircuit.Blocks.LIGHT_GRAY_INTEGRATED_CIRCUIT;
+            case CYAN -> IntegratedCircuit.Blocks.CYAN_INTEGRATED_CIRCUIT;
+            case PURPLE -> IntegratedCircuit.Blocks.PURPLE_INTEGRATED_CIRCUIT;
+            case BLUE -> IntegratedCircuit.Blocks.BLUE_INTEGRATED_CIRCUIT;
+            case BROWN -> IntegratedCircuit.Blocks.BROWN_INTEGRATED_CIRCUIT;
+            case GREEN -> IntegratedCircuit.Blocks.GREEN_INTEGRATED_CIRCUIT;
+            case RED -> IntegratedCircuit.Blocks.RED_INTEGRATED_CIRCUIT;
+            case BLACK -> IntegratedCircuit.Blocks.BLACK_INTEGRATED_CIRCUIT;
         };
     }
 }

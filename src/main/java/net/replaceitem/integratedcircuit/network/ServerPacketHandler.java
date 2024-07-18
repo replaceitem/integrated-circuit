@@ -15,7 +15,7 @@ public class ServerPacketHandler {
         ServerPlayerEntity player = context.player();
         ServerWorld world = player.getServerWorld();
         if(
-                world.getBlockState(packet.blockPos()).isIn(IntegratedCircuit.INTEGRATED_CIRCUITS_BLOCK_TAG) &&
+                world.getBlockState(packet.blockPos()).isIn(IntegratedCircuit.Tags.INTEGRATED_CIRCUITS_BLOCK_TAG) &&
                 world.getBlockEntity(packet.blockPos()) instanceof IntegratedCircuitBlockEntity integratedCircuitBlockEntity &&
                 integratedCircuitBlockEntity.getCircuit() != null
         ) {
@@ -37,7 +37,7 @@ public class ServerPacketHandler {
         ServerPlayerEntity player = context.player();
         ServerWorld world = player.getServerWorld();
         if(
-                world.getBlockState(packet.blockPos()).isIn(IntegratedCircuit.INTEGRATED_CIRCUITS_BLOCK_TAG) && 
+                world.getBlockState(packet.blockPos()).isIn(IntegratedCircuit.Tags.INTEGRATED_CIRCUITS_BLOCK_TAG) && 
                 world.getBlockEntity(packet.blockPos()) instanceof IntegratedCircuitBlockEntity integratedCircuitBlockEntity &&
                 integratedCircuitBlockEntity.getCircuit() != null
         ) {
