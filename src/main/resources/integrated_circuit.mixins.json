@@ -4,11 +4,11 @@
     "package": "net.replaceitem.integratedcircuit.mixin",
     "compatibilityLevel": "JAVA_21",
     "mixins": [
-        "KeyBindingAccessor",
         "RedstoneWireBlockAccessor",
         "SchemasMixin"
     ],
     "client": [
+        "KeyBindingAccessor",
         "client.ClientPlayNetworkHandlerMixin"
     ],
     "injectors": {
