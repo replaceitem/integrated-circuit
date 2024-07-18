@@ -1,21 +1,22 @@
 {
-    "required": true,
-    "minVersion": "0.8",
-    "package": "net.replaceitem.integratedcircuit.mixin",
-    "compatibilityLevel": "JAVA_21",
-    "mixins": [
-        "ItemStackComponetizationFixMixin",
-        "KeyBindingAccessor",
-        "RedstoneWireBlockAccessor",
-        "Schema1460Mixin",
-        "Schema704Mixin",
-        "Schema99Mixin",
-        "SchemasMixin"
-    ],
-    "client": [
-        "client.ClientPlayNetworkHandlerMixin"
-    ],
-    "injectors": {
-        "defaultRequire": 1
+  "required": true,
+  "minVersion": "0.8",
+  "package": "net.replaceitem.integratedcircuit.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "ItemStackComponetizationFixMixin",
+    "KeyBindingAccessor",
+    "RedstoneWireBlockAccessor",
+    "Schema1460Mixin",
+    "Schema3818_3Mixin",
+    "Schema704Mixin",
+    "Schema99Mixin",
+    "SchemasMixin"
+  ],
+  "client": [
+    "client.ClientPlayNetworkHandlerMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
   }
 }

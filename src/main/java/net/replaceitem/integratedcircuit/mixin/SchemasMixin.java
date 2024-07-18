@@ -9,7 +9,6 @@ import net.minecraft.datafixer.fix.RenameBlockEntityFix;
 import net.replaceitem.integratedcircuit.datafix.CircuitBlockEntityFix;
 import net.replaceitem.integratedcircuit.datafix.Schema3120;
 import net.replaceitem.integratedcircuit.datafix.Schema3800_1;
-import net.replaceitem.integratedcircuit.datafix.Schema3800_4;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -42,7 +41,7 @@ public abstract class SchemasMixin {
         builder.addFixer(new CircuitBlockEntityFix(schema3800_2));
         //Schema schema3800_3 = builder.addSchema(3800, 3, EMPTY_IDENTIFIER_NORMALIZE);
         //builder.addFixer(new CircuitItemFix(schema3800_3));
-        Schema schema3800_4 = builder.addSchema(3800, 3, Schema3800_4::new); // TODO remove if not needed
+        //Schema schema3800_4 = builder.addSchema(3800, 3, Schema3800_4::new); // TODO remove if not needed
         //builder.addFixer(new WriteAndReadFix(schema3800_4, "MY CUSTOM WRITEANDREAD TESTING", TypeReferences.DATA_COMPONENTS));
     }
 }
