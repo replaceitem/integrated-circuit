@@ -27,7 +27,7 @@ public class LeverComponent extends FacingComponent {
         this.setDefaultState(this.getStateManager().getDefaultState().with(FACING, FlatDirection.NORTH).with(POWERED, false));
     }
 
-    private static final Identifier ITEM_TEXTURE = new Identifier("textures/block/lever.png");
+    private static final Identifier ITEM_TEXTURE = Identifier.ofVanilla("textures/block/lever.png");
 
     public static final Identifier TEXTURE_OFF = IntegratedCircuit.id("textures/integrated_circuit/lever_off.png");
     public static final Identifier TEXTURE_ON = IntegratedCircuit.id("textures/integrated_circuit/lever_on.png");

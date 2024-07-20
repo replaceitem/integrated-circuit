@@ -34,7 +34,7 @@ public class ComparatorComponent extends AbstractRedstoneGateComponent {
         this.setDefaultState(this.getStateManager().getDefaultState().with(FACING, FlatDirection.NORTH).with(POWERED, false).with(MODE, ComparatorMode.COMPARE).with(OUTPUT_POWER, 0));
     }
 
-    private static final Identifier ITEM_TEXTURE = new Identifier("textures/item/comparator.png");
+    private static final Identifier ITEM_TEXTURE = Identifier.ofVanilla("textures/item/comparator.png");
 
     public static final Identifier TEXTURE = IntegratedCircuit.id("textures/integrated_circuit/comparator.png");
     public static final Identifier TEXTURE_ON = IntegratedCircuit.id("textures/integrated_circuit/comparator_on.png");

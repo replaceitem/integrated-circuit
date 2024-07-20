@@ -1,11 +1,11 @@
 package net.replaceitem.integratedcircuit;
 
 import net.minecraft.component.DataComponentTypes;
-import net.minecraft.inventory.RecipeInputInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.SpecialCraftingRecipe;
 import net.minecraft.recipe.book.CraftingRecipeCategory;
+import net.minecraft.recipe.input.CraftingRecipeInput;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.world.World;
@@ -16,12 +16,12 @@ public class IntegratedCircuitCloningRecipe extends SpecialCraftingRecipe {
     }
 
     @Override
-    public boolean matches(RecipeInputInventory inventory, World world) {
+    public boolean matches(CraftingRecipeInput inventory, World world) {
         int sourceIndex = -1;
         int destIndex = -1;
 
-        for (int i = 0; i < inventory.size(); i++) {
-            ItemStack stack = inventory.getStack(i);
+        for (int i = 0; i < inventory.getSize(); i++) {
+            ItemStack stack = inventory.getStackInSlot(i);
 
             if(stack.isEmpty()) continue;
             if(!(stack.getItem() instanceof IntegratedCircuitItem)) return false;
@@ -39,12 +39,12 @@ public class IntegratedCircuitCloningRecipe extends SpecialCraftingRecipe {
     }
 
     @Override
-    public ItemStack craft(RecipeInputInventory inventory, RegistryWrapper.WrapperLookup wrapperLookup) {
+    public ItemStack craft(CraftingRecipeInput inventory, RegistryWrapper.WrapperLookup wrapperLookup) {
         int sourceIndex = -1;
         int destIndex = -1;
 
-        for (int i = 0; i < inventory.size(); i++) {
-            ItemStack stack = inventory.getStack(i);
+        for (int i = 0; i < inventory.getSize(); i++) {
+            ItemStack stack = inventory.getStackInSlot(i);
 
             if(stack.isEmpty()) continue;
             if(!(stack.getItem() instanceof IntegratedCircuitItem)) return ItemStack.EMPTY;
@@ -59,8 +59,8 @@ public class IntegratedCircuitCloningRecipe extends SpecialCraftingRecipe {
         }
 
         if(sourceIndex != -1 && destIndex != -1) {
-            ItemStack source = inventory.getStack(sourceIndex);
-            ItemStack dest = inventory.getStack(destIndex);
+            ItemStack source = inventory.getStackInSlot(sourceIndex);
+            ItemStack dest = inventory.getStackInSlot(destIndex);
 
             ItemStack craftedStack = dest.copyWithCount(1);
             craftedStack.set(DataComponentTypes.BLOCK_ENTITY_DATA, source.get(DataComponentTypes.BLOCK_ENTITY_DATA));
@@ -70,11 +70,11 @@ public class IntegratedCircuitCloningRecipe extends SpecialCraftingRecipe {
     }
 
     @Override
-    public DefaultedList<ItemStack> getRemainder(RecipeInputInventory inventory) {
-        DefaultedList<ItemStack> remainder = DefaultedList.ofSize(inventory.size(), ItemStack.EMPTY);
+    public DefaultedList<ItemStack> getRemainder(CraftingRecipeInput inventory) {
+        DefaultedList<ItemStack> remainder = DefaultedList.ofSize(inventory.getSize(), ItemStack.EMPTY);
 
-        for (int i = 0; i < inventory.size(); i++) {
-            ItemStack stack = inventory.getStack(i);
+        for (int i = 0; i < inventory.getSize(); i++) {
+            ItemStack stack = inventory.getStackInSlot(i);
 
             if(stack.isEmpty()) continue;
             if(!(stack.getItem() instanceof IntegratedCircuitItem)) return remainder;

@@ -1,11 +1,11 @@
 package net.replaceitem.integratedcircuit;
 
-import net.minecraft.inventory.RecipeInputInventory;
 import net.minecraft.item.DyeItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.SpecialCraftingRecipe;
 import net.minecraft.recipe.book.CraftingRecipeCategory;
+import net.minecraft.recipe.input.CraftingRecipeInput;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.world.World;
 
@@ -15,12 +15,12 @@ public class IntegratedCircuitDyeingRecipe extends SpecialCraftingRecipe {
     }
 
     @Override
-    public boolean matches(RecipeInputInventory inventory, World world) {
+    public boolean matches(CraftingRecipeInput inventory, World world) {
         int circuitIndex = -1;
         int dyeIndex = -1;
 
-        for (int i = 0; i < inventory.size(); i++) {
-            ItemStack stack = inventory.getStack(i);
+        for (int i = 0; i < inventory.getSize(); i++) {
+            ItemStack stack = inventory.getStackInSlot(i);
 
             if(stack.isEmpty()) continue;
 
@@ -39,12 +39,12 @@ public class IntegratedCircuitDyeingRecipe extends SpecialCraftingRecipe {
     }
 
     @Override
-    public ItemStack craft(RecipeInputInventory inventory, RegistryWrapper.WrapperLookup wrapperLookup) {
+    public ItemStack craft(CraftingRecipeInput inventory, RegistryWrapper.WrapperLookup wrapperLookup) {
         int circuitIndex = -1;
         int dyeIndex = -1;
 
-        for (int i = 0; i < inventory.size(); i++) {
-            ItemStack stack = inventory.getStack(i);
+        for (int i = 0; i < inventory.getSize(); i++) {
+            ItemStack stack = inventory.getStackInSlot(i);
 
             if(stack.isEmpty())
                 continue;
@@ -61,8 +61,8 @@ public class IntegratedCircuitDyeingRecipe extends SpecialCraftingRecipe {
         }
 
         if(circuitIndex != -1 && dyeIndex != -1) {
-            ItemStack circuit = inventory.getStack(circuitIndex);
-            ItemStack dye = inventory.getStack(dyeIndex);
+            ItemStack circuit = inventory.getStackInSlot(circuitIndex);
+            ItemStack dye = inventory.getStackInSlot(dyeIndex);
 
             IntegratedCircuitBlock block = IntegratedCircuitBlock.fromColor(((DyeItem) dye.getItem()).getColor());
             return circuit.copyComponentsToNewStack(block, 1);

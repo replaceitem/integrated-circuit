@@ -61,7 +61,7 @@ public class WireComponent extends AbstractWireComponent {
                 .with(POWER, 0);
     }
 
-    private static final Identifier ITEM_TEXTURE = new Identifier("textures/item/redstone.png");
+    private static final Identifier ITEM_TEXTURE = Identifier.ofVanilla("textures/item/redstone.png");
     private static final Identifier TEXTURE_DOT = IntegratedCircuit.id("textures/integrated_circuit/wire_dot.png");
     
     @Override

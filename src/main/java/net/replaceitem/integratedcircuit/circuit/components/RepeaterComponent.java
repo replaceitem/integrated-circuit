@@ -28,7 +28,7 @@ public class RepeaterComponent extends AbstractRedstoneGateComponent {
         this.setDefaultState(this.getStateManager().getDefaultState().with(FACING, FlatDirection.NORTH).with(POWERED, false).with(DELAY, 1).with(LOCKED, false));
     }
 
-    private static final Identifier ITEM_TEXTURE = new Identifier("textures/item/repeater.png");
+    private static final Identifier ITEM_TEXTURE = Identifier.ofVanilla("textures/item/repeater.png");
 
     public static final Identifier TEXTURE_OFF = IntegratedCircuit.id("textures/integrated_circuit/repeater_off.png");
     public static final Identifier TEXTURE_ON = IntegratedCircuit.id("textures/integrated_circuit/repeater_on.png");

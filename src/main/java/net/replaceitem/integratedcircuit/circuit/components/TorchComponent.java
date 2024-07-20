@@ -35,7 +35,7 @@ public class TorchComponent extends FacingComponent {
         this.setDefaultState(this.getDefaultState().with(LIT, true));
     }
 
-    private static final Identifier ITEM_TEXTURE = new Identifier("textures/block/redstone_torch.png");
+    private static final Identifier ITEM_TEXTURE = Identifier.ofVanilla("textures/block/redstone_torch.png");
 
     public static final Identifier TEXTURE = IntegratedCircuit.id("textures/integrated_circuit/torch.png");
     public static final Identifier TEXTURE_OFF = IntegratedCircuit.id("textures/integrated_circuit/torch_off.png");

@@ -12,7 +12,7 @@ import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.block.piston.PistonBehavior;
-import net.minecraft.component.DataComponentType;
+import net.minecraft.component.ComponentType;
 import net.minecraft.component.type.NbtComponent;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroups;
@@ -40,7 +40,7 @@ public class IntegratedCircuit implements ModInitializer {
             .buildAndRegister();
     
     @SuppressWarnings("deprecation")
-    public static final DataComponentType<NbtComponent> CIRCUIT_DATA = DataComponentType.<NbtComponent>builder()
+    public static final ComponentType<NbtComponent> CIRCUIT_DATA = ComponentType.<NbtComponent>builder()
             .codec(NbtComponent.CODEC)
             .packetCodec(NbtComponent.PACKET_CODEC)
             .build();
@@ -116,7 +116,7 @@ public class IntegratedCircuit implements ModInitializer {
     public static final SpecialRecipeSerializer<IntegratedCircuitDyeingRecipe> CIRCUIT_DYEING_RECIPE = new SpecialRecipeSerializer<>(IntegratedCircuitDyeingRecipe::new);
 
     public static Identifier id(String path) {
-        return new Identifier(MOD_ID, path);
+        return Identifier.of(MOD_ID, path);
     }
     
     @Override
