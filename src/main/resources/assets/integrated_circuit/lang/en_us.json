@@ -34,6 +34,10 @@
   "block.integrated_circuit.green_integrated_circuit.empty": "Empty Green Integrated Circuit",
   "block.integrated_circuit.red_integrated_circuit.empty": "Empty Red Integrated Circuit",
   "block.integrated_circuit.black_integrated_circuit.empty": "Empty Black Integrated Circuit",
+
+  "tag.block.integrated_circuit.integrated_circuits": "Integrated Circuits",
+  "tag.item.integrated_circuit.integrated_circuits": "Integrated Circuits",
+  "tag.item.integrated_circuit.dyeable_integrated_circuits": "Dyeable Integrated Circuits",
   
   "text.autoconfig.integrated_circuit.option.place_component": "Place Component",
   "text.autoconfig.integrated_circuit.option.destroy_component": "Destroy Component",
