@@ -1,13 +1,6 @@
-# ⚠️ Warning: Worlds from 1.20.4 and below will not be updated properly and may crash (see note below)
+* Updated to MC 1.21
 
-* Updated to MC 1.20.6
-* Fixed placing a circuit not updating output/input signals
-* Reworked the circuit serialization heavily:
-  * Circuits are now saved using paletted containers (like minecraft chunks are saved)
-  * Component states now use the same state system as block states, allowing more states than the previous 256 limit
-* Renamed block entity name to integrated_circuit:integrated_circuit
-
-## About updating from 1.20.4 or below:
+## ⚠️ Warning: Worlds from 1.20.4 and below will not be updated properly and may crash (see note below)
 
 I already spent weeks writing datafixers to migrate old circuit data to the new one (which already worked).
 Unfortunately, when Minecraft introduced structured components on items to replace NBT,
