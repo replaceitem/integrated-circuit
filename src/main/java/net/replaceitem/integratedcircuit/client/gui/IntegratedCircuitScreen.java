@@ -1,4 +1,4 @@
-package net.replaceitem.integratedcircuit.client;
+package net.replaceitem.integratedcircuit.client.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -18,6 +18,7 @@ import net.replaceitem.integratedcircuit.circuit.Components;
 import net.replaceitem.integratedcircuit.circuit.components.FacingComponent;
 import net.replaceitem.integratedcircuit.circuit.ComponentState;
 import net.replaceitem.integratedcircuit.client.config.DefaultConfig;
+import net.replaceitem.integratedcircuit.client.gui.widget.ComponentButton;
 import net.replaceitem.integratedcircuit.mixin.RedstoneWireBlockAccessor;
 import net.replaceitem.integratedcircuit.network.packet.FinishEditingC2SPacket;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
@@ -25,12 +26,13 @@ import net.replaceitem.integratedcircuit.util.FlatDirection;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class IntegratedCircuitScreen extends Screen {
     public static final Identifier BACKGROUND_TEXTURE = IntegratedCircuit.id("textures/gui/container/integrated_circuit.png");
-    public static final Identifier COMPONENT_BUTTON_TEXTURE = IntegratedCircuit.id("container/integrated_circuit/component_button");
-    public static final Identifier COMPONENT_BUTTON_TEXTURE_HIGHLIGHTED = IntegratedCircuit.id("container/integrated_circuit/component_button_highlighted");
-
-    protected static final int BACKGROUND_WIDTH = 240;
+    
+    protected static final int BACKGROUND_WIDTH = 254;
     protected static final int BACKGROUND_HEIGHT = 230;
     
     public static final int COMPONENT_SIZE = 16;
@@ -41,8 +43,9 @@ public class IntegratedCircuitScreen extends Screen {
 
     private static final int PALETTE_X = 7;
     private static final int PALETTE_Y = 17;
+    private static final int PALETTE_COLS = 2;
 
-    private static final int GRID_X = 40;
+    private static final int GRID_X = 54;
     private static final int GRID_Y = 30;
 
     protected int x, y;
@@ -50,11 +53,12 @@ public class IntegratedCircuitScreen extends Screen {
 
     protected final ClientCircuit circuit;
 
-    private int selectedComponentSlot = -1;
     private FlatDirection cursorRotation = FlatDirection.NORTH;
     
     @Nullable
     private ComponentState cursorState = null;
+    private int selectedComponentSlot = -1;
+    private List<ComponentButton> componentButtons = new ArrayList<>(PALETTE.length);
 
 
     private static final Component[] PALETTE = new Component[]{
@@ -86,6 +90,25 @@ public class IntegratedCircuitScreen extends Screen {
         this.y = (this.height - BACKGROUND_HEIGHT) / 2;
         this.titleX = this.x + 8;
         this.titleY = this.y + 6;
+
+        componentButtons.clear();
+        for (int i = 0; i < PALETTE.length; i++) {
+            Component component = PALETTE[i];
+            int slotX = (i % PALETTE_COLS) * ComponentButton.SIZE;
+            int slotY = (i / PALETTE_COLS) * ComponentButton.SIZE;
+            final int index = i;
+            componentButtons.add(new ComponentButton(x + PALETTE_X + slotX, y + PALETTE_Y + slotY, component) {
+                @Override
+                public void onClick(double mouseX, double mouseY) {
+                    if(selected) {
+                        deselectPalette();
+                    } else {
+                        selectPalette(index);
+                    }
+                }
+            });
+        }
+        componentButtons.forEach(this::addDrawableChild);
     }
 
     @Override
@@ -105,15 +128,17 @@ public class IntegratedCircuitScreen extends Screen {
 
     @Override
     public void render(DrawContext drawContext, int mouseX, int mouseY, float delta) {
-        drawContext.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
-        drawContext.drawTexture(BACKGROUND_TEXTURE, x, y, 0, 0, BACKGROUND_WIDTH, BACKGROUND_HEIGHT);
-
+        super.render(drawContext, mouseX, mouseY, delta);
         drawContext.drawText(this.textRenderer, this.title, this.titleX, this.titleY, 0x404040, false);
-
         this.renderHoverInfo(drawContext, mouseX, mouseY);
         this.renderContent(drawContext);
-        this.renderPalette(drawContext);
         this.renderCursorState(drawContext, mouseX, mouseY);
+    }
+
+    @Override
+    public void renderBackground(DrawContext context, int mouseX, int mouseY, float delta) {
+        super.renderBackground(context, mouseX, mouseY, delta);
+        context.drawTexture(BACKGROUND_TEXTURE, x, y, 0, 0, BACKGROUND_WIDTH, BACKGROUND_HEIGHT);
     }
 
     private void renderHoverInfo(DrawContext drawContext, int mouseX, int mouseY) {
@@ -141,22 +166,6 @@ public class IntegratedCircuitScreen extends Screen {
             renderComponentStateInGrid(drawContext, this.cursorState, pos.getX(), pos.getY(), a);
             drawContext.getMatrices().pop();
         }
-    }
-
-    private void renderPalette(DrawContext drawContext) {
-        for (int i = 0; i < PALETTE.length; i++) {
-            Component component = PALETTE[i];
-            int slotY = this.getPaletteSlotPosY(i);
-            drawContext.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
-            drawContext.drawGuiTexture(selectedComponentSlot == i ? COMPONENT_BUTTON_TEXTURE_HIGHLIGHTED : COMPONENT_BUTTON_TEXTURE, this.x + PALETTE_X, slotY, 14, 14);
-            Identifier itemTexture = component.getItemTexture();
-            if(itemTexture != null) renderPaletteItem(drawContext, itemTexture, this.x+PALETTE_X+1, slotY+1);
-        }
-    }
-    
-    private void renderPaletteItem(DrawContext drawContext, Identifier itemTexture, int x, int y) {
-        drawContext.setShaderColor(1,1,1,1);
-        drawContext.drawTexture(itemTexture, x, y, 0, 0, RENDER_COMPONENT_SIZE, RENDER_COMPONENT_SIZE, RENDER_COMPONENT_SIZE, RENDER_COMPONENT_SIZE);
     }
 
     protected void renderContent(DrawContext drawContext) {
@@ -212,21 +221,29 @@ public class IntegratedCircuitScreen extends Screen {
         drawContext.getMatrices().pop();
     }
 
-    private void selectPalette(int slot) {
-        if(slot < 0 || slot >= PALETTE.length) return;
-        selectedComponentSlot = slot;
-        this.cursorState = PALETTE[selectedComponentSlot].getDefaultState();
-        if(this.cursorState.getComponent() instanceof FacingComponent) this.cursorState = this.cursorState.with(FacingComponent.FACING, this.cursorRotation);
+    private void selectPalette(int index) {
+        if(index < 0 || index >= componentButtons.size()) return;
+        if(selectedComponentSlot >= 0 && selectedComponentSlot < componentButtons.size()) {
+            componentButtons.get(selectedComponentSlot).setSelected(false);
+        }
+        selectedComponentSlot = index;
+        componentButtons.get(index).setSelected(true);
+        Component component = componentButtons.get(index).getComponent();
+        this.cursorState = component.getDefaultState();
+        if(component instanceof FacingComponent) this.cursorState = this.cursorState.with(FacingComponent.FACING, this.cursorRotation);
     }
 
     private void deselectPalette() {
-        selectedComponentSlot = -1;
+        if(selectedComponentSlot >= 0 && selectedComponentSlot < componentButtons.size()) {
+            componentButtons.get(selectedComponentSlot).setSelected(false);
+        }
         this.cursorState = null;
+        selectedComponentSlot = -1;
     }
     
     private void pickPalette(Component component) {
-        for (int i = 0; i < PALETTE.length; i++) {
-            if(PALETTE[i] == component) {
+        for (int i = 0; i < componentButtons.size(); i++) {
+            if(componentButtons.get(i).getComponent() == component) {
                 selectPalette(i);
             }
         }
@@ -278,26 +295,7 @@ public class IntegratedCircuitScreen extends Screen {
                 circuit.useComponent(clickedPos, this.client.player);
                 return true;
             }
-            
-            if(mouseX >= this.x+PALETTE_X && mouseX < this.x+PALETTE_X+14) {
-                int slot = getPaletteSlotAt((int) mouseY);
-                if(slot >= 0 && slot < PALETTE.length) {
-                    if(selectedComponentSlot != slot) {
-                        selectPalette(slot);
-                    } else {
-                        deselectPalette();
-                    }
-                    return true;
-                }
-            }
         }
-        
-        
-        
-
-
-        
-
         return super.mouseClicked(mouseX, mouseY, button);
     }
 
@@ -371,14 +369,6 @@ public class IntegratedCircuitScreen extends Screen {
         return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
-
-    protected int getPaletteSlotPosY(int slot) {
-        return this.y+PALETTE_Y + slot*14;
-    }
-
-    protected int getPaletteSlotAt(int posY) {
-        return (posY-this.y-PALETTE_Y)/14;
-    }
     protected int getGridPosX(int gridX) {
         return this.x + GRID_X + gridX*RENDER_COMPONENT_SIZE;
     }
@@ -392,13 +382,6 @@ public class IntegratedCircuitScreen extends Screen {
 
     protected int getGridYAt(int pixelY) {
         return Math.floorDiv(pixelY-this.y-GRID_Y, RENDER_COMPONENT_SIZE);
-    }
-
-    protected int getGridPosX(ComponentPos pos) {
-        return getGridPosX(pos.getX());
-    }
-    protected int getGridPosY(ComponentPos pos) {
-        return getGridPosY(pos.getY());
     }
 
     protected ComponentPos getComponentPosAt(int pixelX, int pixelY) {

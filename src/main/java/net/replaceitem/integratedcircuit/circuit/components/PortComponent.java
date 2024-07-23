@@ -15,7 +15,7 @@ import net.replaceitem.integratedcircuit.circuit.ComponentState;
 import net.replaceitem.integratedcircuit.circuit.ServerCircuit;
 import net.replaceitem.integratedcircuit.circuit.context.ServerCircuitContext;
 import net.replaceitem.integratedcircuit.circuit.state.FlatDirectionProperty;
-import net.replaceitem.integratedcircuit.client.IntegratedCircuitScreen;
+import net.replaceitem.integratedcircuit.client.gui.IntegratedCircuitScreen;
 import net.replaceitem.integratedcircuit.mixin.RedstoneWireBlockAccessor;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;

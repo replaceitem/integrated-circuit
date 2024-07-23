@@ -1,7 +1,7 @@
 package net.replaceitem.integratedcircuit.network;
 
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.replaceitem.integratedcircuit.client.IntegratedCircuitScreen;
+import net.replaceitem.integratedcircuit.client.gui.IntegratedCircuitScreen;
 import net.replaceitem.integratedcircuit.network.packet.ComponentUpdateS2CPacket;
 import net.replaceitem.integratedcircuit.network.packet.EditIntegratedCircuitS2CPacket;
 
