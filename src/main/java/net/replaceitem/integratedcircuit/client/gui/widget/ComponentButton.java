@@ -2,12 +2,15 @@ package net.replaceitem.integratedcircuit.client.gui.widget;
 
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
+import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.replaceitem.integratedcircuit.IntegratedCircuit;
 import net.replaceitem.integratedcircuit.circuit.Component;
+
+import java.time.Duration;
 
 public class ComponentButton extends ClickableWidget {
 
@@ -21,6 +24,8 @@ public class ComponentButton extends ClickableWidget {
 
     public ComponentButton(int x, int y, Component component) {
         super(x, y, SIZE, SIZE, Text.empty());
+        this.setTooltip(Tooltip.of(component.getName()));
+        this.setTooltipDelay(Duration.ofMillis(700));
         this.component = component;
     }
 

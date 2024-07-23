@@ -218,6 +218,7 @@ public class IntegratedCircuitScreen extends Screen {
         RenderSystem.enableBlend();
         drawContext.setShaderColor(r, g, b, a);
         drawContext.drawTexture(texture, x, y, u, v, w, h, textureW, textureH);
+        drawContext.setShaderColor(1,1,1,1);
         drawContext.getMatrices().pop();
     }
 
