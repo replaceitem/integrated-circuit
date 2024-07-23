@@ -55,7 +55,7 @@ public class LeverComponent extends FacingComponent {
         }
         state = this.togglePower(state, circuit, pos);
         float f = state.get(POWERED) ? 0.6f : 0.5f;
-        circuit.playSound(null, SoundEvents.BLOCK_LEVER_CLICK, SoundCategory.BLOCKS, 0.3f, f);
+        circuit.playSound(null, SoundEvents.BLOCK_LEVER_CLICK, SoundCategory.BLOCKS, 1, f);
     }
 
     public ComponentState togglePower(ComponentState state, Circuit circuit, ComponentPos pos) {

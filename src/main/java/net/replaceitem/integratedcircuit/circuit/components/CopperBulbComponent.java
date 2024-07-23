@@ -65,7 +65,7 @@ public class CopperBulbComponent extends Component {
             ComponentState newState = state;
             if (receivingPower) {
                 newState = newState.cycle(LIT);
-                circuit.playSound(null, newState.get(LIT) ? SoundEvents.BLOCK_COPPER_BULB_TURN_ON : SoundEvents.BLOCK_COPPER_BULB_TURN_OFF, SoundCategory.BLOCKS, 0.3f, 1);
+                circuit.playSound(null, newState.get(LIT) ? SoundEvents.BLOCK_COPPER_BULB_TURN_ON : SoundEvents.BLOCK_COPPER_BULB_TURN_OFF, SoundCategory.BLOCKS, 1, 1);
             }
 
             circuit.setComponentState(pos, newState.with(POWERED, receivingPower), NOTIFY_ALL);

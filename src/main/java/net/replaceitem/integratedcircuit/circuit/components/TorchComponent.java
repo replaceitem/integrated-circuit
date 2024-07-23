@@ -112,7 +112,7 @@ public class TorchComponent extends FacingComponent {
             if (shouldUnpower) {
                 circuit.setComponentState(pos, state.with(LIT, false), Component.NOTIFY_ALL);
                 if (isBurnedOut(circuit, pos, true)) {
-                    circuit.playSound(null, SoundEvents.BLOCK_REDSTONE_TORCH_BURNOUT, SoundCategory.BLOCKS, 0.5f, 2.6f + (random.nextFloat() - random.nextFloat()) * 0.8f);
+                    circuit.playSound(null, SoundEvents.BLOCK_REDSTONE_TORCH_BURNOUT, SoundCategory.BLOCKS, 1, 2.6f + (random.nextFloat() - random.nextFloat()) * 0.8f);
                     circuit.scheduleBlockTick(pos, circuit.getComponentState(pos).getComponent(), 160);
                 }
             }

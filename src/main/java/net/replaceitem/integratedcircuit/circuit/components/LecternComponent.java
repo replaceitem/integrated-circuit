@@ -60,7 +60,7 @@ public class LecternComponent extends Component {
         state = state.cycle(PAGE);
         circuit.setComponentState(pos, state, Component.NOTIFY_ALL);
         circuit.updateNeighborsAlways(pos, this);
-        circuit.playSound(null, SoundEvents.ITEM_BOOK_PAGE_TURN, SoundCategory.BLOCKS, 0.3f, 1);
+        circuit.playSound(null, SoundEvents.ITEM_BOOK_PAGE_TURN, SoundCategory.BLOCKS, 1, 1);
     }
 
     @Override

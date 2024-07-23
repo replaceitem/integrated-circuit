@@ -132,7 +132,7 @@ public class ComparatorComponent extends AbstractRedstoneGateComponent {
         circuit.setComponentState(pos, state, Block.NOTIFY_LISTENERS);
         this.update(circuit, pos, state);
         float f = state.get(MODE) == ComparatorMode.SUBTRACT ? 0.55f : 0.5f;
-        circuit.playSound(player, SoundEvents.BLOCK_COMPARATOR_CLICK, SoundCategory.BLOCKS, 0.3f, f);
+        circuit.playSound(player, SoundEvents.BLOCK_COMPARATOR_CLICK, SoundCategory.BLOCKS, 1, f);
     }
 
     @Override
