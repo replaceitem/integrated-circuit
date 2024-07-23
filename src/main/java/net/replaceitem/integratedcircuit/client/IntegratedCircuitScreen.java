@@ -66,6 +66,7 @@ public class IntegratedCircuitScreen extends Screen {
             Components.TARGET,
             Components.REDSTONE_BLOCK,
             Components.LAMP,
+            Components.COPPER_BULB,
             Components.LECTERN,
             Components.LEVER,
             Components.STONE_BUTTON,

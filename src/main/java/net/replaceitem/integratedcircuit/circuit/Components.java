@@ -3,6 +3,7 @@ package net.replaceitem.integratedcircuit.circuit;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.sound.BlockSoundGroup;
+import net.minecraft.util.Identifier;
 import net.replaceitem.integratedcircuit.IntegratedCircuit;
 import net.replaceitem.integratedcircuit.circuit.components.*;
 
@@ -23,12 +24,17 @@ public class Components {
     public static final ButtonComponent WOODEN_BUTTON = register("wooden_button", new ButtonComponent(new Component.Settings().sounds(BlockSoundGroup.WOOD), true));
     public static final LampComponent LAMP = register("lamp", new LampComponent(new Component.Settings().sounds(BlockSoundGroup.GLASS)));
     public static final LecternComponent LECTERN = register("lectern", new LecternComponent(new Component.Settings().sounds(BlockSoundGroup.WOOD)));
+    public static final CopperBulbComponent COPPER_BULB = register("copper_bulb", new CopperBulbComponent(new Component.Settings().sounds(BlockSoundGroup.COPPER_BULB)));
 
 
     public static final ComponentState AIR_DEFAULT_STATE = AIR.getDefaultState();
 
-    public static <T extends Component> T register(String id, T component) {
-        return Registry.register(IntegratedCircuit.COMPONENTS_REGISTRY, IntegratedCircuit.id(id), component);
+    private static <T extends Component> T register(String id, T component) {
+        return register(IntegratedCircuit.id(id), component);
+    }
+    
+    public static <T extends Component> T register(Identifier id, T component) {
+        return Registry.register(IntegratedCircuit.COMPONENTS_REGISTRY, id, component);
     }
     
     public static  <T extends Component> T register(RegistryKey<Component> key, T component) {
