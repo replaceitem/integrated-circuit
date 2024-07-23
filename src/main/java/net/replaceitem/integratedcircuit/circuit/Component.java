@@ -62,7 +62,7 @@ public abstract class Component {
     }
 
     public Text getName() {
-        return Text.translatable(IntegratedCircuit.COMPONENTS_REGISTRY.getId(this).toTranslationKey("component"));
+        return Text.translatable(IntegratedCircuit.COMPONENTS_REGISTRY.getId(this).toTranslationKey("integrated_circuit.component"));
     }
 
     public void appendProperties(StateManager.Builder<Component, ComponentState> builder) {
