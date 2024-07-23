@@ -186,11 +186,6 @@ public class IntegratedCircuitScreen extends Screen {
         renderComponentState(drawContext, state, x * COMPONENT_SIZE, y * COMPONENT_SIZE, a);
     }
 
-
-    private static void renderComponentTexture(DrawContext drawContext, Identifier component, int x, int y, int rot) {
-        renderComponentTexture(drawContext, component, x, y, rot, 1, 1, 1, 1);
-    }
-
     public static void renderComponentTexture(DrawContext drawContext, Identifier component, int x, int y, int rot, float r, float g, float b, float a) {
         renderComponentTexture(drawContext, component, x, y, rot, r, g, b, a, 0, 0, 16, 16);
     }
