@@ -113,4 +113,12 @@ public class ComponentState extends State<Component,ComponentState> {
     public Text getHoverInfoText() {
         return this.owner.getHoverInfoText(this);
     }
+
+    public boolean hasComparatorOutput() {
+        return this.owner.hasComparatorOutput(this);
+    }
+
+    public int getComparatorOutput(Circuit circuit, ComponentPos pos) {
+        return this.owner.getComparatorOutput(this, circuit, pos);
+    }
 }

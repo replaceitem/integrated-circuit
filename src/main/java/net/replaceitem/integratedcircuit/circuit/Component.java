@@ -147,6 +147,14 @@ public abstract class Component {
         return 0;
     }
 
+    public boolean hasComparatorOutput(ComponentState componentState) {
+        return false;
+    }
+
+    public int getComparatorOutput(ComponentState state, Circuit circuit, ComponentPos pos) {
+        return 0;
+    }
+
     /**
      * Works slightly different from {@link net.minecraft.block.RedstoneWireBlock#increasePower(BlockState)},
      * in that it gets called from the component where the power is checked at, not where it's checked from.

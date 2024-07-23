@@ -241,6 +241,22 @@ public abstract class Circuit implements CircuitAccess {
         state.onUse(this, pos, player);
     }
 
+    public void updateComparators(ComponentPos pos, Component component) {
+        for (FlatDirection direction : FlatDirection.VALUES) {
+            ComponentPos offsetPos = pos.offset(direction);
+            ComponentState state = getComponentState(offsetPos);
+            if(state.isOf(Components.COMPARATOR)) {
+                this.updateNeighbor(state, offsetPos, component, pos, false);
+            } else if (state.isSolidBlock(this, offsetPos)) {
+                offsetPos = offsetPos.offset(direction);
+                state = getComponentState(offsetPos);
+                if(state.isOf(Components.COMPARATOR)) {
+                    this.updateNeighbor(state, offsetPos, component, pos, false);
+                }
+            }
+        }
+    }
+
 
     /**
      * @see net.minecraft.world.World#removeBlock(BlockPos, boolean)

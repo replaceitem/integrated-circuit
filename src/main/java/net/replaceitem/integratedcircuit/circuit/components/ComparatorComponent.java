@@ -17,8 +17,8 @@ import net.minecraft.world.tick.TickPriority;
 import net.replaceitem.integratedcircuit.IntegratedCircuit;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
 import net.replaceitem.integratedcircuit.circuit.Component;
-import net.replaceitem.integratedcircuit.circuit.ServerCircuit;
 import net.replaceitem.integratedcircuit.circuit.ComponentState;
+import net.replaceitem.integratedcircuit.circuit.ServerCircuit;
 import net.replaceitem.integratedcircuit.client.IntegratedCircuitScreen;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
@@ -110,8 +110,20 @@ public class ComparatorComponent extends AbstractRedstoneGateComponent {
 
     @Override
     protected int getPower(Circuit circuit, ComponentPos pos, ComponentState state) {
-        // overriding is unnecessary, but when blocks get added that have a comparator power level, this needs to be changed
-        return super.getPower(circuit, pos, state);
+        int power = super.getPower(circuit, pos, state);
+        FlatDirection direction = state.get(FACING);
+        ComponentPos offsetPos = pos.offset(direction);
+        ComponentState offsetState = circuit.getComponentState(offsetPos);
+        if (offsetState.hasComparatorOutput()) {
+            power = offsetState.getComparatorOutput(circuit, offsetPos);
+        } else if (power < 15 && offsetState.isSolidBlock(circuit, offsetPos)) {
+            offsetPos = offsetPos.offset(direction);
+            offsetState = circuit.getComponentState(offsetPos);
+            if(offsetState.hasComparatorOutput()) {
+                power = offsetState.getComparatorOutput(circuit, offsetPos);
+            }
+        }
+        return power;
     }
 
     @Override
