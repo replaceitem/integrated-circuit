@@ -26,7 +26,7 @@ import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
 public class IntegratedCircuitScreen extends Screen {
-    public static final Identifier BACKGROUND_TEXTURE = IntegratedCircuit.id("textures/gui/integrated_circuit_screen.png");
+    public static final Identifier BACKGROUND_TEXTURE = IntegratedCircuit.id("textures/gui/container/integrated_circuit.png");
     public static final Identifier COMPONENT_BUTTON_TEXTURE = IntegratedCircuit.id("container/integrated_circuit/component_button");
     public static final Identifier COMPONENT_BUTTON_TEXTURE_HIGHLIGHTED = IntegratedCircuit.id("container/integrated_circuit/component_button_highlighted");
 
