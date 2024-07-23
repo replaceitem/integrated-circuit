@@ -139,6 +139,9 @@ public abstract class Circuit implements CircuitAccess {
             }
             if ((flags & Component.NOTIFY_NEIGHBORS) != 0) {
                 this.updateNeighbors(pos, oldState.getComponent());
+                if (!this.isClient && state.hasComparatorOutput()) {
+                    this.updateComparators(pos, state.getComponent());
+                }
             }
             if ((flags & Block.FORCE_STATE) == 0 && maxUpdateDepth > 0) {
                 int i = flags & ~(Block.NOTIFY_NEIGHBORS | Block.SKIP_DROPS);

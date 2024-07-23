@@ -72,12 +72,6 @@ public class LecternComponent extends Component {
     }
 
     @Override
-    public void onBlockAdded(ComponentState state, Circuit circuit, ComponentPos pos, ComponentState oldState) {
-        super.onBlockAdded(state, circuit, pos, oldState);
-        circuit.updateComparators(pos, this);
-    }
-
-    @Override
     public boolean hasComparatorOutput(ComponentState componentState) {
         return true;
     }
