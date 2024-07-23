@@ -4,20 +4,7 @@ import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.sound.BlockSoundGroup;
 import net.replaceitem.integratedcircuit.IntegratedCircuit;
-import net.replaceitem.integratedcircuit.circuit.components.AirComponent;
-import net.replaceitem.integratedcircuit.circuit.components.BlockComponent;
-import net.replaceitem.integratedcircuit.circuit.components.ButtonComponent;
-import net.replaceitem.integratedcircuit.circuit.components.ComparatorComponent;
-import net.replaceitem.integratedcircuit.circuit.components.CrossoverComponent;
-import net.replaceitem.integratedcircuit.circuit.components.LampComponent;
-import net.replaceitem.integratedcircuit.circuit.components.LeverComponent;
-import net.replaceitem.integratedcircuit.circuit.components.ObserverComponent;
-import net.replaceitem.integratedcircuit.circuit.components.PortComponent;
-import net.replaceitem.integratedcircuit.circuit.components.RedstoneBlockComponent;
-import net.replaceitem.integratedcircuit.circuit.components.RepeaterComponent;
-import net.replaceitem.integratedcircuit.circuit.components.TargetComponent;
-import net.replaceitem.integratedcircuit.circuit.components.TorchComponent;
-import net.replaceitem.integratedcircuit.circuit.components.WireComponent;
+import net.replaceitem.integratedcircuit.circuit.components.*;
 
 public class Components {
     public static final AirComponent AIR = register("air", new AirComponent(new Component.Settings()));
@@ -35,6 +22,7 @@ public class Components {
     public static final ButtonComponent STONE_BUTTON = register("stone_button", new ButtonComponent(new Component.Settings(), false));
     public static final ButtonComponent WOODEN_BUTTON = register("wooden_button", new ButtonComponent(new Component.Settings().sounds(BlockSoundGroup.WOOD), true));
     public static final LampComponent LAMP = register("lamp", new LampComponent(new Component.Settings().sounds(BlockSoundGroup.GLASS)));
+    public static final LecternComponent LECTERN = register("lectern", new LecternComponent(new Component.Settings().sounds(BlockSoundGroup.WOOD)));
 
 
     public static final ComponentState AIR_DEFAULT_STATE = AIR.getDefaultState();
