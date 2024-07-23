@@ -27,6 +27,8 @@ import org.lwjgl.glfw.GLFW;
 
 public class IntegratedCircuitScreen extends Screen {
     public static final Identifier BACKGROUND_TEXTURE = IntegratedCircuit.id("textures/gui/integrated_circuit_screen.png");
+    public static final Identifier COMPONENT_BUTTON_TEXTURE = IntegratedCircuit.id("container/integrated_circuit/component_button");
+    public static final Identifier COMPONENT_BUTTON_TEXTURE_HIGHLIGHTED = IntegratedCircuit.id("container/integrated_circuit/component_button_highlighted");
 
     protected static final int BACKGROUND_WIDTH = 240;
     protected static final int BACKGROUND_HEIGHT = 230;
@@ -146,7 +148,7 @@ public class IntegratedCircuitScreen extends Screen {
             Component component = PALETTE[i];
             int slotY = this.getPaletteSlotPosY(i);
             drawContext.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
-            drawContext.drawTexture(BACKGROUND_TEXTURE, this.x + PALETTE_X, slotY, selectedComponentSlot == i ? 14 : 0, BACKGROUND_HEIGHT, 14, 14);
+            drawContext.drawGuiTexture(selectedComponentSlot == i ? COMPONENT_BUTTON_TEXTURE_HIGHLIGHTED : COMPONENT_BUTTON_TEXTURE, this.x + PALETTE_X, slotY, 14, 14);
             Identifier itemTexture = component.getItemTexture();
             if(itemTexture != null) renderPaletteItem(drawContext, itemTexture, this.x+PALETTE_X+1, slotY+1);
         }
