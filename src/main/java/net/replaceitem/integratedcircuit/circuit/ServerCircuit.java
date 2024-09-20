@@ -5,6 +5,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
+import net.minecraft.util.math.MathHelper;
 import net.replaceitem.integratedcircuit.circuit.components.PortComponent;
 import net.replaceitem.integratedcircuit.circuit.context.ServerCircuitContext;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
@@ -58,6 +59,7 @@ public class ServerCircuit extends Circuit {
     }
     
     public void onExternalPowerChanged(FlatDirection direction, int power) {
+        power = MathHelper.clamp(power, 0, 15);
         ComponentPos pos = PORT_POSITIONS.get(direction);
         ComponentState state = getComponentState(pos);
         boolean isOutput = state.get(PortComponent.IS_OUTPUT);

@@ -68,15 +68,15 @@ public abstract class AbstractWireComponent extends AbstractConductingComponent 
         return WireComponent.POWER;
     }
 
-    protected int getReceivedRedstonePower(Circuit world, ComponentPos pos) {
+    protected int getReceivedRedstonePower(Circuit circuit, ComponentPos pos) {
         wiresGivePower = false;
-        int i = world.getReceivedRedstonePower(pos);
+        int i = circuit.getReceivedRedstonePower(pos);
         wiresGivePower = true;
         int j = 0;
         if (i < 15) {
             for (FlatDirection direction : FlatDirection.VALUES) {
                 ComponentPos blockPos = pos.offset(direction);
-                ComponentState blockState = world.getComponentState(blockPos);
+                ComponentState blockState = circuit.getComponentState(blockPos);
                 j = Math.max(j, blockState.increasePower(direction.getOpposite()));
             }
         }

@@ -74,10 +74,10 @@ public class PortComponent extends AbstractWireComponent {
     }
 
     @Override
-    protected int getReceivedRedstonePower(Circuit world, ComponentPos pos) {
-        ComponentState state = world.getComponentState(pos);
+    protected int getReceivedRedstonePower(Circuit circuit, ComponentPos pos) {
+        ComponentState state = circuit.getComponentState(pos);
         if(!state.get(IS_OUTPUT)) return state.get(POWER);
-        return super.getReceivedRedstonePower(world, pos);
+        return super.getReceivedRedstonePower(circuit, pos);
     }
 
     @Override
