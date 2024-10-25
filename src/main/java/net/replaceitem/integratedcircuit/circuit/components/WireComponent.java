@@ -3,6 +3,7 @@ package net.replaceitem.integratedcircuit.circuit.components;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import net.minecraft.block.Block;
+import net.minecraft.block.RedstoneWireBlock;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.state.StateManager;
@@ -10,14 +11,13 @@ import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.IntProperty;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.ColorHelper;
 import net.replaceitem.integratedcircuit.IntegratedCircuit;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
 import net.replaceitem.integratedcircuit.circuit.Component;
-import net.replaceitem.integratedcircuit.circuit.Components;
 import net.replaceitem.integratedcircuit.circuit.ComponentState;
+import net.replaceitem.integratedcircuit.circuit.Components;
 import net.replaceitem.integratedcircuit.client.gui.IntegratedCircuitScreen;
-import net.replaceitem.integratedcircuit.mixin.RedstoneWireBlockAccessor;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
 import org.jetbrains.annotations.Nullable;
@@ -79,22 +79,19 @@ public class WireComponent extends AbstractWireComponent {
         final int size = IntegratedCircuitScreen.COMPONENT_SIZE;
         final int halfSize = size/2;
 
-        Vec3d color = RedstoneWireBlockAccessor.getCOLORS()[state.get(POWER)];
-        float r = (float) color.x;
-        float g = (float) color.y;
-        float b = (float) color.z;
+        int color = ColorHelper.withAlpha(ColorHelper.channelFromFloat(a), RedstoneWireBlock.getWireColor(state.get(POWER)));
 
-        if(state.get(CONNECTED_NORTH)) IntegratedCircuitScreen.renderComponentTexture(drawContext, TEXTURE_Y, x, y, 0, r, g, b, a, 0, 0, size, halfSize);
-        if(state.get(CONNECTED_EAST)) IntegratedCircuitScreen.renderComponentTexture(drawContext, TEXTURE_X, x, y, 0, r, g, b, a, halfSize, 0, halfSize, size);
-        if(state.get(CONNECTED_SOUTH)) IntegratedCircuitScreen.renderComponentTexture(drawContext, TEXTURE_Y, x, y, 0, r, g, b, a, 0, halfSize, size, halfSize);
-        if(state.get(CONNECTED_WEST)) IntegratedCircuitScreen.renderComponentTexture(drawContext, TEXTURE_X, x, y, 0, r, g, b, a, 0, 0, halfSize, size);
+        if(state.get(CONNECTED_NORTH)) IntegratedCircuitScreen.renderComponentTexture(drawContext, TEXTURE_Y, x, y, 0, color, 0, 0, size, halfSize);
+        if(state.get(CONNECTED_EAST)) IntegratedCircuitScreen.renderComponentTexture(drawContext, TEXTURE_X, x, y, 0, color, halfSize, 0, halfSize, size);
+        if(state.get(CONNECTED_SOUTH)) IntegratedCircuitScreen.renderComponentTexture(drawContext, TEXTURE_Y, x, y, 0, color, 0, halfSize, size, halfSize);
+        if(state.get(CONNECTED_WEST)) IntegratedCircuitScreen.renderComponentTexture(drawContext, TEXTURE_X, x, y, 0, color, 0, 0, halfSize, size);
 
         int connections = 0;
         for (FlatDirection direction : FlatDirection.VALUES) if(state.get(DIRECTION_TO_CONNECTION_PROPERTY.get(direction))) connections++;
-        if(connections != 2) IntegratedCircuitScreen.renderComponentTexture(drawContext, TEXTURE_DOT, x, y, 0, r, g, b, a, 0, 0, size, size);
+        if(connections != 2) IntegratedCircuitScreen.renderComponentTexture(drawContext, TEXTURE_DOT, x, y, 0, color, 0, 0, size, size);
         
         if(!(state.get(CONNECTED_NORTH) && state.get(CONNECTED_SOUTH) || state.get(CONNECTED_EAST) && state.get(CONNECTED_WEST))) {
-            IntegratedCircuitScreen.renderComponentTexture(drawContext, TEXTURE_DOT, x, y, 0, r, g, b, a, 0, 0, size, size);
+            IntegratedCircuitScreen.renderComponentTexture(drawContext, TEXTURE_DOT, x, y, 0, color, 0, 0, size, size);
         }
     }
 

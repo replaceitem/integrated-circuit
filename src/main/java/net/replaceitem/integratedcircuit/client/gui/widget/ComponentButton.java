@@ -4,6 +4,7 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ClickableWidget;
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -44,14 +45,13 @@ public class ComponentButton extends ClickableWidget {
 
     @Override
     protected void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
-        context.drawGuiTexture(selected ? COMPONENT_BUTTON_TEXTURE_HIGHLIGHTED : COMPONENT_BUTTON_TEXTURE, getX(), getY(), SIZE, SIZE);
+        context.drawGuiTexture(RenderLayer::getGuiTextured, selected ? COMPONENT_BUTTON_TEXTURE_HIGHLIGHTED : COMPONENT_BUTTON_TEXTURE, getX(), getY(), SIZE, SIZE);
         Identifier itemTexture = component.getItemTexture();
         if(itemTexture != null) renderPaletteItem(context, itemTexture);
     }
     
     private void renderPaletteItem(DrawContext drawContext, Identifier itemTexture) {
-        drawContext.setShaderColor(1,1,1,1);
-        drawContext.drawTexture(itemTexture, getX()+1, getY()+1, 0, 0, SIZE-2, SIZE-2, SIZE-2, SIZE-2);
+        drawContext.drawTexture(RenderLayer::getGuiTextured, itemTexture, getX()+1, getY()+1, 0, 0, SIZE-2, SIZE-2, SIZE-2, SIZE-2);
     }
     
     @Override

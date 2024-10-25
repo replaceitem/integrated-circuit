@@ -7,7 +7,7 @@ public class IntegratedCircuitDataGenerator implements DataGeneratorEntrypoint {
     @Override
     public void onInitializeDataGenerator(FabricDataGenerator fabricDataGenerator) {
         FabricDataGenerator.Pack pack = fabricDataGenerator.createPack();
-        pack.addProvider(IntegratedCircuitRecipes::new);
+        pack.addProvider(IntegratedCircuitRecipeGenerator.Provider::new);
         pack.addProvider(IntegratedCircuitLootTables::new);
     }
 }

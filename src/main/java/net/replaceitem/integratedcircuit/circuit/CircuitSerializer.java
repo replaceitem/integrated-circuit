@@ -72,7 +72,7 @@ public class CircuitSerializer {
     public static OrderedCircuitTick readOrderedTick(NbtCompound nbt, ServerCircuitContext context) {
         // todo more robust handling of missing values
         return new OrderedCircuitTick(
-                IntegratedCircuit.COMPONENTS_REGISTRY.getOrEmpty(Identifier.tryParse(nbt.getString("c"))).orElseThrow(),
+                IntegratedCircuit.COMPONENTS_REGISTRY.getOptionalValue(Identifier.tryParse(nbt.getString("c"))).orElseThrow(),
                 new ComponentPos(nbt.getInt("x"), nbt.getInt("y")),
                 context.getTime() + nbt.getInt("t"),
                 TickPriority.byIndex(nbt.getInt("p")),

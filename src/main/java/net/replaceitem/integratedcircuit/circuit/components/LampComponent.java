@@ -36,7 +36,7 @@ public class LampComponent extends Component {
     @Override
     public void render(DrawContext drawContext, int x, int y, float a, ComponentState state) {
         Identifier texture = state.get(LIT) ? TEXTURE_ON : TEXTURE;
-        IntegratedCircuitScreen.renderComponentTexture(drawContext, texture, x, y, 0, 1, 1, 1, a);
+        IntegratedCircuitScreen.renderComponentTexture(drawContext, texture, x, y, 0, a);
     }
 
     @Override

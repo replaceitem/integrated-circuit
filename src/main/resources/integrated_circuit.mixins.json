@@ -4,7 +4,6 @@
     "package": "net.replaceitem.integratedcircuit.mixin",
     "compatibilityLevel": "JAVA_21",
     "mixins": [
-        "RedstoneWireBlockAccessor",
         "SchemasMixin"
     ],
     "client": [

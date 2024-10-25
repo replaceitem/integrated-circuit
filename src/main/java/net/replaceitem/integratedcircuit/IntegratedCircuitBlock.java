@@ -3,21 +3,15 @@ package net.replaceitem.integratedcircuit;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockEntityProvider;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.HorizontalFacingBlock;
-import net.minecraft.block.RedstoneWireBlock;
-import net.minecraft.block.ShapeContext;
+import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
-import net.minecraft.loot.context.LootContextParameterSet;
 import net.minecraft.loot.context.LootContextParameters;
+import net.minecraft.loot.context.LootWorldContext;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -31,12 +25,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.world.BlockRenderView;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.RedstoneView;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldAccess;
-import net.minecraft.world.WorldView;
+import net.minecraft.world.*;
+import net.minecraft.world.block.OrientationHelper;
+import net.minecraft.world.block.WireOrientation;
+import net.minecraft.world.tick.ScheduledTickView;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
 import net.replaceitem.integratedcircuit.circuit.CircuitSerializer;
 import net.replaceitem.integratedcircuit.circuit.ServerCircuit;
@@ -84,22 +76,23 @@ public class IntegratedCircuitBlock extends HorizontalFacingBlock implements Blo
     }
 
     @Override
-    protected BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
+    protected BlockState getStateForNeighborUpdate(BlockState state, WorldView world, ScheduledTickView tickView, BlockPos pos, Direction direction, BlockPos neighborPos, BlockState neighborState, Random random) {
         if (direction == Direction.DOWN && !this.canPlaceAt(state, world, pos))
             return Blocks.AIR.getDefaultState();
-        return super.getStateForNeighborUpdate(state, direction, neighborState, world, pos, neighborPos);
+        return super.getStateForNeighborUpdate(state, world, tickView, pos, direction, neighborPos, neighborState, random);
     }
 
+
     @Override
-    protected void neighborUpdate(BlockState state, World world, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
-        super.neighborUpdate(state, world, pos, sourceBlock, sourcePos, notify);
+    protected void neighborUpdate(BlockState state, World world, BlockPos pos, Block sourceBlock, @Nullable WireOrientation wireOrientation, boolean notify) {
+        super.neighborUpdate(state, world, pos, sourceBlock, wireOrientation, notify);
         if(world.isClient) return;
         if(world.getBlockEntity(pos) instanceof IntegratedCircuitBlockEntity integratedCircuitBlockEntity && integratedCircuitBlockEntity.getCircuit() != null) {
             for (FlatDirection direction : FlatDirection.VALUES) {
                 integratedCircuitBlockEntity.getCircuit().getContext().readExternalPower(direction);
             }
         }
-        ensureTicking(world, pos);
+        ensureTicking(world, pos);    
     }
 
     @Override
@@ -123,8 +116,9 @@ public class IntegratedCircuitBlock extends HorizontalFacingBlock implements Blo
     
     public void updateTarget(World world, BlockPos pos, Direction direction) {
         BlockPos blockPos = pos.offset(direction);
-        world.updateNeighbor(blockPos, this, pos);
-        world.updateNeighborsExcept(blockPos, this, direction.getOpposite());
+        WireOrientation wireOrientation = OrientationHelper.getEmissionOrientation(world, direction, Direction.UP);
+        world.updateNeighbor(blockPos, this, wireOrientation);
+        world.updateNeighborsExcept(blockPos, this, direction.getOpposite(), wireOrientation);
     }
 
     protected void updateTargets(World world, BlockPos pos) {
@@ -156,7 +150,7 @@ public class IntegratedCircuitBlock extends HorizontalFacingBlock implements Blo
         if (itemStack.contains(DataComponentTypes.CUSTOM_NAME) && world.getBlockEntity(pos) instanceof IntegratedCircuitBlockEntity integratedCircuitBlockEntity)
             integratedCircuitBlockEntity.setCustomName(itemStack.getName());
         this.updateTargets(world, pos);
-        world.updateNeighbor(pos, this, pos);
+        world.updateNeighbor(pos, this, null);
     }
 
     @Override
@@ -209,7 +203,7 @@ public class IntegratedCircuitBlock extends HorizontalFacingBlock implements Blo
     }
 
     @Override
-    protected List<ItemStack> getDroppedStacks(BlockState state, LootContextParameterSet.Builder builder) {
+    protected List<ItemStack> getDroppedStacks(BlockState state, LootWorldContext.Builder builder) {
         List<ItemStack> list = super.getDroppedStacks(state, builder);
 
         BlockEntity blockEntity = builder.getOptional(LootContextParameters.BLOCK_ENTITY);
@@ -224,7 +218,7 @@ public class IntegratedCircuitBlock extends HorizontalFacingBlock implements Blo
         }
         return list;
     }
-
+    
     public int getPortRenderStrength(BlockRenderView view, BlockPos pos, FlatDirection circuitDirection) {
         if(view.getBlockEntity(pos) instanceof IntegratedCircuitBlockEntity integratedCircuitBlockEntity) {
             return integratedCircuitBlockEntity.getPortRenderStrength(circuitDirection);

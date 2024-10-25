@@ -31,7 +31,7 @@ public class RedstoneBlockComponent extends Component {
 
     @Override
     public void render(DrawContext drawContext, int x, int y, float a, ComponentState state) {
-        IntegratedCircuitScreen.renderComponentTexture(drawContext, TEXTURE, x, y, 0, 1, 1, 1, a);
+        IntegratedCircuitScreen.renderComponentTexture(drawContext, TEXTURE, x, y, 0, a);
     }
 
     @Override

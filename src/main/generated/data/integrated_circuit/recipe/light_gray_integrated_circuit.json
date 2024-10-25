@@ -3,18 +3,10 @@
   "category": "redstone",
   "group": "integrated_circuit:integrated_circuit",
   "key": {
-    "C": {
-      "item": "minecraft:light_gray_concrete"
-    },
-    "Q": {
-      "item": "minecraft:quartz"
-    },
-    "R": {
-      "item": "minecraft:redstone"
-    },
-    "T": {
-      "item": "minecraft:black_terracotta"
-    }
+    "C": "minecraft:light_gray_concrete",
+    "Q": "minecraft:quartz",
+    "R": "minecraft:redstone",
+    "T": "minecraft:black_terracotta"
   },
   "pattern": [
     " T ",

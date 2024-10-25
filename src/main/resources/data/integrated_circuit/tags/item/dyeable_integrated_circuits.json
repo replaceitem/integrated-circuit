@@ -1,7 +1,7 @@
 {
   "replace": false,
   "values": [
-		"integrated_circuit:integrated_circuit",
+    "integrated_circuit:integrated_circuit",
     "integrated_circuit:white_integrated_circuit",
     "integrated_circuit:orange_integrated_circuit",
     "integrated_circuit:magenta_integrated_circuit",

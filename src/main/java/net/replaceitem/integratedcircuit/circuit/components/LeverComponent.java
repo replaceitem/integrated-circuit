@@ -45,7 +45,7 @@ public class LeverComponent extends FacingComponent {
     @Override
     public void render(DrawContext drawContext, int x, int y, float a, ComponentState state) {
         Identifier texture = state.get(POWERED) ? TEXTURE_ON : TEXTURE_OFF;
-        IntegratedCircuitScreen.renderComponentTexture(drawContext, texture, x, y, state.get(FACING).getIndex(), 1, 1, 1, a);
+        IntegratedCircuitScreen.renderComponentTexture(drawContext, texture, x, y, state.get(FACING).getIndex(), a);
     }
 
     @Override

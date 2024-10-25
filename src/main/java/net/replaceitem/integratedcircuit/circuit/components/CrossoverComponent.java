@@ -1,18 +1,18 @@
 package net.replaceitem.integratedcircuit.circuit.components;
 
 import com.google.common.collect.Sets;
+import net.minecraft.block.RedstoneWireBlock;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.IntProperty;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.ColorHelper;
 import net.replaceitem.integratedcircuit.IntegratedCircuit;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
 import net.replaceitem.integratedcircuit.circuit.Component;
 import net.replaceitem.integratedcircuit.circuit.ComponentState;
 import net.replaceitem.integratedcircuit.client.gui.IntegratedCircuitScreen;
-import net.replaceitem.integratedcircuit.mixin.RedstoneWireBlockAccessor;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
 import org.jetbrains.annotations.Nullable;
@@ -48,12 +48,12 @@ public class CrossoverComponent extends AbstractConductingComponent {
 
     @Override
     public void render(DrawContext drawContext, int x, int y, float a, ComponentState state) {
-        Vec3d colorX = RedstoneWireBlockAccessor.getCOLORS()[state.get(POWER_X)];
-        Vec3d colorY = RedstoneWireBlockAccessor.getCOLORS()[state.get(POWER_Y)];
+        int colorX = RedstoneWireBlock.getWireColor(state.get(POWER_X));
+        int colorY = RedstoneWireBlock.getWireColor(state.get(POWER_Y));
 
-        IntegratedCircuitScreen.renderComponentTexture(drawContext, TEXTURE_X, x, y, 0, (float) colorX.x, (float) colorX.y, (float) colorX.z, a);
-        IntegratedCircuitScreen.renderComponentTexture(drawContext, TEXTURE_BRIDGE, x, y, 0, 1, 1, 1, a);
-        IntegratedCircuitScreen.renderComponentTexture(drawContext, TEXTURE_Y, x, y, 0, (float) colorY.x, (float) colorY.y, (float) colorY.z, a);
+        IntegratedCircuitScreen.renderComponentTexture(drawContext, TEXTURE_X, x, y, 0, ColorHelper.withAlpha(ColorHelper.channelFromFloat(a), colorX));
+        IntegratedCircuitScreen.renderComponentTexture(drawContext, TEXTURE_BRIDGE, x, y, 0, a);
+        IntegratedCircuitScreen.renderComponentTexture(drawContext, TEXTURE_Y, x, y, 0, ColorHelper.withAlpha(ColorHelper.channelFromFloat(a), colorY));
     }
 
 

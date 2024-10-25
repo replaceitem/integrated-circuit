@@ -2,14 +2,15 @@ package net.replaceitem.integratedcircuit.client.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.minecraft.block.RedstoneWireBlock;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.ColorHelper;
 import net.minecraft.util.math.RotationAxis;
-import net.minecraft.util.math.Vec3d;
 import net.replaceitem.integratedcircuit.IntegratedCircuit;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
 import net.replaceitem.integratedcircuit.circuit.ClientCircuit;
@@ -19,7 +20,6 @@ import net.replaceitem.integratedcircuit.circuit.components.FacingComponent;
 import net.replaceitem.integratedcircuit.circuit.ComponentState;
 import net.replaceitem.integratedcircuit.client.config.DefaultConfig;
 import net.replaceitem.integratedcircuit.client.gui.widget.ComponentButton;
-import net.replaceitem.integratedcircuit.mixin.RedstoneWireBlockAccessor;
 import net.replaceitem.integratedcircuit.network.packet.FinishEditingC2SPacket;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
@@ -58,7 +58,7 @@ public class IntegratedCircuitScreen extends Screen {
     @Nullable
     private ComponentState cursorState = null;
     private int selectedComponentSlot = -1;
-    private List<ComponentButton> componentButtons = new ArrayList<>(PALETTE.length);
+    private final List<ComponentButton> componentButtons = new ArrayList<>(PALETTE.length);
 
 
     private static final Component[] PALETTE = new Component[]{
@@ -138,7 +138,7 @@ public class IntegratedCircuitScreen extends Screen {
     @Override
     public void renderBackground(DrawContext context, int mouseX, int mouseY, float delta) {
         super.renderBackground(context, mouseX, mouseY, delta);
-        context.drawTexture(BACKGROUND_TEXTURE, x, y, 0, 0, BACKGROUND_WIDTH, BACKGROUND_HEIGHT);
+        context.drawTexture(RenderLayer::getGuiTextured, BACKGROUND_TEXTURE, x, y, 0, 0, BACKGROUND_WIDTH, BACKGROUND_HEIGHT, 256, 256);
     }
 
     private void renderHoverInfo(DrawContext drawContext, int mouseX, int mouseY) {
@@ -150,8 +150,7 @@ public class IntegratedCircuitScreen extends Screen {
     }
 
     public static Text getSignalStrengthText(int signalStrength) {
-        Vec3d colorVec = RedstoneWireBlockAccessor.getCOLORS()[signalStrength].multiply(255);
-        int color = ColorHelper.Argb.getArgb(0xFF, (int) colorVec.x, (int) colorVec.y, (int) colorVec.z);
+        int color = RedstoneWireBlock.getWireColor(signalStrength);
         return Text.literal(String.valueOf(signalStrength)).styled(style -> style.withColor(color));
     }
 
@@ -196,29 +195,35 @@ public class IntegratedCircuitScreen extends Screen {
     protected void renderComponentStateInGrid(DrawContext drawContext, ComponentState state, int x, int y, float a) {
         renderComponentState(drawContext, state, x * COMPONENT_SIZE, y * COMPONENT_SIZE, a);
     }
-
-    public static void renderComponentTexture(DrawContext drawContext, Identifier component, int x, int y, int rot, float r, float g, float b, float a) {
-        renderComponentTexture(drawContext, component, x, y, rot, r, g, b, a, 0, 0, 16, 16);
+    
+    public static void renderComponentTexture(DrawContext drawContext, Identifier component, int x, int y, int rot, float alpha) {
+        renderComponentTexture(drawContext, component, x, y, rot, ColorHelper.getWhite(alpha));
+    }
+    
+    public static void renderComponentTexture(DrawContext drawContext, Identifier component, int x, int y, int rot, int color) {
+        renderComponentTexture(drawContext, component, x, y, rot, color, 0, 0, 16, 16);
     }
 
-    public static void renderComponentTexture(DrawContext drawContext, Identifier component, int x, int y, int rot, float r, float g, float b, float a, int u, int v, int w, int h) {
-        renderPartialTexture(drawContext, component, x, y, u, v, 16, 16, rot, r, g, b, a, u, v, w, h);
+    public static void renderComponentTexture(DrawContext drawContext, Identifier component, int x, int y, int rot, int color, int u, int v, int w, int h) {
+        renderPartialTexture(drawContext, component, x, y, u, v, 16, 16, rot, color, u, v, w, h);
     }
 
 
-    public static void renderPartialTexture(DrawContext drawContext, Identifier texture, int componentX, int componentY, int x, int y, int textureW, int textureH, int rot, float r, float g, float b, float a) {
-        renderPartialTexture(drawContext, texture, componentX, componentY, x, y, textureW, textureH, rot, r, g, b, a, 0, 0, textureW, textureH);
+    public static void renderPartialTexture(DrawContext drawContext, Identifier texture, int componentX, int componentY, int x, int y, int textureW, int textureH, int rot, float alpha) {
+        renderPartialTexture(drawContext, texture, componentX, componentY, x, y, textureW, textureH, rot, ColorHelper.getWhite(alpha));
+    }
+    
+    public static void renderPartialTexture(DrawContext drawContext, Identifier texture, int componentX, int componentY, int x, int y, int textureW, int textureH, int rot, int color) {
+        renderPartialTexture(drawContext, texture, componentX, componentY, x, y, textureW, textureH, rot, color, 0, 0, textureW, textureH);
     }
 
-    private static void renderPartialTexture(DrawContext drawContext, Identifier texture, int componentX, int componentY, int x, int y, int textureW, int textureH, int rot, float r, float g, float b, float a, int u, int v, int w, int h) {
+    private static void renderPartialTexture(DrawContext drawContext, Identifier texture, int componentX, int componentY, int x, int y, int textureW, int textureH, int rot, int color, int u, int v, int w, int h) {
         drawContext.getMatrices().push();
         drawContext.getMatrices().translate(componentX+8, componentY+8, 0);
         drawContext.getMatrices().multiply(RotationAxis.POSITIVE_Z.rotation((float) (rot*Math.PI*0.5)));
         drawContext.getMatrices().translate(-8, -8, 0);
         RenderSystem.enableBlend();
-        drawContext.setShaderColor(r, g, b, a);
-        drawContext.drawTexture(texture, x, y, u, v, w, h, textureW, textureH);
-        drawContext.setShaderColor(1,1,1,1);
+        drawContext.drawTexture(RenderLayer::getGuiTextured, texture, x, y, u, v, w, h, textureW, textureH, color);
         drawContext.getMatrices().pop();
     }
 

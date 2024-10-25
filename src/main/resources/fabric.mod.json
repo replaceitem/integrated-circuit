@@ -34,7 +34,7 @@
   ],
   "accessWidener": "integrated_circuit.accesswidener",
   "depends": {
-    "minecraft": ">=1.21",
+    "minecraft": ">=1.21.2",
     "fabricloader": ">=0.15.0",
     "fabric": "*"
   },

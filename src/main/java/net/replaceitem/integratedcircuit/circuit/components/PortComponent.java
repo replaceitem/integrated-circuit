@@ -1,29 +1,28 @@
 package net.replaceitem.integratedcircuit.circuit.components;
 
+import net.minecraft.block.RedstoneWireBlock;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
+import net.minecraft.state.property.EnumProperty;
 import net.minecraft.state.property.IntProperty;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.Vec3d;
 import net.replaceitem.integratedcircuit.IntegratedCircuit;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
 import net.replaceitem.integratedcircuit.circuit.Component;
 import net.replaceitem.integratedcircuit.circuit.ComponentState;
 import net.replaceitem.integratedcircuit.circuit.ServerCircuit;
 import net.replaceitem.integratedcircuit.circuit.context.ServerCircuitContext;
-import net.replaceitem.integratedcircuit.circuit.state.FlatDirectionProperty;
 import net.replaceitem.integratedcircuit.client.gui.IntegratedCircuitScreen;
-import net.replaceitem.integratedcircuit.mixin.RedstoneWireBlockAccessor;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
 import org.jetbrains.annotations.Nullable;
 
 public class PortComponent extends AbstractWireComponent {
 
-    public static final FlatDirectionProperty FACING = FlatDirectionProperty.of("facing");
+    public static final EnumProperty<FlatDirection> FACING = FacingComponent.FACING;
     public static final IntProperty POWER = Properties.POWER;
     public static final BooleanProperty IS_OUTPUT = BooleanProperty.of("is_output");
 
@@ -41,16 +40,13 @@ public class PortComponent extends AbstractWireComponent {
 
     @Override
     public void render(DrawContext drawContext, int x, int y, float a, ComponentState state) {
-        Vec3d color = RedstoneWireBlockAccessor.getCOLORS()[state.get(POWER)];
-        float r = (float) color.x;
-        float g = (float) color.y;
-        float b = (float) color.z;
-
+        int color = RedstoneWireBlock.getWireColor(state.get(POWER));
+        
         FlatDirection rotation = state.get(FACING);
-        IntegratedCircuitScreen.renderComponentTexture(drawContext, TEXTURE_ARROW, x, y, rotation.getIndex(), r, g, b, a);
+        IntegratedCircuitScreen.renderComponentTexture(drawContext, TEXTURE_ARROW, x, y, rotation.getIndex(), color);
         
         Identifier wireTexture = rotation.getAxis() == FlatDirection.Axis.X ? TEXTURE_X : TEXTURE_Y;
-        IntegratedCircuitScreen.renderComponentTexture(drawContext, wireTexture, x, y, 0, r, g, b, a);
+        IntegratedCircuitScreen.renderComponentTexture(drawContext, wireTexture, x, y, 0, color);
     }
 
     @Override
