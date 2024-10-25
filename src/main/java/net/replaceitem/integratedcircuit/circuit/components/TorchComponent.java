@@ -105,8 +105,8 @@ public class TorchComponent extends FacingComponent {
     public void scheduledTick(ComponentState state, ServerCircuit circuit, ComponentPos pos, Random random) {
         boolean shouldUnpower = this.shouldUnpower(circuit, pos, state);
         List<BurnoutEntry> list = BURNOUT_MAP.get(circuit);
-        while (list != null && !list.isEmpty() && circuit.getTime() - list.get(0).time > 60L) {
-            list.remove(0);
+        while (list != null && !list.isEmpty() && circuit.getTime() - list.getFirst().time > 60L) {
+            list.removeFirst();
         }
         if (state.get(LIT)) {
             if (shouldUnpower) {

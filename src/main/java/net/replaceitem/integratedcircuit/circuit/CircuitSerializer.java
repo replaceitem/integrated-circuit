@@ -6,16 +6,10 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtOps;
-import net.minecraft.util.Identifier;
 import net.minecraft.world.chunk.PalettedContainer;
-import net.minecraft.world.tick.TickPriority;
-import net.replaceitem.integratedcircuit.IntegratedCircuit;
 import net.replaceitem.integratedcircuit.circuit.context.ClientCircuitContext;
 import net.replaceitem.integratedcircuit.circuit.context.ServerCircuitContext;
-import net.replaceitem.integratedcircuit.util.ComponentPos;
 import org.slf4j.Logger;
-
-import java.util.Arrays;
 
 /*
 NBT Structure in BlockEntity:
@@ -55,30 +49,6 @@ public class CircuitSerializer {
                 readSection()
         );
     }
-    
-    private CircuitTickScheduler readTickScheduler(ServerCircuitContext context) {
-        if(!root.contains(TICK_SCHEDULER_TAG, NbtElement.LIST_TYPE)) return new CircuitTickScheduler();
-        NbtList tickSchedulerNbt = root.getList(TICK_SCHEDULER_TAG, NbtElement.COMPOUND_TYPE);
-        CircuitTickScheduler circuitTickScheduler = new CircuitTickScheduler();
-        for (NbtElement nbtElement : tickSchedulerNbt) {
-            if(!(nbtElement instanceof NbtCompound nbtCompound)) continue;
-            OrderedCircuitTick orderedCircuitTick = readOrderedTick(nbtCompound, context);
-            circuitTickScheduler.queueTick(orderedCircuitTick);
-        }
-        return circuitTickScheduler;
-    }
-
-
-    public static OrderedCircuitTick readOrderedTick(NbtCompound nbt, ServerCircuitContext context) {
-        // todo more robust handling of missing values
-        return new OrderedCircuitTick(
-                IntegratedCircuit.COMPONENTS_REGISTRY.getOptionalValue(Identifier.tryParse(nbt.getString("c"))).orElseThrow(),
-                new ComponentPos(nbt.getInt("x"), nbt.getInt("y")),
-                context.getTime() + nbt.getInt("t"),
-                TickPriority.byIndex(nbt.getInt("p")),
-                nbt.getLong("s")
-        );
-    }
 
     private ComponentState[] readPortStates() {
         if(!root.contains(PORTS_TAG)) return Circuit.createDefaultPorts();
@@ -101,39 +71,5 @@ public class CircuitSerializer {
 
     public static DataResult<NbtElement> writeCircuit(ServerCircuit circuit) {
         return ServerCircuit.CODEC.encodeStart(circuit.getContext(), NbtOps.INSTANCE, circuit);
-    }
-
-    private static NbtElement writePortStates(ComponentState[] portStates) {
-        return NbtOps.INSTANCE.createList(
-                Arrays.stream(portStates)
-                        .map(componentState -> ComponentState.CODEC.encodeStart(NbtOps.INSTANCE, componentState))
-                        .map(DataResult::getOrThrow)
-        );
-    }
-
-    private static NbtList writeTickScheduler(CircuitTickScheduler tickScheduler, long time) {
-        NbtList nbtList = new NbtList();
-        for (OrderedCircuitTick orderedTick : tickScheduler.getTickQueue()) {
-            nbtList.add(writeOrderedTick(orderedTick, time));
-        }
-        return nbtList;
-    }
-
-    public static NbtCompound writeOrderedTick(OrderedCircuitTick tick, long time) {
-        NbtCompound nbtCompound = new NbtCompound();
-        String id = IntegratedCircuit.COMPONENTS_REGISTRY.getId(tick.type()).toString();
-        nbtCompound.putString("c", id);
-        nbtCompound.putInt("x", tick.pos().getX());
-        nbtCompound.putInt("y", tick.pos().getY());
-        nbtCompound.putInt("t", (int) (tick.triggerTick() - time));
-        nbtCompound.putInt("p", tick.priority().getIndex());
-        nbtCompound.putLong("s", tick.subTickOrder());
-        return nbtCompound;
-    }
-
-    public static NbtCompound writeSection(CircuitSection section) {
-        NbtCompound nbt = new NbtCompound();
-        nbt.put(COMPONENT_STATES_TAG, CircuitSection.PALETTE_CODEC.encodeStart(NbtOps.INSTANCE, section.getComponentStateContainer()).getOrThrow());
-        return nbt;
     }
 }

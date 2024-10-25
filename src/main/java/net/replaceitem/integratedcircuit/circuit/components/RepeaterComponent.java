@@ -105,11 +105,6 @@ public class RepeaterComponent extends AbstractRedstoneGateComponent {
     }
 
     @Override
-    public boolean isSolidBlock(Circuit circuit, ComponentPos pos) {
-        return false;
-    }
-
-    @Override
     public void appendProperties(StateManager.Builder<Component, ComponentState> builder) {
         super.appendProperties(builder);
         builder.add(DELAY, LOCKED);

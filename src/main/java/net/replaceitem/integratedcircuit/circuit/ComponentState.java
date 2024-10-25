@@ -3,17 +3,11 @@ package net.replaceitem.integratedcircuit.circuit;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectArrayMap;
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.state.State;
 import net.minecraft.state.property.Property;
 import net.minecraft.text.Text;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.random.Random;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldAccess;
 import net.replaceitem.integratedcircuit.IntegratedCircuit;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
@@ -46,16 +40,10 @@ public class ComponentState extends State<Component,ComponentState> {
         return this.owner.emitsRedstonePower(this);
     }
 
-    /**
-     * {@link AbstractBlock.AbstractBlockState#getStateForNeighborUpdate(net.minecraft.util.math.Direction, BlockState, WorldAccess, BlockPos, BlockPos)}
-     */
     public ComponentState getStateForNeighborUpdate(FlatDirection direction, ComponentState neighborState, Circuit circuit, ComponentPos pos, ComponentPos neighborPos) {
         return this.owner.getStateForNeighborUpdate(this, direction, neighborState, circuit, pos, neighborPos);
     }
 
-    /**
-     * {@link AbstractBlock.AbstractBlockState#neighborUpdate(World, BlockPos, Block, BlockPos, boolean)}
-     */
     public void neighborUpdate(Circuit world, ComponentPos pos, Component sourceBlock, ComponentPos sourcePos, boolean notify) {
         this.owner.neighborUpdate(this, world, pos, sourceBlock, sourcePos, notify);
     }
