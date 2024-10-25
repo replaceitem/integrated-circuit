@@ -15,6 +15,8 @@ public class IntegratedCircuitCloningRecipe extends SpecialCraftingRecipe {
     public IntegratedCircuitCloningRecipe(CraftingRecipeCategory category) {
         super(category);
     }
+    
+    public static ComponentType<NbtComponent> CLONED_COMPONENT = IntegratedCircuit.CIRCUIT_DATA;
 
     @Override
     public boolean matches(CraftingRecipeInput inventory, World world) {
@@ -27,7 +29,7 @@ public class IntegratedCircuitCloningRecipe extends SpecialCraftingRecipe {
             if(stack.isEmpty()) continue;
             if(!(stack.getItem() instanceof IntegratedCircuitItem)) return false;
 
-            if(stack.contains(DataComponentTypes.BLOCK_ENTITY_DATA)) {
+            if(stack.contains(CLONED_COMPONENT)) {
                 if(sourceIndex != -1) return false;// Only one should have data
                 sourceIndex = i;
             } else {
@@ -50,7 +52,7 @@ public class IntegratedCircuitCloningRecipe extends SpecialCraftingRecipe {
             if(stack.isEmpty()) continue;
             if(!(stack.getItem() instanceof IntegratedCircuitItem)) return ItemStack.EMPTY;
 
-            if(stack.contains(DataComponentTypes.BLOCK_ENTITY_DATA)) {
+            if(stack.contains(CLONED_COMPONENT)) {
                 if(sourceIndex != -1) return ItemStack.EMPTY; // Only one should have NBT data
                 sourceIndex = i;
             } else {
@@ -64,7 +66,7 @@ public class IntegratedCircuitCloningRecipe extends SpecialCraftingRecipe {
             ItemStack dest = input.getStackInSlot(destIndex);
 
             ItemStack craftedStack = dest.copyWithCount(1);
-            craftedStack.set(DataComponentTypes.BLOCK_ENTITY_DATA, source.get(DataComponentTypes.BLOCK_ENTITY_DATA));
+            craftedStack.set(CLONED_COMPONENT, source.get(CLONED_COMPONENT));
             return craftedStack;
         }
         return ItemStack.EMPTY;
@@ -80,7 +82,7 @@ public class IntegratedCircuitCloningRecipe extends SpecialCraftingRecipe {
             if(stack.isEmpty()) continue;
             if(!(stack.getItem() instanceof IntegratedCircuitItem)) return remainder;
 
-            if(stack.contains(DataComponentTypes.BLOCK_ENTITY_DATA)) {
+            if(stack.contains(CLONED_COMPONENT)) {
                 remainder.set(i, stack.copyWithCount(1));
                 return remainder;
             }
