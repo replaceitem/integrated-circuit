@@ -31,7 +31,6 @@ public class IntegratedCircuitClient implements ClientModInitializer {
                 block.getPortRenderStrength(view, pos, circuitDirection)
             );
         }, IntegratedCircuit.Blocks.CIRCUITS);
-        ColorProviderRegistry.ITEM.register((stack, tintIndex) -> RedstoneWireBlock.getWireColor(0), IntegratedCircuit.Items.CIRCUITS);
         
         BlockEntityRendererFactories.register(IntegratedCircuit.INTEGRATED_CIRCUIT_BLOCK_ENTITY, IntegratedCircuitBlockEntityRenderer::new);
 
