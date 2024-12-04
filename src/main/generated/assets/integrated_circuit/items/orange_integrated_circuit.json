@@ -1,0 +1,24 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "integrated_circuit:block/orange_integrated_circuit",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": -11796480
+      },
+      {
+        "type": "minecraft:constant",
+        "value": -11796480
+      },
+      {
+        "type": "minecraft:constant",
+        "value": -11796480
+      },
+      {
+        "type": "minecraft:constant",
+        "value": -11796480
+      }
+    ]
+  }
+}

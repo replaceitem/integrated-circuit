@@ -3,14 +3,14 @@
   "parent": "block/thin_block",
   "ambientocclusion": false,
   "textures": {
-    "base_sides": "integrated_circuit:block/white_integrated_circuit_sides",
-    "base_sides_overlay": "integrated_circuit:block/integrated_circuit_sides_overlay",
-    "base_top": "integrated_circuit:block/white_integrated_circuit_top",
+    "sides": "integrated_circuit:block/white_integrated_circuit_sides",
+    "sides_overlay": "integrated_circuit:block/integrated_circuit_sides_overlay",
+    "top": "integrated_circuit:block/white_integrated_circuit_top",
     "base_top_overlay_north": "integrated_circuit:block/integrated_circuit_top_overlay_north",
     "base_top_overlay_east": "integrated_circuit:block/integrated_circuit_top_overlay_east",
     "base_top_overlay_south": "integrated_circuit:block/integrated_circuit_top_overlay_south",
     "base_top_overlay_west": "integrated_circuit:block/integrated_circuit_top_overlay_west",
-    "base_bottom": "minecraft:block/white_concrete",
+    "bottom": "minecraft:block/white_concrete",
     "box": "integrated_circuit:block/integrated_circuit_box",
     "box_overlay": "integrated_circuit:block/integrated_circuit_box_overlay",
     "particle": "integrated_circuit:block/white_integrated_circuit_top"
@@ -37,7 +37,7 @@
             0,  0,
             16, 2
           ],
-          "texture": "#base_sides",
+          "texture": "#sides",
           "cullface": "north"
         },
         "east": {
@@ -45,7 +45,7 @@
             0,  2,
             16, 4
           ],
-          "texture": "#base_sides",
+          "texture": "#sides",
           "cullface": "east"
         },
         "south": {
@@ -53,7 +53,7 @@
             0,  4,
             16, 6
           ],
-          "texture": "#base_sides",
+          "texture": "#sides",
           "cullface": "south"
         },
         "west": {
@@ -61,7 +61,7 @@
             0,  6,
             16, 8
           ],
-          "texture": "#base_sides",
+          "texture": "#sides",
           "cullface": "west"
         },
         "up": {
@@ -69,20 +69,20 @@
             0,  0,
             16, 16
           ],
-          "texture": "#base_top"
+          "texture": "#top"
         },
         "down": {
           "uv": [
             0,  0,
             16, 16
           ],
-          "texture": "#base_bottom",
+          "texture": "#bottom",
           "cullface": "down"
         }
       }
     },
     {
-      "name": "base_sides_overlay",
+      "name": "sides_overlay",
       "from": [
         0, 0, 0
       ],
@@ -95,7 +95,7 @@
             0,  0,
             16, 2
           ],
-          "texture": "#base_sides_overlay",
+          "texture": "#sides_overlay",
           "tintindex": 0,
           "cullface": "north"
         },
@@ -104,7 +104,7 @@
             0,  2,
             16, 4
           ],
-          "texture": "#base_sides_overlay",
+          "texture": "#sides_overlay",
           "tintindex": 1,
           "cullface": "east"
         },
@@ -113,7 +113,7 @@
             0,  4,
             16, 6
           ],
-          "texture": "#base_sides_overlay",
+          "texture": "#sides_overlay",
           "tintindex": 2,
           "cullface": "south"
         },
@@ -122,7 +122,7 @@
             0,  6,
             16, 8
           ],
-          "texture": "#base_sides_overlay",
+          "texture": "#sides_overlay",
           "tintindex": 3,
           "cullface": "west"
         }

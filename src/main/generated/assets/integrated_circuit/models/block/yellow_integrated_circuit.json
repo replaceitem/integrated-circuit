@@ -1,0 +1,9 @@
+{
+  "parent": "integrated_circuit:block/template_integrated_circuit",
+  "textures": {
+    "bottom": "minecraft:block/yellow_concrete",
+    "particle": "integrated_circuit:block/yellow_integrated_circuit_top",
+    "sides": "integrated_circuit:block/yellow_integrated_circuit_sides",
+    "top": "integrated_circuit:block/yellow_integrated_circuit_top"
+  }
+}

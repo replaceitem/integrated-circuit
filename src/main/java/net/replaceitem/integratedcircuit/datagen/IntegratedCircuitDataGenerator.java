@@ -9,5 +9,6 @@ public class IntegratedCircuitDataGenerator implements DataGeneratorEntrypoint {
         FabricDataGenerator.Pack pack = fabricDataGenerator.createPack();
         pack.addProvider(IntegratedCircuitRecipeGenerator.Provider::new);
         pack.addProvider(IntegratedCircuitLootTables::new);
+        pack.addProvider(ModelGenerator::new);
     }
 }

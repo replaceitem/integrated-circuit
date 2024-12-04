@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "integrated_circuit:block/lime_integrated_circuit",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "integrated_circuit:block/lime_integrated_circuit"
+    },
+    "facing=south": {
+      "model": "integrated_circuit:block/lime_integrated_circuit",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "integrated_circuit:block/lime_integrated_circuit",
+      "y": 270
+    }
+  }
+}
