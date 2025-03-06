@@ -46,7 +46,7 @@ public class CrossoverComponent extends AbstractConductingComponent {
     public Text getHoverInfoText(ComponentState state) {
         return Text.literal("─ ")
             .append(IntegratedCircuitScreen.getSignalStrengthText(state.get(POWER_X)))
-            .append("   │ ")
+            .append(" │ ")
             .append(IntegratedCircuitScreen.getSignalStrengthText(state.get(POWER_Y)));
     }
 

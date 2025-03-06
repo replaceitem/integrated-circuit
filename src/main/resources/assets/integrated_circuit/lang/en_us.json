@@ -36,6 +36,7 @@
   "block.integrated_circuit.black_integrated_circuit.empty": "Empty Black Integrated Circuit",
 
   "integrated_circuit.gui.screen_title": "Integrated Circuit Designer",
+  "integrated_circuit.gui.statusbar_no_info": "No information available",
 
   "integrated_circuit.component.integrated_circuit.air": "Air",
   "integrated_circuit.component.integrated_circuit.block": "Block",
@@ -54,6 +55,9 @@
   "integrated_circuit.component.integrated_circuit.lamp": "Lamp",
   "integrated_circuit.component.integrated_circuit.lectern": "Lectern",
   "integrated_circuit.component.integrated_circuit.copper_bulb": "Copper Bulb",
+
+  "integrated_circuit.component.integrated_circuit.port_output": "Output",
+  "integrated_circuit.component.integrated_circuit.port_input": "Input",
 
   "tag.block.integrated_circuit.integrated_circuits": "Integrated Circuits",
   "tag.item.integrated_circuit.integrated_circuits": "Integrated Circuits",

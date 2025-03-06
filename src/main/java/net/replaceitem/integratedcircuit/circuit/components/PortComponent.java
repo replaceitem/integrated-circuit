@@ -8,6 +8,7 @@ import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.EnumProperty;
 import net.minecraft.state.property.IntProperty;
 import net.minecraft.state.property.Properties;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.replaceitem.integratedcircuit.IntegratedCircuit;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
@@ -40,6 +41,19 @@ public class PortComponent extends AbstractWireComponent {
     @Override
     public @Nullable Identifier getToolTexture() {
         return null;
+    }
+
+    @Override
+    public Text getHoverInfoText(ComponentState state) {
+        int signalStrength = state.get(getPowerProperty());
+
+        return Text.translatable(
+                state.get(IS_OUTPUT)
+                    ? "integrated_circuit.component.integrated_circuit.port_output"
+                    : "integrated_circuit.component.integrated_circuit.port_input"
+            )
+            .append(" | ")
+            .append(IntegratedCircuitScreen.getSignalStrengthText(signalStrength));
     }
 
     @Override

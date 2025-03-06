@@ -16,11 +16,9 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.ColorHelper;
 import net.minecraft.util.math.RotationAxis;
 import net.replaceitem.integratedcircuit.IntegratedCircuit;
-import net.replaceitem.integratedcircuit.circuit.Circuit;
-import net.replaceitem.integratedcircuit.circuit.ClientCircuit;
-import net.replaceitem.integratedcircuit.circuit.Component;
-import net.replaceitem.integratedcircuit.circuit.ComponentState;
+import net.replaceitem.integratedcircuit.circuit.*;
 import net.replaceitem.integratedcircuit.circuit.components.FacingComponent;
+import net.replaceitem.integratedcircuit.circuit.components.PortComponent;
 import net.replaceitem.integratedcircuit.client.config.DefaultConfig;
 import net.replaceitem.integratedcircuit.client.gui.widget.ToolSelectionInfo;
 import net.replaceitem.integratedcircuit.client.gui.widget.Toolbox;
@@ -38,7 +36,7 @@ public class IntegratedCircuitScreen extends Screen {
     );
 
     protected static final int BACKGROUND_WIDTH = 302;
-    protected static final int BACKGROUND_HEIGHT = 237;
+    protected static final int BACKGROUND_HEIGHT = 250;
 
     public static final int COMPONENT_SIZE = 16;
     public static final int RENDER_COMPONENT_SIZE = 12;
@@ -58,6 +56,10 @@ public class IntegratedCircuitScreen extends Screen {
 
     private static final int TOOLBOX_X = 8;
     private static final int TOOLBOX_Y = 24;
+
+    private static final int STATUSBAR_X = 89;
+    private static final int STATUSBAR_Y = 234;
+    private static final int STATUSBAR_RIGHT_MARGIN = 8;
 
     private boolean startedDraggingInside = false;
 
@@ -131,7 +133,7 @@ public class IntegratedCircuitScreen extends Screen {
     public void render(DrawContext drawContext, int mouseX, int mouseY, float delta) {
         super.render(drawContext, mouseX, mouseY, delta);
         drawContext.drawText(this.textRenderer, this.title, this.titleX, this.titleY, 0x404040, false);
-//        this.renderHoverInfo(drawContext, mouseX, mouseY);
+        this.renderStatusBar(drawContext, mouseX, mouseY);
         this.renderContent(drawContext);
         this.renderCursorState(drawContext, mouseX, mouseY);
         this.customNameTextField.render(drawContext, mouseX, mouseY, delta);
@@ -153,12 +155,71 @@ public class IntegratedCircuitScreen extends Screen {
         );
     }
 
-    private void renderHoverInfo(DrawContext drawContext, int mouseX, int mouseY) {
+    private void renderStatusBar(DrawContext drawContext, int mouseX, int mouseY) {
         ComponentPos pos = getComponentPosAt(mouseX, mouseY);
         ComponentState componentState = circuit.getComponentState(pos);
-        Text text = componentState.getHoverInfoText();
-        int textWidth = textRenderer.getWidth(text);
-        drawContext.drawText(this.textRenderer, text, this.x + BACKGROUND_WIDTH - 6 - textWidth, this.titleY, 0x404040, false);
+        Component component = componentState.getComponent();
+
+        int gridX = getGridXAt(mouseX);
+        int gridY = getGridYAt(mouseY);
+
+        if (circuit.isInside(pos)) {
+            String componentName = "";
+
+            if (component != Components.AIR) {
+                componentName = component.getName().getString();
+            }
+
+            drawContext.drawText(
+                this.textRenderer,
+                Text.literal(
+                    String.format(
+                        "(%d, %d) %s",
+                        gridX,
+                        gridY,
+                        componentName
+                    )
+                ),
+                this.x + STATUSBAR_X,
+                this.y + STATUSBAR_Y,
+                0x404040,
+                false
+            );
+        } else if (componentState.getComponent() instanceof PortComponent portComponent) {
+            drawContext.drawText(
+                this.textRenderer,
+                portComponent.getName(),
+                this.x + STATUSBAR_X,
+                this.y + STATUSBAR_Y,
+                0x404040,
+                false
+            );
+        } else {
+            drawContext.drawText(
+                this.textRenderer,
+                Text.translatable("integrated_circuit.gui.statusbar_no_info"),
+                this.x + STATUSBAR_X,
+                this.y + STATUSBAR_Y,
+                0x404040,
+                false
+            );
+        }
+
+        if (component != Components.AIR) {
+            Text componentInfoText = componentState.getHoverInfoText();
+            if (!componentInfoText.getString().isEmpty()) {
+                int componentInfoWidth = this.textRenderer.getWidth(componentInfoText);
+
+                drawContext.drawText(
+                    this.textRenderer,
+                    componentInfoText,
+                    this.x + BACKGROUND_WIDTH - componentInfoWidth - STATUSBAR_RIGHT_MARGIN,
+                    this.y + STATUSBAR_Y,
+                    0x404040,
+                    false
+                );
+            }
+        }
     }
 
     public static Text getSignalStrengthText(int signalStrength) {
