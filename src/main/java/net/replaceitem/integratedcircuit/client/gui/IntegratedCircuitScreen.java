@@ -168,32 +168,34 @@ public class IntegratedCircuitScreen extends Screen {
         int gridX = getGridXAt(mouseX);
         int gridY = getGridYAt(mouseY);
 
+        Text leftSideText = null;
+        Text rightSideText = null;
+
         if (circuit.isInside(pos)) {
-            String componentName = "";
+            String componentName = component != Components.AIR
+                ? component.getName().getString()
+                : "";
 
-            if (component != Components.AIR) {
-                componentName = component.getName().getString();
-            }
-
-            drawContext.drawText(
-                this.textRenderer,
-                Text.literal(
-                    String.format(
-                        "(%d, %d) %s",
-                        gridX,
-                        gridY,
-                        componentName
-                    )
-                ),
-                this.x + STATUSBAR_X,
-                this.y + STATUSBAR_Y,
-                0x404040,
-                false
+            leftSideText = Text.literal(
+                String.format(
+                    "(%d, %d) %s",
+                    gridX,
+                    gridY,
+                    componentName
+                )
             );
         } else if (componentState.getComponent() instanceof PortComponent portComponent) {
+            leftSideText = portComponent.getName();
+        }
+
+        if (component != Components.AIR) {
+            rightSideText = componentState.getHoverInfoText();
+        }
+
+        if (leftSideText != null) {
             drawContext.drawText(
                 this.textRenderer,
-                portComponent.getName(),
+                leftSideText,
                 this.x + STATUSBAR_X,
                 this.y + STATUSBAR_Y,
                 0x404040,
@@ -201,20 +203,17 @@ public class IntegratedCircuitScreen extends Screen {
             );
         }
 
-        if (component != Components.AIR) {
-            Text componentInfoText = componentState.getHoverInfoText();
-            if (!componentInfoText.getString().isEmpty()) {
-                int componentInfoWidth = this.textRenderer.getWidth(componentInfoText);
+        if (rightSideText != null) {
+            int componentInfoWidth = this.textRenderer.getWidth(rightSideText);
 
-                drawContext.drawText(
-                    this.textRenderer,
-                    componentInfoText,
-                    this.x + BACKGROUND_WIDTH - componentInfoWidth - STATUSBAR_RIGHT_MARGIN,
-                    this.y + STATUSBAR_Y,
-                    0x404040,
-                    false
-                );
-            }
+            drawContext.drawText(
+                this.textRenderer,
+                rightSideText,
+                this.x + BACKGROUND_WIDTH - componentInfoWidth - STATUSBAR_RIGHT_MARGIN,
+                this.y + STATUSBAR_Y,
+                0x404040,
+                false
+            );
         }
     }
 
