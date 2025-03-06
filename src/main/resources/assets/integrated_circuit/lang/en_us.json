@@ -34,7 +34,9 @@
   "block.integrated_circuit.green_integrated_circuit.empty": "Empty Green Integrated Circuit",
   "block.integrated_circuit.red_integrated_circuit.empty": "Empty Red Integrated Circuit",
   "block.integrated_circuit.black_integrated_circuit.empty": "Empty Black Integrated Circuit",
-  
+
+  "integrated_circuit.gui.screen_title": "Integrated Circuit Designer",
+
   "integrated_circuit.component.integrated_circuit.air": "Air",
   "integrated_circuit.component.integrated_circuit.block": "Block",
   "integrated_circuit.component.integrated_circuit.wire": "Wire",

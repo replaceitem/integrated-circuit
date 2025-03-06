@@ -8,13 +8,13 @@ import net.minecraft.client.gui.Drawable;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.Selectable;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.ColorHelper;
 import net.minecraft.util.math.RotationAxis;
-
 import net.replaceitem.integratedcircuit.IntegratedCircuit;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
 import net.replaceitem.integratedcircuit.circuit.ClientCircuit;
@@ -27,9 +27,10 @@ import net.replaceitem.integratedcircuit.client.gui.widget.Toolbox;
 import net.replaceitem.integratedcircuit.network.packet.FinishEditingC2SPacket;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
-
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
+
+import java.util.Objects;
 
 public class IntegratedCircuitScreen extends Screen {
     public static final Identifier BACKGROUND_TEXTURE = IntegratedCircuit.id(
@@ -37,48 +38,74 @@ public class IntegratedCircuitScreen extends Screen {
     );
 
     protected static final int BACKGROUND_WIDTH = 302;
-    protected static final int BACKGROUND_HEIGHT = 232;
+    protected static final int BACKGROUND_HEIGHT = 237;
 
     public static final int COMPONENT_SIZE = 16;
     public static final int RENDER_COMPONENT_SIZE = 12;
 
     private static final float RENDER_SCALE = (((float) RENDER_COMPONENT_SIZE) / ((float) COMPONENT_SIZE));
 
+    private static final int TITLE_X = 8;
+    private static final int TITLE_Y = 9;
+
     private static final int GRID_X = 101;
-    private static final int GRID_Y = 31;
+    private static final int GRID_Y = 36;
+
+    private static final int CIRCUIT_NAME_TEXTBOX_X = 153;
+    private static final int CIRCUIT_NAME_TEXTBOX_Y = 9;
+    private static final int CIRCUIT_NAME_TEXTBOX_WIDTH = 132;
+    private static final int CIRCUIT_NAME_TEXTBOX_HEIGHT = 12;
 
     private static final int TOOLBOX_X = 8;
-    private static final int TOOLBOX_Y = 19;
+    private static final int TOOLBOX_Y = 24;
 
     private boolean startedDraggingInside = false;
-
-    protected Toolbox toolbox;
 
     protected int x, y;
     protected int titleX, titleY;
 
+    protected Toolbox toolbox;
+    protected TextFieldWidget customNameTextField;
+
+    protected Text customName;
     protected final ClientCircuit circuit;
 
     private FlatDirection cursorRotation = FlatDirection.NORTH;
-    @Nullable
-    private ComponentState cursorState = null;
+    private @Nullable ComponentState cursorState = null;
 
-    public IntegratedCircuitScreen(ClientCircuit circuit, Text name) {
-        super(name);
+    public IntegratedCircuitScreen(ClientCircuit circuit, Text customName) {
+        super(Text.translatable("integrated_circuit.gui.screen_title"));
 
         this.circuit = circuit;
-        this.toolbox = new Toolbox(this, TOOLBOX_X, TOOLBOX_Y);
+        this.customName = customName;
     }
 
     @Override
     protected void init() {
         this.x = (this.width - BACKGROUND_WIDTH) / 2;
         this.y = (this.height - BACKGROUND_HEIGHT) / 2;
-        this.titleX = this.x + 89;
-        this.titleY = this.y + 7;
+        this.titleX = this.x + TITLE_X;
+        this.titleY = this.y + TITLE_Y;
 
+        this.toolbox = new Toolbox(this, TOOLBOX_X, TOOLBOX_Y);
         this.toolbox.init();
         this.toolbox.registerToolSelectionSubscriber(this::updateToolSelection);
+
+        this.customNameTextField = new TextFieldWidget(
+            this.textRenderer,
+            this.x + CIRCUIT_NAME_TEXTBOX_X,
+            this.y + CIRCUIT_NAME_TEXTBOX_Y,
+            CIRCUIT_NAME_TEXTBOX_WIDTH,
+            CIRCUIT_NAME_TEXTBOX_HEIGHT,
+            this.customName
+        );
+
+        this.customNameTextField.setDrawsBackground(false);
+        this.customNameTextField.setMaxLength(50);
+        this.customNameTextField.setEditable(true);
+        this.customNameTextField.setText(this.customName.getString());
+        this.customNameTextField.setPlaceholder(Text.of("Enter circuit name..."));
+        this.addSelectableChild(this.customNameTextField);
     }
 
     public void updateToolSelection(ToolSelectionInfo selectionInfo) {
@@ -104,9 +131,10 @@ public class IntegratedCircuitScreen extends Screen {
     public void render(DrawContext drawContext, int mouseX, int mouseY, float delta) {
         super.render(drawContext, mouseX, mouseY, delta);
         drawContext.drawText(this.textRenderer, this.title, this.titleX, this.titleY, 0x404040, false);
-        this.renderHoverInfo(drawContext, mouseX, mouseY);
+//        this.renderHoverInfo(drawContext, mouseX, mouseY);
         this.renderContent(drawContext);
         this.renderCursorState(drawContext, mouseX, mouseY);
+        this.customNameTextField.render(drawContext, mouseX, mouseY, delta);
     }
 
     @Override
@@ -219,19 +247,25 @@ public class IntegratedCircuitScreen extends Screen {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (this.client == null) return false;
+        if (this.client == null)
+            return false;
+
         ComponentPos clickedPos = getComponentPosAt((int) mouseX, (int) mouseY);
 
+        if (customNameTextField.isFocused() && !customNameTextField.isMouseOver(mouseX, mouseY)) {
+            customNameTextField.setFocused(false);
+        }
 
         if (matchesMouse(DefaultConfig.config.getRotateKeybind(), button)) {
             rotateComponent(1);
             return true;
         }
 
+        boolean isInCircuit = circuit.isInside(clickedPos);
         boolean isPlace = matchesMouse(DefaultConfig.config.getPlaceKeybind(), button);
 
-        boolean isInCircuit = circuit.isInside(clickedPos);
         startedDraggingInside = false;
+
         if (isInCircuit) {
             boolean isDestroy = !isPlace && matchesMouse(DefaultConfig.config.getDestroyKeybind(), button);
             boolean isPick = !isDestroy && matchesMouse(DefaultConfig.config.getPickKeybind(), button);
@@ -246,11 +280,13 @@ public class IntegratedCircuitScreen extends Screen {
                 }
                 return true;
             }
+
             if (isDestroy) {
                 breakComponent(clickedPos);
                 startedDraggingInside = true;
                 return true;
             }
+
             if (isPick) {
                 ComponentState state = circuit.getComponentState(clickedPos);
                 Component component = state.getComponent();
@@ -264,6 +300,7 @@ public class IntegratedCircuitScreen extends Screen {
                 return true;
             }
         }
+
         return super.mouseClicked(mouseX, mouseY, button);
     }
 
@@ -293,6 +330,13 @@ public class IntegratedCircuitScreen extends Screen {
 
     private void deselectPalette() {
         toolbox.deselectTool();
+    }
+
+    private void updateCircuitName(String oldText, String newText) {
+        if (!Objects.equals(oldText, newText)) {
+            customName = Text.of(newText);
+            circuit.rename(customName);
+        }
     }
 
     private void updateCursorState(@Nullable Component component) {
@@ -350,7 +394,40 @@ public class IntegratedCircuitScreen extends Screen {
     }
 
     @Override
+    public boolean charTyped(char chr, int modifiers) {
+        String oldText = this.customNameTextField.getText();
+
+        if (this.customNameTextField.charTyped(chr, modifiers)) {
+            updateCircuitName(
+                oldText,
+                this.customNameTextField.getText()
+            );
+            return true;
+        }
+
+        return false;
+    }
+
+    @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (this.customNameTextField.isFocused()) {
+            if (keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER || keyCode == GLFW.GLFW_KEY_ESCAPE) {
+                this.customNameTextField.setFocused(false);
+                return true;
+            } else {
+                String oldText = this.customNameTextField.getText();
+
+                if (this.customNameTextField.keyPressed(keyCode, scanCode, modifiers)) {
+                    updateCircuitName(
+                        oldText,
+                        this.customNameTextField.getText()
+                    );
+                }
+
+                return true;
+            }
+        }
+
         if (matchesKey(DefaultConfig.config.getRotateKeybind(), keyCode, scanCode)) {
             rotateComponent(1);
             return true;

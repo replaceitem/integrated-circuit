@@ -17,15 +17,17 @@ import net.replaceitem.integratedcircuit.circuit.context.ClientWorldClientCircui
 public record EditIntegratedCircuitS2CPacket(
         BlockPos pos,
         Text name,
+        Text customName,
         NbtCompound circuitNbt
 ) implements CustomPayload {
     public static final CustomPayload.Id<EditIntegratedCircuitS2CPacket> ID = new CustomPayload.Id<>(IntegratedCircuit.id("edit_integrated_circuit_s2c_packet"));
 
     public static final PacketCodec<RegistryByteBuf, EditIntegratedCircuitS2CPacket> PACKET_CODEC = PacketCodec.tuple(
-            BlockPos.PACKET_CODEC, EditIntegratedCircuitS2CPacket::pos,
-            TextCodecs.PACKET_CODEC, EditIntegratedCircuitS2CPacket::name,
-            PacketCodecs.NBT_COMPOUND, EditIntegratedCircuitS2CPacket::circuitNbt, // TODO use packet codec for circuit
-            EditIntegratedCircuitS2CPacket::new
+        BlockPos.PACKET_CODEC, EditIntegratedCircuitS2CPacket::pos,
+        TextCodecs.PACKET_CODEC, EditIntegratedCircuitS2CPacket::name,
+        TextCodecs.PACKET_CODEC, EditIntegratedCircuitS2CPacket::customName,
+        PacketCodecs.NBT_COMPOUND, EditIntegratedCircuitS2CPacket::circuitNbt, // TODO use packet codec for circuit
+        EditIntegratedCircuitS2CPacket::new
     );
     
     public ClientCircuit getClientCircuit(ClientWorld world, BlockPos pos) {

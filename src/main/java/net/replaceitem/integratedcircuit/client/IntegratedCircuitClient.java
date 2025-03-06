@@ -12,6 +12,7 @@ import net.replaceitem.integratedcircuit.IntegratedCircuitBlock;
 import net.replaceitem.integratedcircuit.IntegratedCircuitBlockEntityRenderer;
 import net.replaceitem.integratedcircuit.client.config.DefaultConfig;
 import net.replaceitem.integratedcircuit.network.ClientPacketHandler;
+import net.replaceitem.integratedcircuit.network.packet.CircuitNameUpdateS2CPacket;
 import net.replaceitem.integratedcircuit.network.packet.ComponentUpdateS2CPacket;
 import net.replaceitem.integratedcircuit.network.packet.EditIntegratedCircuitS2CPacket;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
@@ -36,6 +37,7 @@ public class IntegratedCircuitClient implements ClientModInitializer {
 
         DefaultConfig.initialize();
 
+        ClientPlayNetworking.registerGlobalReceiver(CircuitNameUpdateS2CPacket.ID, ClientPacketHandler::receiveCircuitNameUpdatePacket);
         ClientPlayNetworking.registerGlobalReceiver(EditIntegratedCircuitS2CPacket.ID, ClientPacketHandler::receiveEditIntegratedCircuitPacket);
         ClientPlayNetworking.registerGlobalReceiver(ComponentUpdateS2CPacket.ID, ClientPacketHandler::receiveComponentUpdatePacket);
     }

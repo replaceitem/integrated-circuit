@@ -231,12 +231,15 @@ public class IntegratedCircuit implements ModInitializer {
         PayloadTypeRegistry.playC2S().register(ComponentInteractionC2SPacket.ID, ComponentInteractionC2SPacket.PACKET_CODEC);
         PayloadTypeRegistry.playC2S().register(FinishEditingC2SPacket.ID, FinishEditingC2SPacket.PACKET_CODEC);
         PayloadTypeRegistry.playC2S().register(PlaceComponentC2SPacket.ID, PlaceComponentC2SPacket.PACKET_CODEC);
+        PayloadTypeRegistry.playC2S().register(RenameCircuitC2SPacket.ID, RenameCircuitC2SPacket.PACKET_CODEC);
 
+        PayloadTypeRegistry.playS2C().register(CircuitNameUpdateS2CPacket.ID, CircuitNameUpdateS2CPacket.PACKET_CODEC);
         PayloadTypeRegistry.playS2C().register(ComponentUpdateS2CPacket.ID, ComponentUpdateS2CPacket.PACKET_CODEC);
         PayloadTypeRegistry.playS2C().register(EditIntegratedCircuitS2CPacket.ID, EditIntegratedCircuitS2CPacket.PACKET_CODEC);
 
         ServerPlayNetworking.registerGlobalReceiver(ComponentInteractionC2SPacket.ID, ServerPacketHandler::receiveComponentInteraction);
         ServerPlayNetworking.registerGlobalReceiver(FinishEditingC2SPacket.ID, ServerPacketHandler::receiveFinishEditingPacket);
         ServerPlayNetworking.registerGlobalReceiver(PlaceComponentC2SPacket.ID, ServerPacketHandler::receivePlaceComponentPacket);
+        ServerPlayNetworking.registerGlobalReceiver(RenameCircuitC2SPacket.ID, ServerPacketHandler::receiveRenameCircuitPacket);
     }
 }
