@@ -11,14 +11,17 @@ import net.minecraft.util.math.random.Random;
 import net.replaceitem.integratedcircuit.IntegratedCircuit;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
 import net.replaceitem.integratedcircuit.circuit.Component;
-import net.replaceitem.integratedcircuit.circuit.ServerCircuit;
 import net.replaceitem.integratedcircuit.circuit.ComponentState;
+import net.replaceitem.integratedcircuit.circuit.ServerCircuit;
 import net.replaceitem.integratedcircuit.client.gui.IntegratedCircuitScreen;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
 import org.jetbrains.annotations.Nullable;
 
 public class ObserverComponent extends FacingComponent {
+    public static final Identifier ITEM_TEXTURE = IntegratedCircuit.id("textures/integrated_circuit/observer.png");
+    public static final Identifier TOOL_TEXTURE = IntegratedCircuit.id("textures/gui/newui/toolbox/icons/observer.png");
+    public static final Identifier TEXTURE_ON = IntegratedCircuit.id("textures/integrated_circuit/observer_on.png");
 
     public static final BooleanProperty POWERED = Properties.POWERED;
 
@@ -26,13 +29,15 @@ public class ObserverComponent extends FacingComponent {
         super(settings);
         this.setDefaultState(this.getStateManager().getDefaultState().with(FACING, FlatDirection.NORTH).with(POWERED, false));
     }
-    
-    public static final Identifier TEXTURE = IntegratedCircuit.id("textures/integrated_circuit/observer.png");
-    public static final Identifier TEXTURE_ON = IntegratedCircuit.id("textures/integrated_circuit/observer_on.png");
 
     @Override
     public @Nullable Identifier getItemTexture() {
-        return TEXTURE;
+        return ITEM_TEXTURE;
+    }
+
+    @Override
+    public @Nullable Identifier getToolTexture() {
+        return TOOL_TEXTURE;
     }
 
     @Override
@@ -42,7 +47,7 @@ public class ObserverComponent extends FacingComponent {
 
     @Override
     public void render(DrawContext drawContext, int x, int y, float a, ComponentState state) {
-        IntegratedCircuitScreen.renderComponentTexture(drawContext, state.get(POWERED) ? TEXTURE_ON : TEXTURE, x, y, state.get(FACING).getOpposite().getIndex(), a);
+        IntegratedCircuitScreen.renderComponentTexture(drawContext, state.get(POWERED) ? TEXTURE_ON : ITEM_TEXTURE, x, y, state.get(FACING).getOpposite().getIndex(), a);
     }
 
     @Override

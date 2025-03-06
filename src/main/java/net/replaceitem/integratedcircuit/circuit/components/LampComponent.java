@@ -18,10 +18,11 @@ import net.replaceitem.integratedcircuit.util.FlatDirection;
 import org.jetbrains.annotations.Nullable;
 
 public class LampComponent extends Component {
-    public static final BooleanProperty LIT = Properties.LIT;
-
-    public static final Identifier TEXTURE = IntegratedCircuit.id("textures/integrated_circuit/lamp.png");
+    public static final Identifier ITEM_TEXTURE = IntegratedCircuit.id("textures/integrated_circuit/lamp.png");
+    public static final Identifier TOOL_TEXTURE = IntegratedCircuit.id("textures/gui/newui/toolbox/icons/lamp.png");
     public static final Identifier TEXTURE_ON = IntegratedCircuit.id("textures/integrated_circuit/lamp_on.png");
+
+    public static final BooleanProperty LIT = Properties.LIT;
 
     public LampComponent(Settings settings) {
         super(settings);
@@ -30,12 +31,17 @@ public class LampComponent extends Component {
 
     @Override
     public @Nullable Identifier getItemTexture() {
-        return TEXTURE;
+        return ITEM_TEXTURE;
+    }
+
+    @Override
+    public @Nullable Identifier getToolTexture() {
+        return TOOL_TEXTURE;
     }
 
     @Override
     public void render(DrawContext drawContext, int x, int y, float a, ComponentState state) {
-        Identifier texture = state.get(LIT) ? TEXTURE_ON : TEXTURE;
+        Identifier texture = state.get(LIT) ? TEXTURE_ON : ITEM_TEXTURE;
         IntegratedCircuitScreen.renderComponentTexture(drawContext, texture, x, y, 0, a);
     }
 

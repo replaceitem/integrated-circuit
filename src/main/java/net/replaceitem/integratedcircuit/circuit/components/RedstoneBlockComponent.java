@@ -13,15 +13,21 @@ import net.replaceitem.integratedcircuit.util.FlatDirection;
 import org.jetbrains.annotations.Nullable;
 
 public class RedstoneBlockComponent extends Component {
+    public static final Identifier ITEM_TEXTURE = IntegratedCircuit.id("textures/integrated_circuit/redstone_block.png");
+    public static final Identifier TOOL_TEXTURE = IntegratedCircuit.id("textures/gui/newui/toolbox/icons/redstone_block.png");
+
     public RedstoneBlockComponent(Settings settings) {
         super(settings);
     }
 
-    public static final Identifier TEXTURE = IntegratedCircuit.id("textures/integrated_circuit/redstone_block.png");
-
     @Override
     public @Nullable Identifier getItemTexture() {
-        return TEXTURE;
+        return ITEM_TEXTURE;
+    }
+
+    @Override
+    public @Nullable Identifier getToolTexture() {
+        return TOOL_TEXTURE;
     }
 
     @Override
@@ -31,7 +37,7 @@ public class RedstoneBlockComponent extends Component {
 
     @Override
     public void render(DrawContext drawContext, int x, int y, float a, ComponentState state) {
-        IntegratedCircuitScreen.renderComponentTexture(drawContext, TEXTURE, x, y, 0, a);
+        IntegratedCircuitScreen.renderComponentTexture(drawContext, ITEM_TEXTURE, x, y, 0, a);
     }
 
     @Override

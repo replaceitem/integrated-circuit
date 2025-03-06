@@ -25,6 +25,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Map;
 
 public class WireComponent extends AbstractWireComponent {
+    private static final Identifier ITEM_TEXTURE = Identifier.ofVanilla("textures/item/redstone.png");
+    private static final Identifier TOOL_TEXTURE = IntegratedCircuit.id("textures/gui/newui/toolbox/icons/redstone.png");
+    private static final Identifier TEXTURE_DOT = IntegratedCircuit.id("textures/integrated_circuit/wire_dot.png");
 
     public static final BooleanProperty CONNECTED_NORTH = BooleanProperty.of("connected_north");
     public static final BooleanProperty CONNECTED_EAST = BooleanProperty.of("connected_east");
@@ -32,7 +35,6 @@ public class WireComponent extends AbstractWireComponent {
     public static final BooleanProperty CONNECTED_WEST = BooleanProperty.of("connected_west");
     
     public static final IntProperty POWER = Properties.POWER;
-
 
     public static final Map<FlatDirection, BooleanProperty> DIRECTION_TO_CONNECTION_PROPERTY = Maps.newEnumMap(ImmutableMap.of(
             FlatDirection.NORTH, CONNECTED_NORTH,
@@ -60,9 +62,6 @@ public class WireComponent extends AbstractWireComponent {
                 .with(CONNECTED_WEST, true)
                 .with(POWER, 0);
     }
-
-    private static final Identifier ITEM_TEXTURE = Identifier.ofVanilla("textures/item/redstone.png");
-    private static final Identifier TEXTURE_DOT = IntegratedCircuit.id("textures/integrated_circuit/wire_dot.png");
     
     @Override
     public ComponentState getPlacementState(Circuit circuit, ComponentPos pos, FlatDirection rotation) {
@@ -72,6 +71,11 @@ public class WireComponent extends AbstractWireComponent {
     @Override
     public @Nullable Identifier getItemTexture() {
         return ITEM_TEXTURE;
+    }
+
+    @Override
+    public @Nullable Identifier getToolTexture() {
+        return TOOL_TEXTURE;
     }
 
     @Override

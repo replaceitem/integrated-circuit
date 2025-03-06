@@ -19,6 +19,13 @@ import net.replaceitem.integratedcircuit.util.FlatDirection;
 import org.jetbrains.annotations.Nullable;
 
 public class RepeaterComponent extends AbstractRedstoneGateComponent {
+    private static final Identifier ITEM_TEXTURE = Identifier.ofVanilla("textures/item/repeater.png");
+    private static final Identifier TOOL_TEXTURE = IntegratedCircuit.id("textures/gui/newui/toolbox/icons/repeater.png");
+    private static final Identifier TEXTURE_OFF = IntegratedCircuit.id("textures/integrated_circuit/repeater_off.png");
+    private static final Identifier TEXTURE_ON = IntegratedCircuit.id("textures/integrated_circuit/repeater_on.png");
+    private static final Identifier TEXTURE_TORCH_OFF = IntegratedCircuit.id("textures/integrated_circuit/torch_top_off.png");
+    private static final Identifier TEXTURE_TORCH_ON = IntegratedCircuit.id("textures/integrated_circuit/torch_top_on.png");
+    private static final Identifier TEXTURE_BAR = IntegratedCircuit.id("textures/integrated_circuit/repeater_bar.png");
 
     public static final IntProperty DELAY = Properties.DELAY;
     public static final BooleanProperty LOCKED = Properties.LOCKED;
@@ -28,15 +35,10 @@ public class RepeaterComponent extends AbstractRedstoneGateComponent {
         this.setDefaultState(this.getStateManager().getDefaultState().with(FACING, FlatDirection.NORTH).with(POWERED, false).with(DELAY, 1).with(LOCKED, false));
     }
 
-    private static final Identifier ITEM_TEXTURE = Identifier.ofVanilla("textures/item/repeater.png");
-
-    public static final Identifier TEXTURE_OFF = IntegratedCircuit.id("textures/integrated_circuit/repeater_off.png");
-    public static final Identifier TEXTURE_ON = IntegratedCircuit.id("textures/integrated_circuit/repeater_on.png");
-
-    public static final Identifier TEXTURE_TORCH_OFF = IntegratedCircuit.id("textures/integrated_circuit/torch_top_off.png");
-    public static final Identifier TEXTURE_TORCH_ON = IntegratedCircuit.id("textures/integrated_circuit/torch_top_on.png");
-    public static final Identifier TEXTURE_BAR = IntegratedCircuit.id("textures/integrated_circuit/repeater_bar.png");
-
+    @Override
+    public @Nullable Identifier getToolTexture() {
+        return TOOL_TEXTURE;
+    }
 
     @Override
     public Text getHoverInfoText(ComponentState state) {

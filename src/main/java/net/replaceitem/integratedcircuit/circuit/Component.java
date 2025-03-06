@@ -84,8 +84,9 @@ public abstract class Component {
     }
 
     public abstract @Nullable Identifier getItemTexture();
-    public abstract void render(DrawContext drawContext, int x, int y, float a, ComponentState state);
+    public abstract @Nullable Identifier getToolTexture();
 
+    public abstract void render(DrawContext drawContext, int x, int y, float a, ComponentState state);
 
     public static void replace(ComponentState state, ComponentState newState, Circuit world, ComponentPos pos, int flags) {
         replace(state, newState, world, pos, flags, 512);

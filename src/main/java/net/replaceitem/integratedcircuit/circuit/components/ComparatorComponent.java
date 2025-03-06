@@ -25,6 +25,12 @@ import net.replaceitem.integratedcircuit.util.FlatDirection;
 import org.jetbrains.annotations.Nullable;
 
 public class ComparatorComponent extends AbstractRedstoneGateComponent {
+    private static final Identifier ITEM_TEXTURE = Identifier.ofVanilla("textures/item/comparator.png");
+    private static final Identifier TOOL_TEXTURE = IntegratedCircuit.id("textures/gui/newui/toolbox/icons/comparator.png");
+    private static final Identifier TEXTURE = IntegratedCircuit.id("textures/integrated_circuit/comparator.png");
+    private static final Identifier TEXTURE_ON = IntegratedCircuit.id("textures/integrated_circuit/comparator_on.png");
+    private static final Identifier TEXTURE_TORCH_OFF = IntegratedCircuit.id("textures/integrated_circuit/torch_top_off.png");
+    private static final Identifier TEXTURE_TORCH_ON = IntegratedCircuit.id("textures/integrated_circuit/torch_top_on.png");
 
     public static final EnumProperty<ComparatorMode> MODE = Properties.COMPARATOR_MODE;
     public static final IntProperty OUTPUT_POWER = Properties.POWER;
@@ -34,17 +40,14 @@ public class ComparatorComponent extends AbstractRedstoneGateComponent {
         this.setDefaultState(this.getStateManager().getDefaultState().with(FACING, FlatDirection.NORTH).with(POWERED, false).with(MODE, ComparatorMode.COMPARE).with(OUTPUT_POWER, 0));
     }
 
-    private static final Identifier ITEM_TEXTURE = Identifier.ofVanilla("textures/item/comparator.png");
-
-    public static final Identifier TEXTURE = IntegratedCircuit.id("textures/integrated_circuit/comparator.png");
-    public static final Identifier TEXTURE_ON = IntegratedCircuit.id("textures/integrated_circuit/comparator_on.png");
-
-    public static final Identifier TEXTURE_TORCH_OFF = IntegratedCircuit.id("textures/integrated_circuit/torch_top_off.png");
-    public static final Identifier TEXTURE_TORCH_ON = IntegratedCircuit.id("textures/integrated_circuit/torch_top_on.png");
-
     @Override
     public @Nullable Identifier getItemTexture() {
         return ITEM_TEXTURE;
+    }
+
+    @Override
+    public @Nullable Identifier getToolTexture() {
+        return TOOL_TEXTURE;
     }
 
     @Override
@@ -58,7 +61,7 @@ public class ComparatorComponent extends AbstractRedstoneGateComponent {
         boolean powered = state.get(POWERED);
         int rot = state.get(FACING).getOpposite().getIndex();
         IntegratedCircuitScreen.renderComponentTexture(drawContext, powered ? TEXTURE_ON : TEXTURE, x, y, rot, a);
-        
+
         Identifier torchTexture = powered ? TEXTURE_TORCH_ON : TEXTURE_TORCH_OFF;
 
         IntegratedCircuitScreen.renderPartialTexture(drawContext, torchTexture, x, y, 3, 10, 4, 4, rot, a);
@@ -119,7 +122,7 @@ public class ComparatorComponent extends AbstractRedstoneGateComponent {
         } else if (power < 15 && offsetState.isSolidBlock(circuit, offsetPos)) {
             offsetPos = offsetPos.offset(direction);
             offsetState = circuit.getComponentState(offsetPos);
-            if(offsetState.hasComparatorOutput()) {
+            if (offsetState.hasComparatorOutput()) {
                 power = offsetState.getComparatorOutput(circuit, offsetPos);
             }
         }
