@@ -160,7 +160,6 @@ public class IntegratedCircuitBlock extends HorizontalFacingBlock implements Blo
                 serverPlayerEntity,
                 new EditIntegratedCircuitS2CPacket(
                     pos,
-                    integratedCircuitBlockEntity.getName(),
                     customName,
                     compound
                 )

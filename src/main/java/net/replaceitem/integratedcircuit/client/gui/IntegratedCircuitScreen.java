@@ -114,6 +114,7 @@ public class IntegratedCircuitScreen extends Screen {
         );
         this.addSelectableChild(this.customNameTextField);
         this.addDrawableChild(this.customNameTextField);
+        this.customNameTextField.setChangedListener(this::setCustomName);
     }
 
     public void updateToolSelection(ToolSelectionInfo selectionInfo) {
@@ -309,7 +310,7 @@ public class IntegratedCircuitScreen extends Screen {
         ComponentPos clickedPos = getComponentPosAt((int) mouseX, (int) mouseY);
 
         if (customNameTextField.isFocused() && !customNameTextField.isMouseOver(mouseX, mouseY)) {
-            customNameTextField.setFocused(false);
+            unfocusCustomNameTextField();
         }
 
         if (matchesMouse(DefaultConfig.config.getRotateKeybind(), button)) {
@@ -388,11 +389,13 @@ public class IntegratedCircuitScreen extends Screen {
         toolbox.deselectTool();
     }
 
-    private void updateCircuitName(String oldText, String newText) {
-        if (!Objects.equals(oldText, newText)) {
-            customName = Text.of(newText);
-            circuit.rename(customName);
-        }
+    private void setCustomName(String customName) {
+        this.customName = Text.literal(customName);
+    }
+
+    private void unfocusCustomNameTextField() {
+        this.customNameTextField.setFocused(false);
+        this.circuit.rename(customName);
     }
 
     private void updateCursorState(@Nullable Component component) {
@@ -450,36 +453,10 @@ public class IntegratedCircuitScreen extends Screen {
     }
 
     @Override
-    public boolean charTyped(char chr, int modifiers) {
-        String oldText = this.customNameTextField.getText();
-
-        if (this.customNameTextField.charTyped(chr, modifiers)) {
-            updateCircuitName(
-                oldText,
-                this.customNameTextField.getText()
-            );
-            return true;
-        }
-
-        return false;
-    }
-
-    @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         if (this.customNameTextField.isFocused()) {
             if (keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER || keyCode == GLFW.GLFW_KEY_ESCAPE) {
-                this.customNameTextField.setFocused(false);
-                return true;
-            } else {
-                String oldText = this.customNameTextField.getText();
-
-                if (this.customNameTextField.keyPressed(keyCode, scanCode, modifiers)) {
-                    updateCircuitName(
-                        oldText,
-                        this.customNameTextField.getText()
-                    );
-                }
-
+                unfocusCustomNameTextField();
                 return true;
             }
         }
