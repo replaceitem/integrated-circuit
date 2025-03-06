@@ -194,15 +194,6 @@ public class IntegratedCircuitScreen extends Screen {
                 0x404040,
                 false
             );
-        } else {
-            drawContext.drawText(
-                this.textRenderer,
-                Text.translatable("integrated_circuit.gui.statusbar_no_info"),
-                this.x + STATUSBAR_X,
-                this.y + STATUSBAR_Y,
-                0x404040,
-                false
-            );
         }
 
         if (component != Components.AIR) {

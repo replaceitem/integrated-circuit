@@ -37,7 +37,6 @@
 
   "integrated_circuit.gui.screen_title": "Integrated Circuit Designer",
   "integrated_circuit.gui.rename_field_placeholder": "Enter circuit name...",
-  "integrated_circuit.gui.statusbar_no_info": "No information available",
 
   "integrated_circuit.component.integrated_circuit.air": "Air",
   "integrated_circuit.component.integrated_circuit.block": "Block",
