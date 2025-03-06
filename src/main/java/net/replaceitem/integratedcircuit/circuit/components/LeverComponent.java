@@ -20,7 +20,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class LeverComponent extends FacingComponent {
     private static final Identifier ITEM_TEXTURE = Identifier.ofVanilla("textures/block/lever.png");
-    private static final Identifier TOOL_TEXTURE = IntegratedCircuit.id("textures/gui/newui/toolbox/icons/lever.png");
+    private static final Identifier TOOL_TEXTURE = IntegratedCircuit.id("toolbox/icons/lever");
     private static final Identifier TEXTURE_OFF = IntegratedCircuit.id("textures/integrated_circuit/lever_off.png");
     private static final Identifier TEXTURE_ON = IntegratedCircuit.id("textures/integrated_circuit/lever_on.png");
 

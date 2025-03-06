@@ -18,7 +18,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class CopperBulbComponent extends Component {
     private static final Identifier ITEM_TEXTURE = IntegratedCircuit.id("textures/integrated_circuit/copper_bulb.png");
-    private static final Identifier TOOL_TEXTURE = IntegratedCircuit.id("textures/gui/newui/toolbox/icons/copper_bulb.png");
+    private static final Identifier TOOL_TEXTURE = IntegratedCircuit.id("toolbox/icons/copper_bulb");
     private static final Identifier TEXTURE_LIT = IntegratedCircuit.id("textures/integrated_circuit/copper_bulb_lit.png");
     private static final Identifier TEXTURE_POWERED = IntegratedCircuit.id("textures/integrated_circuit/copper_bulb_powered.png");
     private static final Identifier TEXTURE_LIT_POWERED = IntegratedCircuit.id("textures/integrated_circuit/copper_bulb_lit_powered.png");

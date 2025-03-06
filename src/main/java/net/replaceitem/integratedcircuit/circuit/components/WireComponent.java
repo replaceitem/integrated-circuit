@@ -26,7 +26,7 @@ import java.util.Map;
 
 public class WireComponent extends AbstractWireComponent {
     private static final Identifier ITEM_TEXTURE = Identifier.ofVanilla("textures/item/redstone.png");
-    private static final Identifier TOOL_TEXTURE = IntegratedCircuit.id("textures/gui/newui/toolbox/icons/redstone.png");
+    private static final Identifier TOOL_TEXTURE = IntegratedCircuit.id("toolbox/icons/redstone");
     private static final Identifier TEXTURE_DOT = IntegratedCircuit.id("textures/integrated_circuit/wire_dot.png");
 
     public static final BooleanProperty CONNECTED_NORTH = BooleanProperty.of("connected_north");

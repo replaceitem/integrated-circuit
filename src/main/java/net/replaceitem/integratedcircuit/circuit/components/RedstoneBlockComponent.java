@@ -14,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class RedstoneBlockComponent extends Component {
     public static final Identifier ITEM_TEXTURE = IntegratedCircuit.id("textures/integrated_circuit/redstone_block.png");
-    public static final Identifier TOOL_TEXTURE = IntegratedCircuit.id("textures/gui/newui/toolbox/icons/redstone_block.png");
+    public static final Identifier TOOL_TEXTURE = IntegratedCircuit.id("toolbox/icons/redstone_block");
 
     public RedstoneBlockComponent(Settings settings) {
         super(settings);

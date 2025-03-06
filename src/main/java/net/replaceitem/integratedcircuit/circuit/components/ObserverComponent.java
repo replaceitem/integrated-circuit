@@ -20,7 +20,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class ObserverComponent extends FacingComponent {
     public static final Identifier ITEM_TEXTURE = IntegratedCircuit.id("textures/integrated_circuit/observer.png");
-    public static final Identifier TOOL_TEXTURE = IntegratedCircuit.id("textures/gui/newui/toolbox/icons/observer.png");
+    public static final Identifier TOOL_TEXTURE = IntegratedCircuit.id("toolbox/icons/observer");
     public static final Identifier TEXTURE_ON = IntegratedCircuit.id("textures/integrated_circuit/observer_on.png");
 
     public static final BooleanProperty POWERED = Properties.POWERED;

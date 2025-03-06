@@ -20,7 +20,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class LecternComponent extends Component {
     private static final Identifier ITEM_TEXTURE = IntegratedCircuit.id("textures/integrated_circuit/lectern.png");
-    private static final Identifier TOOL_TEXTURE = IntegratedCircuit.id("textures/gui/newui/toolbox/icons/lectern.png");
+    private static final Identifier TOOL_TEXTURE = IntegratedCircuit.id("toolbox/icons/lectern");
 
     public static final IntProperty PAGE = IntProperty.of("page", 1, 15);
     

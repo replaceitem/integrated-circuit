@@ -26,8 +26,8 @@ import org.jetbrains.annotations.Nullable;
 public class ButtonComponent extends FacingComponent {
     private static final Identifier ITEM_TEXTURE_STONE = IntegratedCircuit.id("textures/integrated_circuit/button_stone.png");
     private static final Identifier ITEM_TEXTURE_WOOD = IntegratedCircuit.id("textures/integrated_circuit/button_wood.png");
-    private static final Identifier TOOL_TEXTURE_STONE = IntegratedCircuit.id("textures/gui/newui/toolbox/icons/button_stone.png");
-    private static final Identifier TOOL_TEXTURE_WOOD = IntegratedCircuit.id("textures/gui/newui/toolbox/icons/button_wood.png");
+    private static final Identifier TOOL_TEXTURE_STONE = IntegratedCircuit.id("toolbox/icons/button_stone");
+    private static final Identifier TOOL_TEXTURE_WOOD = IntegratedCircuit.id("toolbox/icons/button_wood");
 
     public static final BooleanProperty POWERED = Properties.POWERED;
 

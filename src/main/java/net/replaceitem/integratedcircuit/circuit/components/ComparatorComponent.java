@@ -26,7 +26,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class ComparatorComponent extends AbstractRedstoneGateComponent {
     private static final Identifier ITEM_TEXTURE = Identifier.ofVanilla("textures/item/comparator.png");
-    private static final Identifier TOOL_TEXTURE = IntegratedCircuit.id("textures/gui/newui/toolbox/icons/comparator.png");
+    private static final Identifier TOOL_TEXTURE = IntegratedCircuit.id("toolbox/icons/comparator");
     private static final Identifier TEXTURE = IntegratedCircuit.id("textures/integrated_circuit/comparator.png");
     private static final Identifier TEXTURE_ON = IntegratedCircuit.id("textures/integrated_circuit/comparator_on.png");
     private static final Identifier TEXTURE_TORCH_OFF = IntegratedCircuit.id("textures/integrated_circuit/torch_top_off.png");

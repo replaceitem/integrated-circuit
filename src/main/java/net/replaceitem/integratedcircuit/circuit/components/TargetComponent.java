@@ -12,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class TargetComponent extends Component {
     public static final Identifier ITEM_TEXTURE = IntegratedCircuit.id("textures/integrated_circuit/target.png");
-    public static final Identifier TOOL_TEXTURE = IntegratedCircuit.id("textures/gui/newui/toolbox/icons/target.png");
+    public static final Identifier TOOL_TEXTURE = IntegratedCircuit.id("toolbox/icons/target");
 
     public TargetComponent(Settings settings) {
         super(settings);

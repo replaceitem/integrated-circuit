@@ -23,7 +23,7 @@ import java.util.WeakHashMap;
 
 public class TorchComponent extends FacingComponent {
     private static final Identifier ITEM_TEXTURE = Identifier.ofVanilla("textures/block/redstone_torch.png");
-    private static final Identifier TOOL_TEXTURE = IntegratedCircuit.id("textures/gui/newui/toolbox/icons/torch.png");
+    private static final Identifier TOOL_TEXTURE = IntegratedCircuit.id("toolbox/icons/torch");
     private static final Identifier TEXTURE = IntegratedCircuit.id("textures/integrated_circuit/torch.png");
     private static final Identifier TEXTURE_OFF = IntegratedCircuit.id("textures/integrated_circuit/torch_off.png");
 

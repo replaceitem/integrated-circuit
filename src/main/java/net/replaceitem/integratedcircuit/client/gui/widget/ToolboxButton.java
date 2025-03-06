@@ -65,19 +65,17 @@ public class ToolboxButton extends ClickableWidget {
         );
 
         Identifier toolTexture = component.getToolTexture();
-        if (toolTexture != null) renderPaletteItem(context, toolTexture);
+
+        if (toolTexture != null)
+            renderPaletteItem(context, toolTexture);
     }
 
     private void renderPaletteItem(DrawContext drawContext, Identifier itemTexture) {
-        drawContext.drawTexture(
+        drawContext.drawGuiTexture(
             RenderLayer::getGuiTextured,
             itemTexture,
             getX(),
             getY(),
-            0,
-            0,
-            SIZE,
-            SIZE,
             SIZE,
             SIZE
         );

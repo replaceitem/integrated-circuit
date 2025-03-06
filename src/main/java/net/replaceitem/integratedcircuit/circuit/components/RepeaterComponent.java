@@ -20,7 +20,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class RepeaterComponent extends AbstractRedstoneGateComponent {
     private static final Identifier ITEM_TEXTURE = Identifier.ofVanilla("textures/item/repeater.png");
-    private static final Identifier TOOL_TEXTURE = IntegratedCircuit.id("textures/gui/newui/toolbox/icons/repeater.png");
+    private static final Identifier TOOL_TEXTURE = IntegratedCircuit.id("toolbox/icons/repeater");
     private static final Identifier TEXTURE_OFF = IntegratedCircuit.id("textures/integrated_circuit/repeater_off.png");
     private static final Identifier TEXTURE_ON = IntegratedCircuit.id("textures/integrated_circuit/repeater_on.png");
     private static final Identifier TEXTURE_TORCH_OFF = IntegratedCircuit.id("textures/integrated_circuit/torch_top_off.png");

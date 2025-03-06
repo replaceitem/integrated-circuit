@@ -19,7 +19,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class LampComponent extends Component {
     public static final Identifier ITEM_TEXTURE = IntegratedCircuit.id("textures/integrated_circuit/lamp.png");
-    public static final Identifier TOOL_TEXTURE = IntegratedCircuit.id("textures/gui/newui/toolbox/icons/lamp.png");
+    public static final Identifier TOOL_TEXTURE = IntegratedCircuit.id("toolbox/icons/lamp");
     public static final Identifier TEXTURE_ON = IntegratedCircuit.id("textures/integrated_circuit/lamp_on.png");
 
     public static final BooleanProperty LIT = Properties.LIT;

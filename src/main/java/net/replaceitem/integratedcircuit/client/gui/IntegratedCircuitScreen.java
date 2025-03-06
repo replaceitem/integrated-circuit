@@ -32,7 +32,7 @@ import java.util.Objects;
 
 public class IntegratedCircuitScreen extends Screen {
     public static final Identifier BACKGROUND_TEXTURE = IntegratedCircuit.id(
-        "textures/gui/newui/container/integrated_circuit.png"
+        "textures/gui/container/integrated_circuit.png"
     );
 
     protected static final int BACKGROUND_WIDTH = 302;

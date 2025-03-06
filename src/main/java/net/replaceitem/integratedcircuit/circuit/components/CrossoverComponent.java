@@ -21,7 +21,7 @@ import java.util.HashSet;
 
 public class CrossoverComponent extends AbstractConductingComponent {
     private static final Identifier ITEM_TEXTURE = IntegratedCircuit.id("textures/integrated_circuit/crossover.png");
-    private static final Identifier TOOL_TEXTURE = IntegratedCircuit.id("textures/gui/newui/toolbox/icons/crossover.png");
+    private static final Identifier TOOL_TEXTURE = IntegratedCircuit.id("toolbox/icons/crossover");
     private static final Identifier TEXTURE_BRIDGE = IntegratedCircuit.id("textures/integrated_circuit/wire_bridge.png");
 
     public static final IntProperty POWER_X = IntProperty.of("power_x", 0, 15);
