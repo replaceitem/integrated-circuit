@@ -153,7 +153,7 @@ public class IntegratedCircuitBlock extends HorizontalFacingBlock implements Blo
             Text customName = integratedCircuitBlockEntity.getCustomName();
 
             if (customName == null) {
-                customName = Text.of("");
+                customName = Text.empty();
             }
 
             ServerPlayNetworking.send(

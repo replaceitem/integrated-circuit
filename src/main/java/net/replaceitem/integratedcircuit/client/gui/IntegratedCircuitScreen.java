@@ -106,7 +106,7 @@ public class IntegratedCircuitScreen extends Screen {
         this.customNameTextField.setMaxLength(50);
         this.customNameTextField.setEditable(true);
         this.customNameTextField.setText(this.customName.getString());
-        this.customNameTextField.setPlaceholder(Text.of("Enter circuit name..."));
+        this.customNameTextField.setPlaceholder(Text.translatable("integrated_circuit.gui.rename_field_placeholder"));
         this.addSelectableChild(this.customNameTextField);
     }
 
