@@ -106,7 +106,12 @@ public class IntegratedCircuitScreen extends Screen {
         this.customNameTextField.setMaxLength(50);
         this.customNameTextField.setEditable(true);
         this.customNameTextField.setText(this.customName.getString());
-        this.customNameTextField.setPlaceholder(Text.translatable("integrated_circuit.gui.rename_field_placeholder"));
+        this.customNameTextField.setPlaceholder(
+            Text.translatable("integrated_circuit.gui.rename_field_placeholder")
+                .styled(style ->
+                        style.withColor(0x9C9C9C)
+                             .withShadowColor(0x22222222))
+        );
         this.addSelectableChild(this.customNameTextField);
     }
 
