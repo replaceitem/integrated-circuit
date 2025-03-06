@@ -113,6 +113,7 @@ public class IntegratedCircuitScreen extends Screen {
                              .withShadowColor(0x22222222))
         );
         this.addSelectableChild(this.customNameTextField);
+        this.addDrawableChild(this.customNameTextField);
     }
 
     public void updateToolSelection(ToolSelectionInfo selectionInfo) {
@@ -141,7 +142,6 @@ public class IntegratedCircuitScreen extends Screen {
         this.renderStatusBar(drawContext, mouseX, mouseY);
         this.renderContent(drawContext);
         this.renderCursorState(drawContext, mouseX, mouseY);
-        this.customNameTextField.render(drawContext, mouseX, mouseY, delta);
     }
 
     @Override
