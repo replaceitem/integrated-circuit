@@ -19,9 +19,10 @@ import net.replaceitem.integratedcircuit.util.ComponentPos;
 import org.jetbrains.annotations.Nullable;
 
 public class LecternComponent extends Component {
+    private static final Identifier ITEM_TEXTURE = IntegratedCircuit.id("textures/integrated_circuit/lectern.png");
+    private static final Identifier TOOL_TEXTURE = IntegratedCircuit.id("toolbox/icons/lectern");
 
     public static final IntProperty PAGE = IntProperty.of("page", 1, 15);
-    private static final Identifier TEXTURE = IntegratedCircuit.id("textures/integrated_circuit/lectern.png");
     
     public LecternComponent(Settings settings) {
         super(settings);
@@ -30,12 +31,17 @@ public class LecternComponent extends Component {
 
     @Override
     public @Nullable Identifier getItemTexture() {
-        return TEXTURE;
+        return ITEM_TEXTURE;
+    }
+
+    @Override
+    public @Nullable Identifier getToolTexture() {
+        return TOOL_TEXTURE;
     }
 
     @Override
     public void render(DrawContext drawContext, int x, int y, float a, ComponentState state) {
-        IntegratedCircuitScreen.renderComponentTexture(drawContext, TEXTURE, x, y, 0, a);
+        IntegratedCircuitScreen.renderComponentTexture(drawContext, ITEM_TEXTURE, x, y, 0, a);
         TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
         String text = String.valueOf(state.get(PAGE));
         

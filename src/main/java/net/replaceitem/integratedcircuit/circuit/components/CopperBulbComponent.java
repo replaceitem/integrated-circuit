@@ -17,15 +17,15 @@ import net.replaceitem.integratedcircuit.util.ComponentPos;
 import org.jetbrains.annotations.Nullable;
 
 public class CopperBulbComponent extends Component {
-    
-    public static final BooleanProperty LIT = Properties.LIT;
-    public static final BooleanProperty POWERED = Properties.POWERED;
-    
-    private static final Identifier TEXTURE = IntegratedCircuit.id("textures/integrated_circuit/copper_bulb.png");
+    private static final Identifier ITEM_TEXTURE = IntegratedCircuit.id("textures/integrated_circuit/copper_bulb.png");
+    private static final Identifier TOOL_TEXTURE = IntegratedCircuit.id("toolbox/icons/copper_bulb");
     private static final Identifier TEXTURE_LIT = IntegratedCircuit.id("textures/integrated_circuit/copper_bulb_lit.png");
     private static final Identifier TEXTURE_POWERED = IntegratedCircuit.id("textures/integrated_circuit/copper_bulb_powered.png");
     private static final Identifier TEXTURE_LIT_POWERED = IntegratedCircuit.id("textures/integrated_circuit/copper_bulb_lit_powered.png");
-    
+
+    public static final BooleanProperty LIT = Properties.LIT;
+    public static final BooleanProperty POWERED = Properties.POWERED;
+
     public CopperBulbComponent(Settings settings) {
         super(settings);
         this.setDefaultState(this.getStateManager().getDefaultState().with(LIT, false).with(POWERED, false));
@@ -33,11 +33,16 @@ public class CopperBulbComponent extends Component {
 
     @Override
     public @Nullable Identifier getItemTexture() {
-        return TEXTURE;
+        return ITEM_TEXTURE;
     }
-    
+
+    @Override
+    public @Nullable Identifier getToolTexture() {
+        return TOOL_TEXTURE;
+    }
+
     private Identifier getTexture(boolean lit, boolean powered) {
-        return lit ? (powered ? TEXTURE_LIT_POWERED : TEXTURE_LIT) : (powered ? TEXTURE_POWERED : TEXTURE);
+        return lit ? (powered ? TEXTURE_LIT_POWERED : TEXTURE_LIT) : (powered ? TEXTURE_POWERED : ITEM_TEXTURE);
     }
 
     @Override
@@ -54,7 +59,7 @@ public class CopperBulbComponent extends Component {
 
     @Override
     public void neighborUpdate(ComponentState state, Circuit circuit, ComponentPos pos, Component sourceBlock, ComponentPos sourcePos, boolean notify) {
-        if(circuit instanceof ServerCircuit serverCircuit) {
+        if (circuit instanceof ServerCircuit serverCircuit) {
             update(state, serverCircuit, pos);
         }
     }

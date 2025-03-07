@@ -18,6 +18,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.Properties;
+import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.hit.BlockHitResult;
@@ -129,18 +130,40 @@ public class IntegratedCircuitBlock extends HorizontalFacingBlock implements Blo
 
     @Override
     protected ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
-        if(!world.isClient() && player instanceof ServerPlayerEntity serverPlayerEntity && world.getBlockEntity(pos) instanceof IntegratedCircuitBlockEntity integratedCircuitBlockEntity) {
+        if (!world.isClient() && player instanceof ServerPlayerEntity serverPlayerEntity && world.getBlockEntity(pos) instanceof IntegratedCircuitBlockEntity integratedCircuitBlockEntity) {
             ServerCircuit circuit = integratedCircuitBlockEntity.getCircuit();
-            if(circuit == null) return ActionResult.FAIL;
+
+            if (circuit == null)
+                return ActionResult.FAIL;
+
             DataResult<NbtElement> circuitNbt = CircuitSerializer.writeCircuit(circuit);
-            if(circuitNbt.error().isPresent()) {
+
+            if (circuitNbt.error().isPresent()) {
                 IntegratedCircuit.LOGGER.error(circuitNbt.error().get().message());
                 return ActionResult.FAIL;
             }
+
             NbtElement nbtElement = circuitNbt.result().orElseThrow();
-            if(!(nbtElement instanceof NbtCompound compound)) return ActionResult.FAIL;
+
+            if (!(nbtElement instanceof NbtCompound compound))
+                return ActionResult.FAIL;
+
             integratedCircuitBlockEntity.addEditor(serverPlayerEntity);
-            ServerPlayNetworking.send(serverPlayerEntity, new EditIntegratedCircuitS2CPacket(pos, integratedCircuitBlockEntity.getName(), compound));
+
+            Text customName = integratedCircuitBlockEntity.getCustomName();
+
+            if (customName == null) {
+                customName = Text.empty();
+            }
+
+            ServerPlayNetworking.send(
+                serverPlayerEntity,
+                new EditIntegratedCircuitS2CPacket(
+                    pos,
+                    customName,
+                    compound
+                )
+            );
         }
         return ActionResult.SUCCESS;
     }

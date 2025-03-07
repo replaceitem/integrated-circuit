@@ -11,12 +11,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.random.Random;
 import net.replaceitem.integratedcircuit.IntegratedCircuit;
-import net.replaceitem.integratedcircuit.circuit.Circuit;
-import net.replaceitem.integratedcircuit.circuit.CircuitNeighborUpdater;
-import net.replaceitem.integratedcircuit.circuit.Component;
-import net.replaceitem.integratedcircuit.circuit.ComponentState;
-import net.replaceitem.integratedcircuit.circuit.Components;
-import net.replaceitem.integratedcircuit.circuit.ServerCircuit;
+import net.replaceitem.integratedcircuit.circuit.*;
 import net.replaceitem.integratedcircuit.client.gui.IntegratedCircuitScreen;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
@@ -27,20 +22,19 @@ import java.util.Map;
 import java.util.WeakHashMap;
 
 public class TorchComponent extends FacingComponent {
+    private static final Identifier ITEM_TEXTURE = Identifier.ofVanilla("textures/block/redstone_torch.png");
+    private static final Identifier TOOL_TEXTURE = IntegratedCircuit.id("toolbox/icons/torch");
+    private static final Identifier TEXTURE = IntegratedCircuit.id("textures/integrated_circuit/torch.png");
+    private static final Identifier TEXTURE_OFF = IntegratedCircuit.id("textures/integrated_circuit/torch_off.png");
 
     public static final BooleanProperty LIT = Properties.LIT;
+
+    private static final Map<ServerCircuit, List<BurnoutEntry>> BURNOUT_MAP = new WeakHashMap<>();
 
     public TorchComponent(Settings settings) {
         super(settings);
         this.setDefaultState(this.getDefaultState().with(LIT, true));
     }
-
-    private static final Identifier ITEM_TEXTURE = Identifier.ofVanilla("textures/block/redstone_torch.png");
-
-    public static final Identifier TEXTURE = IntegratedCircuit.id("textures/integrated_circuit/torch.png");
-    public static final Identifier TEXTURE_OFF = IntegratedCircuit.id("textures/integrated_circuit/torch_off.png");
-
-    private static final Map<ServerCircuit, List<BurnoutEntry>> BURNOUT_MAP = new WeakHashMap<>();
 
     @Override
     public ComponentState getPlacementState(Circuit circuit, ComponentPos pos, FlatDirection rotation) {
@@ -48,7 +42,7 @@ public class TorchComponent extends FacingComponent {
         if (!componentState.canPlaceAt(circuit, pos)) {
             for (FlatDirection value : CircuitNeighborUpdater.UPDATE_ORDER) {
                 componentState = componentState.with(FACING, value);
-                if(componentState.canPlaceAt(circuit, pos)) return componentState;
+                if (componentState.canPlaceAt(circuit, pos)) return componentState;
             }
             return null;
         }
@@ -61,13 +55,18 @@ public class TorchComponent extends FacingComponent {
     }
 
     @Override
+    public @Nullable Identifier getToolTexture() {
+        return TOOL_TEXTURE;
+    }
+
+    @Override
     public Text getHoverInfoText(ComponentState state) {
         return IntegratedCircuitScreen.getSignalStrengthText(state.get(LIT) ? 15 : 0);
     }
 
     @Override
     public void render(DrawContext drawContext, int x, int y, float a, ComponentState state) {
-        Identifier texture = state.get(LIT)?TEXTURE:TEXTURE_OFF;
+        Identifier texture = state.get(LIT) ? TEXTURE : TEXTURE_OFF;
         IntegratedCircuitScreen.renderComponentTexture(drawContext, texture, x, y, state.get(FACING).getIndex(), a);
     }
 
@@ -86,7 +85,7 @@ public class TorchComponent extends FacingComponent {
         ComponentState blockState = circuit.getComponentState(blockPos);
         return blockState.getComponent().isSideSolidFullSquare(circuit, blockPos, direction);
     }
-    
+
     @Override
     public void onBlockAdded(ComponentState state, Circuit circuit, ComponentPos pos, ComponentState oldState) {
         for (FlatDirection direction : FlatDirection.VALUES) {
@@ -137,7 +136,7 @@ public class TorchComponent extends FacingComponent {
     public boolean isSolidBlock(Circuit circuit, ComponentPos pos) {
         return false;
     }
-    
+
     protected boolean shouldUnpower(Circuit circuit, ComponentPos pos, ComponentState state) {
         FlatDirection direction = state.get(FACING).getOpposite();
         return circuit.isEmittingRedstonePower(pos.offset(direction), direction);

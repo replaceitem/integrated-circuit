@@ -24,6 +24,10 @@ import net.replaceitem.integratedcircuit.util.FlatDirection;
 import org.jetbrains.annotations.Nullable;
 
 public class ButtonComponent extends FacingComponent {
+    private static final Identifier ITEM_TEXTURE_STONE = IntegratedCircuit.id("textures/integrated_circuit/button_stone.png");
+    private static final Identifier ITEM_TEXTURE_WOOD = IntegratedCircuit.id("textures/integrated_circuit/button_wood.png");
+    private static final Identifier TOOL_TEXTURE_STONE = IntegratedCircuit.id("toolbox/icons/button_stone");
+    private static final Identifier TOOL_TEXTURE_WOOD = IntegratedCircuit.id("toolbox/icons/button_wood");
 
     public static final BooleanProperty POWERED = Properties.POWERED;
 
@@ -35,12 +39,14 @@ public class ButtonComponent extends FacingComponent {
         this.setDefaultState(this.getStateManager().getDefaultState().with(POWERED, false));
     }
 
-    public static final Identifier TEXTURE_STONE = IntegratedCircuit.id("textures/integrated_circuit/button_stone.png");
-    public static final Identifier TEXTURE_WOOD = IntegratedCircuit.id("textures/integrated_circuit/button_wood.png");
-
     @Override
     public @Nullable Identifier getItemTexture() {
-        return wooden ? TEXTURE_WOOD : TEXTURE_STONE;
+        return wooden ? ITEM_TEXTURE_WOOD : ITEM_TEXTURE_STONE;
+    }
+
+    @Override
+    public @Nullable Identifier getToolTexture() {
+        return wooden ? TOOL_TEXTURE_WOOD : TOOL_TEXTURE_STONE;
     }
 
     @Override

@@ -34,7 +34,10 @@
   "block.integrated_circuit.green_integrated_circuit.empty": "Empty Green Integrated Circuit",
   "block.integrated_circuit.red_integrated_circuit.empty": "Empty Red Integrated Circuit",
   "block.integrated_circuit.black_integrated_circuit.empty": "Empty Black Integrated Circuit",
-  
+
+  "integrated_circuit.gui.screen_title": "Integrated Circuit Designer",
+  "integrated_circuit.gui.rename_field_placeholder": "Enter circuit name...",
+
   "integrated_circuit.component.integrated_circuit.air": "Air",
   "integrated_circuit.component.integrated_circuit.block": "Block",
   "integrated_circuit.component.integrated_circuit.wire": "Wire",
@@ -52,6 +55,9 @@
   "integrated_circuit.component.integrated_circuit.lamp": "Lamp",
   "integrated_circuit.component.integrated_circuit.lectern": "Lectern",
   "integrated_circuit.component.integrated_circuit.copper_bulb": "Copper Bulb",
+
+  "integrated_circuit.component.integrated_circuit.port_output": "Output",
+  "integrated_circuit.component.integrated_circuit.port_input": "Input",
 
   "tag.block.integrated_circuit.integrated_circuits": "Integrated Circuits",
   "tag.item.integrated_circuit.integrated_circuits": "Integrated Circuits",

@@ -20,18 +20,17 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashSet;
 
 public class CrossoverComponent extends AbstractConductingComponent {
+    private static final Identifier ITEM_TEXTURE = IntegratedCircuit.id("textures/integrated_circuit/crossover.png");
+    private static final Identifier TOOL_TEXTURE = IntegratedCircuit.id("toolbox/icons/crossover");
+    private static final Identifier TEXTURE_BRIDGE = IntegratedCircuit.id("textures/integrated_circuit/wire_bridge.png");
 
     public static final IntProperty POWER_X = IntProperty.of("power_x", 0, 15);
     public static final IntProperty POWER_Y = IntProperty.of("power_y", 0, 15);
-
 
     public CrossoverComponent(Settings settings) {
         super(settings);
         this.setDefaultState(this.getStateManager().getDefaultState().with(POWER_X, 0).with(POWER_Y, 0));
     }
-
-    protected static final Identifier TEXTURE_BRIDGE = IntegratedCircuit.id("textures/integrated_circuit/wire_bridge.png");
-    protected static final Identifier ITEM_TEXTURE = IntegratedCircuit.id("textures/integrated_circuit/crossover.png");
 
     @Override
     public @Nullable Identifier getItemTexture() {
@@ -39,11 +38,16 @@ public class CrossoverComponent extends AbstractConductingComponent {
     }
 
     @Override
+    public @Nullable Identifier getToolTexture() {
+        return TOOL_TEXTURE;
+    }
+
+    @Override
     public Text getHoverInfoText(ComponentState state) {
         return Text.literal("─ ")
-                .append(IntegratedCircuitScreen.getSignalStrengthText(state.get(POWER_X)))
-                .append("   │ ")
-                .append(IntegratedCircuitScreen.getSignalStrengthText(state.get(POWER_Y)));
+            .append(IntegratedCircuitScreen.getSignalStrengthText(state.get(POWER_X)))
+            .append(" │ ")
+            .append(IntegratedCircuitScreen.getSignalStrengthText(state.get(POWER_Y)));
     }
 
     @Override
@@ -68,7 +72,7 @@ public class CrossoverComponent extends AbstractConductingComponent {
 
     @Override
     public void neighborUpdate(ComponentState state, Circuit circuit, ComponentPos pos, Component sourceBlock, ComponentPos sourcePos, boolean notify) {
-        if(circuit.isClient) return;
+        if (circuit.isClient) return;
         update(circuit, pos, state);
     }
 
@@ -98,13 +102,12 @@ public class CrossoverComponent extends AbstractConductingComponent {
     }
 
 
-
     protected int getReceivedRedstonePower(Circuit circuit, ComponentPos pos, FlatDirection.Axis axis) {
         wiresGivePower = false;
         int i = 0;
         for (FlatDirection direction : FlatDirection.forAxis(axis)) {
             int power = circuit.getEmittedRedstonePower(pos.offset(direction), direction);
-            if(power > i) i = power;
+            if (power > i) i = power;
         }
         wiresGivePower = true;
 

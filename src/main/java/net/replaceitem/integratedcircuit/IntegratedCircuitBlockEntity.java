@@ -1,6 +1,7 @@
 package net.replaceitem.integratedcircuit;
 
 import com.mojang.serialization.DataResult;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.component.ComponentMap;
@@ -133,6 +134,18 @@ public class IntegratedCircuitBlockEntity extends BlockEntity implements Nameabl
     public void setCustomName(@Nullable Text name) {
         this.customName = name;
         this.markDirty();
+
+        if (world != null) {
+            BlockPos pos = getPos();
+            BlockState state = world.getBlockState(pos);
+
+            world.updateListeners(
+                pos,
+                this.getCachedState(),
+                state,
+                Block.NOTIFY_LISTENERS
+            );
+        }
     }
 
     @Override

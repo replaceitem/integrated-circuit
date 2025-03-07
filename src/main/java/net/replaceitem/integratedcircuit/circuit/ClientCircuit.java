@@ -1,14 +1,18 @@
 package net.replaceitem.integratedcircuit.circuit;
 
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
+import net.minecraft.text.Text;
+import net.minecraft.util.math.BlockPos;
 import net.replaceitem.integratedcircuit.circuit.context.ClientCircuitContext;
 import net.replaceitem.integratedcircuit.network.packet.ComponentInteractionC2SPacket;
 import net.replaceitem.integratedcircuit.network.packet.PlaceComponentC2SPacket;
+import net.replaceitem.integratedcircuit.network.packet.RenameCircuitC2SPacket;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
 import org.jetbrains.annotations.Nullable;
@@ -65,6 +69,10 @@ public class ClientCircuit extends Circuit {
     public void useComponent(ComponentPos pos, PlayerEntity player) {
         ClientPlayNetworking.send(new ComponentInteractionC2SPacket(pos, this.context.getBlockPos()));
         super.useComponent(pos, player);
+    }
+
+    public void rename(Text newName) {
+        ClientPlayNetworking.send(new RenameCircuitC2SPacket(newName, this.context.getBlockPos()));
     }
 
     @Override

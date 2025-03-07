@@ -19,7 +19,11 @@ import net.replaceitem.integratedcircuit.util.FlatDirection;
 import org.jetbrains.annotations.Nullable;
 
 public class LeverComponent extends FacingComponent {
-    
+    private static final Identifier ITEM_TEXTURE = Identifier.ofVanilla("textures/block/lever.png");
+    private static final Identifier TOOL_TEXTURE = IntegratedCircuit.id("toolbox/icons/lever");
+    private static final Identifier TEXTURE_OFF = IntegratedCircuit.id("textures/integrated_circuit/lever_off.png");
+    private static final Identifier TEXTURE_ON = IntegratedCircuit.id("textures/integrated_circuit/lever_on.png");
+
     public static final BooleanProperty POWERED = Properties.POWERED;
 
     public LeverComponent(Settings settings) {
@@ -27,14 +31,14 @@ public class LeverComponent extends FacingComponent {
         this.setDefaultState(this.getStateManager().getDefaultState().with(FACING, FlatDirection.NORTH).with(POWERED, false));
     }
 
-    private static final Identifier ITEM_TEXTURE = Identifier.ofVanilla("textures/block/lever.png");
-
-    public static final Identifier TEXTURE_OFF = IntegratedCircuit.id("textures/integrated_circuit/lever_off.png");
-    public static final Identifier TEXTURE_ON = IntegratedCircuit.id("textures/integrated_circuit/lever_on.png");
-
     @Override
     public @Nullable Identifier getItemTexture() {
         return ITEM_TEXTURE;
+    }
+
+    @Override
+    public @Nullable Identifier getToolTexture() {
+        return TOOL_TEXTURE;
     }
 
     @Override

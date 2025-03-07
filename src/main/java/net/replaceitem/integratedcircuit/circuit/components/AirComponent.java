@@ -9,7 +9,6 @@ import net.replaceitem.integratedcircuit.util.ComponentPos;
 import org.jetbrains.annotations.Nullable;
 
 public class AirComponent extends Component {
-
     public AirComponent(Settings settings) {
         super(settings);
     }
@@ -20,7 +19,13 @@ public class AirComponent extends Component {
     }
 
     @Override
-    public void render(DrawContext drawContext, int x, int y, float a, ComponentState state) {}
+    public @Nullable Identifier getToolTexture() {
+        return null;
+    }
+
+    @Override
+    public void render(DrawContext drawContext, int x, int y, float a, ComponentState state) {
+    }
 
     @Override
     public boolean isSolidBlock(Circuit circuit, ComponentPos pos) {
