@@ -76,6 +76,7 @@ public class PortComponent extends AbstractWireComponent {
         boolean wasOutput = oldState.get(IS_OUTPUT);
         context.setRenderStrength(portSide, state.get(POWER));
         this.update(circuit, pos, state);
+        this.updateAfterSignalStrengthChange(circuit, pos);
         this.updateOffsetNeighbors(circuit, pos);
         if (isOutput || wasOutput) context.updateExternal(portSide);
         if (!isOutput && wasOutput) context.readExternalPower(portSide);

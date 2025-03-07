@@ -1,5 +1,6 @@
 package net.replaceitem.integratedcircuit.circuit.components;
 
+import com.google.common.collect.Sets;
 import net.minecraft.util.Identifier;
 import net.replaceitem.integratedcircuit.IntegratedCircuit;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
@@ -8,6 +9,8 @@ import net.replaceitem.integratedcircuit.circuit.Components;
 import net.replaceitem.integratedcircuit.circuit.ComponentState;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
+
+import java.util.HashSet;
 
 public abstract class AbstractConductingComponent extends Component {
     public AbstractConductingComponent(Settings settings) {
@@ -47,6 +50,17 @@ public abstract class AbstractConductingComponent extends Component {
     protected void updateOffsetNeighbors(Circuit circuit, ComponentPos pos) {
         for (FlatDirection direction : FlatDirection.VALUES) {
             this.updateNeighbors(circuit, pos.offset(direction));
+        }
+    }
+    
+    protected void updateAfterSignalStrengthChange(Circuit circuit, ComponentPos pos) {
+        HashSet<ComponentPos> set = Sets.newHashSet();
+        set.add(pos);
+        for (FlatDirection direction : FlatDirection.VALUES) {
+            set.add(pos.offset(direction));
+        }
+        for (ComponentPos blockPos : set) {
+            circuit.updateNeighborsAlways(blockPos, this);
         }
     }
 

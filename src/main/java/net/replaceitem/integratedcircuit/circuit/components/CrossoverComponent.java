@@ -1,6 +1,5 @@
 package net.replaceitem.integratedcircuit.circuit.components;
 
-import com.google.common.collect.Sets;
 import net.minecraft.block.RedstoneWireBlock;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.state.StateManager;
@@ -16,8 +15,6 @@ import net.replaceitem.integratedcircuit.client.gui.IntegratedCircuitScreen;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.HashSet;
 
 public class CrossoverComponent extends AbstractConductingComponent {
     private static final Identifier ITEM_TEXTURE = IntegratedCircuit.id("textures/integrated_circuit/crossover.png");
@@ -90,14 +87,7 @@ public class CrossoverComponent extends AbstractConductingComponent {
             if (circuit.getComponentState(pos) == state) {
                 circuit.setComponentState(pos, state.with(POWER_X, powerX).with(POWER_Y, powerY), Component.NOTIFY_LISTENERS);
             }
-            HashSet<ComponentPos> set = Sets.newHashSet();
-            set.add(pos);
-            for (FlatDirection direction : FlatDirection.VALUES) {
-                set.add(pos.offset(direction));
-            }
-            for (ComponentPos blockPos : set) {
-                circuit.updateNeighborsAlways(blockPos, this);
-            }
+            this.updateAfterSignalStrengthChange(circuit, pos);
         }
     }
 

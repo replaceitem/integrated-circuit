@@ -1,6 +1,5 @@
 package net.replaceitem.integratedcircuit.circuit.components;
 
-import com.google.common.collect.Sets;
 import net.minecraft.state.property.IntProperty;
 import net.minecraft.text.Text;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
@@ -9,8 +8,6 @@ import net.replaceitem.integratedcircuit.circuit.ComponentState;
 import net.replaceitem.integratedcircuit.client.gui.IntegratedCircuitScreen;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
-
-import java.util.HashSet;
 
 public abstract class AbstractWireComponent extends AbstractConductingComponent {
     public AbstractWireComponent(Settings settings) {
@@ -53,14 +50,7 @@ public abstract class AbstractWireComponent extends AbstractConductingComponent 
             if (circuit.getComponentState(pos) == state) {
                 circuit.setComponentState(pos, state.with(getPowerProperty(), i), Component.NOTIFY_LISTENERS);
             }
-            HashSet<ComponentPos> set = Sets.newHashSet();
-            set.add(pos);
-            for (FlatDirection direction : FlatDirection.VALUES) {
-                set.add(pos.offset(direction));
-            }
-            for (ComponentPos blockPos : set) {
-                circuit.updateNeighborsAlways(blockPos, this);
-            }
+            this.updateAfterSignalStrengthChange(circuit, pos);
         }
     }
 
