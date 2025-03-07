@@ -23,11 +23,8 @@ public class ClientPacketHandler {
     }
 
     public static void receiveCircuitNameUpdatePacket(CircuitNameUpdateS2CPacket packet, ClientPlayNetworking.Context context) {
-        ClientWorld clientWorld = context.player().clientWorld;
-        BlockEntity blockEntity = clientWorld.getBlockEntity(packet.pos());
-
-        if (blockEntity instanceof IntegratedCircuitBlockEntity integratedCircuitBlockEntity) {
-            integratedCircuitBlockEntity.setCustomName(packet.newName());
+        if (context.client().currentScreen instanceof IntegratedCircuitScreen integratedCircuitScreen) {
+            integratedCircuitScreen.updateCustomNameForExternalChange(packet.newName());
         }
     }
 

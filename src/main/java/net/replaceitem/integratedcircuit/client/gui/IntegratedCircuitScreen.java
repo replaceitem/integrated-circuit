@@ -115,15 +115,20 @@ public class IntegratedCircuitScreen extends Screen {
         this.customNameTextField.setMaxLength(50);
         this.customNameTextField.setEditable(true);
         this.customNameTextField.setText(this.customName.getString());
+
         this.customNameTextField.setPlaceholder(
             Text.translatable("integrated_circuit.gui.rename_field_placeholder")
                 .styled(style ->
                         style.withColor(0x9C9C9C)
                              .withShadowColor(0x22222222))
         );
+
+        this.customNameTextField.setChangedListener(
+            name -> this.customName = Text.literal(name)
+        );
+
         this.addSelectableChild(this.customNameTextField);
         this.addDrawableChild(this.customNameTextField);
-        this.customNameTextField.setChangedListener(this::setCustomName);
     }
 
     public void updateToolSelection(ToolSelectionInfo selectionInfo) {
@@ -398,10 +403,6 @@ public class IntegratedCircuitScreen extends Screen {
         toolbox.deselectTool();
     }
 
-    private void setCustomName(String customName) {
-        this.customName = Text.literal(customName);
-    }
-
     private void updateCursorState(@Nullable Component component) {
         if (component != null) {
             this.cursorState = component.getDefaultState();
@@ -414,6 +415,12 @@ public class IntegratedCircuitScreen extends Screen {
             }
         } else {
             this.cursorState = null;
+        }
+    }
+
+    public void updateCustomNameForExternalChange(Text customName) {
+        if (!this.customNameTextField.isFocused()) {
+            this.customNameTextField.setText(customName.getString());
         }
     }
 

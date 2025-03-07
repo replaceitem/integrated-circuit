@@ -54,7 +54,7 @@ public class ServerPacketHandler {
             if (!Objects.equals(currentName, newName)) {
                 integratedCircuitBlockEntity.setCustomName(newName);
 
-                for (ServerPlayerEntity player : serverWorld.getPlayers()) {
+                for (ServerPlayerEntity player : integratedCircuitBlockEntity.getEditingPlayers()) {
                     ServerPlayNetworking.send(
                         player,
                         new CircuitNameUpdateS2CPacket(newName, pos)
