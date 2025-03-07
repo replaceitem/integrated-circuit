@@ -100,7 +100,16 @@ public class IntegratedCircuitScreen extends Screen {
             CIRCUIT_NAME_TEXTBOX_WIDTH,
             CIRCUIT_NAME_TEXTBOX_HEIGHT,
             this.customName
-        );
+        ) {
+            @Override
+            public void setFocused(boolean focused) {
+                super.setFocused(focused);
+
+                if (!focused) {
+                    circuit.rename(customName);
+                }
+            }
+        };
 
         this.customNameTextField.setDrawsBackground(false);
         this.customNameTextField.setMaxLength(50);
@@ -310,7 +319,7 @@ public class IntegratedCircuitScreen extends Screen {
         ComponentPos clickedPos = getComponentPosAt((int) mouseX, (int) mouseY);
 
         if (customNameTextField.isFocused() && !customNameTextField.isMouseOver(mouseX, mouseY)) {
-            unfocusCustomNameTextField();
+            customNameTextField.setFocused(false);
         }
 
         if (matchesMouse(DefaultConfig.config.getRotateKeybind(), button)) {
@@ -393,11 +402,6 @@ public class IntegratedCircuitScreen extends Screen {
         this.customName = Text.literal(customName);
     }
 
-    private void unfocusCustomNameTextField() {
-        this.customNameTextField.setFocused(false);
-        this.circuit.rename(customName);
-    }
-
     private void updateCursorState(@Nullable Component component) {
         if (component != null) {
             this.cursorState = component.getDefaultState();
@@ -456,7 +460,7 @@ public class IntegratedCircuitScreen extends Screen {
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         if (this.customNameTextField.isFocused()) {
             if (keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER || keyCode == GLFW.GLFW_KEY_ESCAPE) {
-                unfocusCustomNameTextField();
+                customNameTextField.setFocused(false);
                 return true;
             }
         }
