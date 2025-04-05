@@ -103,9 +103,8 @@ public class IntegratedCircuitBlock extends HorizontalFacingBlock implements Blo
     }
 
     @Override
-    protected void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
-        if (moved || state.isOf(newState.getBlock())) return;
-        super.onStateReplaced(state, world, pos, newState, moved);
+    protected void onStateReplaced(BlockState state, ServerWorld world, BlockPos pos, boolean moved) {
+        if (moved) return;
         this.updateTargets(world, pos);
     }
     

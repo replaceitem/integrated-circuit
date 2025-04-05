@@ -7,12 +7,14 @@ import net.minecraft.block.Blocks;
 import net.minecraft.block.RedstoneWireBlock;
 import net.minecraft.client.data.*;
 import net.minecraft.client.render.item.tint.TintSource;
+import net.minecraft.client.render.model.json.ModelVariantOperator;
+import net.minecraft.state.property.Properties;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.Direction;
 import net.replaceitem.integratedcircuit.IntegratedCircuit;
 
 import java.util.Optional;
 
-import static net.minecraft.client.data.BlockStateModelGenerator.createNorthDefaultHorizontalRotationStates;
 import static net.minecraft.client.data.TextureMap.getId;
 import static net.minecraft.client.data.TextureMap.getSubId;
 import static net.replaceitem.integratedcircuit.IntegratedCircuit.Blocks.*;
@@ -21,7 +23,7 @@ public class ModelGenerator extends FabricModelProvider {
 
     public static final TextureKey SIDES = TextureKey.of("sides");
     public static final Identifier TEMPLATE_MODEL_ID = Identifier.of(IntegratedCircuit.MOD_ID, "block/template_integrated_circuit");
-    public static final Model TEMPLATE_CANDLE = new Model(Optional.of(TEMPLATE_MODEL_ID), Optional.empty(), TextureKey.TOP, SIDES, TextureKey.BOTTOM, TextureKey.PARTICLE);
+    public static final Model TEMPLATE_CIRCUIT = new Model(Optional.of(TEMPLATE_MODEL_ID), Optional.empty(), TextureKey.TOP, SIDES, TextureKey.BOTTOM, TextureKey.PARTICLE);
     
     public static TextureMap circuitTextures(Block block, Block bottomBlock) {
         return new TextureMap()
@@ -61,14 +63,22 @@ public class ModelGenerator extends FabricModelProvider {
 
     }
 
+    private static final BlockStateVariantMap<ModelVariantOperator> NORTH_DEFAULT_HORIZONTAL_ROTATION_OPERATIONS = BlockStateVariantMap.operations(
+                    Properties.HORIZONTAL_FACING
+            )
+            .register(Direction.EAST, BlockStateModelGenerator.ROTATE_Y_90)
+            .register(Direction.SOUTH, BlockStateModelGenerator.ROTATE_Y_180)
+            .register(Direction.WEST, BlockStateModelGenerator.ROTATE_Y_270)
+            .register(Direction.NORTH, BlockStateModelGenerator.NO_OP);
+    
     public final void registerCircuit(BlockStateModelGenerator blockStateModelGenerator, Block block, Block baseBlock) {
         TextureMap textureMap = circuitTextures(block, baseBlock);
         
-        Identifier modelId = TEMPLATE_CANDLE.upload(block, textureMap, blockStateModelGenerator.modelCollector);
+        Identifier modelId = TEMPLATE_CIRCUIT.upload(block, textureMap, blockStateModelGenerator.modelCollector);
         blockStateModelGenerator.blockStateCollector
                 .accept(
-                        VariantsBlockStateSupplier.create(block, BlockStateVariant.create().put(VariantSettings.MODEL, modelId))
-                                .coordinate(createNorthDefaultHorizontalRotationStates())
+                        VariantsBlockModelDefinitionCreator.of(block, BlockStateModelGenerator.createWeightedVariant(modelId))
+                                .coordinate(NORTH_DEFAULT_HORIZONTAL_ROTATION_OPERATIONS)
                 );
 
         TintSource wireOffTint = ItemModels.constantTintSource(RedstoneWireBlock.getWireColor(0));

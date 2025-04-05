@@ -5,10 +5,10 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.component.ComponentMap;
+import net.minecraft.component.ComponentsAccess;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.NbtComponent;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
 import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
@@ -104,18 +104,12 @@ public class IntegratedCircuitBlockEntity extends BlockEntity implements Nameabl
 
     @Override
     public void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
-        if(nbt.contains("CustomName", NbtElement.STRING_TYPE)) {
-            this.customName = Text.Serialization.fromJson(nbt.getString("CustomName"), registryLookup);
-        }
-        if(nbt.contains("circuit", NbtElement.COMPOUND_TYPE)) {
-            this.circuitNbt = nbt.getCompound("circuit");
-        }
+        this.customName = nbt.getString("CustomName").map(s -> Text.Serialization.fromJson(s, registryLookup)).orElse(null);
+        this.circuitNbt = nbt.getCompound("circuit").orElse(null);
         tryCreateCircuit();
 
         // only received from toInitialChunkDataNbt on the client
-        if(nbt.contains("outputStrengths")) {
-            this.renderSignalStrengths = nbt.getByteArray("outputStrengths");
-        }
+        nbt.getByteArray("outputStrengths").ifPresent(bytes -> this.renderSignalStrengths = bytes);
     }
 
     @Override

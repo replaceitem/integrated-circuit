@@ -1,6 +1,5 @@
 package net.replaceitem.integratedcircuit.client.gui;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.block.RedstoneWireBlock;
 import net.minecraft.client.gui.DrawContext;
@@ -27,8 +26,6 @@ import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
-
-import java.util.Objects;
 
 public class IntegratedCircuitScreen extends Screen {
     public static final Identifier BACKGROUND_TEXTURE = IntegratedCircuit.id(
@@ -306,7 +303,6 @@ public class IntegratedCircuitScreen extends Screen {
         drawContext.getMatrices().translate(componentX + 8, componentY + 8, 0);
         drawContext.getMatrices().multiply(RotationAxis.POSITIVE_Z.rotation((float) (rot * Math.PI * 0.5)));
         drawContext.getMatrices().translate(-8, -8, 0);
-        RenderSystem.enableBlend();
         drawContext.drawTexture(RenderLayer::getGuiTextured, texture, x, y, u, v, w, h, textureW, textureH, color);
         drawContext.getMatrices().pop();
     }

@@ -4,5 +4,7 @@
   "group": "integrated_circuit_dye",
   "input": "#integrated_circuit:dyeable_integrated_circuits",
   "material": "minecraft:blue_dye",
-  "result": "integrated_circuit:blue_integrated_circuit"
+  "result": {
+    "id": "integrated_circuit:blue_integrated_circuit"
+  }
 }

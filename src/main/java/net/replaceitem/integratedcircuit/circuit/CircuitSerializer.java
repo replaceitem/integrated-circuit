@@ -4,9 +4,7 @@ import com.mojang.logging.LogUtils;
 import com.mojang.serialization.DataResult;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
-import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtOps;
-import net.minecraft.world.chunk.PalettedContainer;
 import net.replaceitem.integratedcircuit.circuit.context.ClientCircuitContext;
 import net.replaceitem.integratedcircuit.circuit.context.ServerCircuitContext;
 import org.slf4j.Logger;
@@ -51,22 +49,26 @@ public class CircuitSerializer {
     }
 
     private ComponentState[] readPortStates() {
-        if(!root.contains(PORTS_TAG)) return Circuit.createDefaultPorts();
-        NbtList ports = root.getList(PORTS_TAG, NbtElement.COMPOUND_TYPE);
-        if(ports.size() != 4) return Circuit.createDefaultPorts();
-        return ports.stream().map(nbtElement -> ComponentState.CODEC.parse(NbtOps.INSTANCE, nbtElement).result().orElse(Components.AIR_DEFAULT_STATE)).toArray(ComponentState[]::new);
+        return root.getList(PORTS_TAG)
+                .filter(nbtElements -> nbtElements.size() == 4)
+                .map(ports -> ports.stream()
+                        .map(nbtElement -> ComponentState.CODEC.parse(NbtOps.INSTANCE, nbtElement)
+                                .result().orElse(Components.AIR_DEFAULT_STATE)
+                        )
+                        .toArray(ComponentState[]::new)
+                )
+                .orElseGet(Circuit::createDefaultPorts);
     }
 
     public CircuitSection readSection() {
-        if(!root.contains(SECTION_TAG, NbtElement.COMPOUND_TYPE)) return new CircuitSection();
-        NbtCompound sectionNbt = root.getCompound(SECTION_TAG);
-        if(!sectionNbt.contains(COMPONENT_STATES_TAG, NbtElement.COMPOUND_TYPE)) return new CircuitSection();
-        PalettedContainer<ComponentState> palettedContainer;
-        palettedContainer = CircuitSection.PALETTE_CODEC.parse(NbtOps.INSTANCE, sectionNbt.getCompound(COMPONENT_STATES_TAG))
-                .promotePartial(errorMessage -> CircuitSerializer.LOGGER.error("Could not load circuit: {}", errorMessage))
-                .result()
-                .orElseGet(CircuitSection::createContainer);
-        return new CircuitSection(palettedContainer);
+        return root.getCompound(SECTION_TAG)
+                .flatMap(sectionNbt -> sectionNbt.getCompound(COMPONENT_STATES_TAG))
+                .flatMap(componentStatesNbt -> CircuitSection.PALETTE_CODEC.parse(NbtOps.INSTANCE, componentStatesNbt)
+                        .promotePartial(errorMessage -> CircuitSerializer.LOGGER.error("Could not load circuit: {}", errorMessage))
+                        .result()
+                )
+                .map(CircuitSection::new)
+                .orElseGet(CircuitSection::new);
     }
 
     public static DataResult<NbtElement> writeCircuit(ServerCircuit circuit) {
