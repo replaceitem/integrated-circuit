@@ -10,13 +10,12 @@ import net.replaceitem.integratedcircuit.IntegratedCircuit;
 import net.replaceitem.integratedcircuit.IntegratedCircuitBlockEntity;
 import net.replaceitem.integratedcircuit.network.packet.*;
 
-import java.util.List;
 import java.util.Objects;
 
 public class ServerPacketHandler {
     public static void receiveComponentInteraction(ComponentInteractionC2SPacket packet, ServerPlayNetworking.Context context) {
         ServerPlayerEntity player = context.player();
-        ServerWorld world = player.getServerWorld();
+        ServerWorld world = player.getWorld();
         if(
                 world.getBlockState(packet.blockPos()).isIn(IntegratedCircuit.Tags.INTEGRATED_CIRCUITS_BLOCK_TAG) &&
                 world.getBlockEntity(packet.blockPos()) instanceof IntegratedCircuitBlockEntity integratedCircuitBlockEntity &&
@@ -30,7 +29,7 @@ public class ServerPacketHandler {
     public static void receiveFinishEditingPacket(FinishEditingC2SPacket packet, ServerPlayNetworking.Context context) {
         ServerPlayerEntity player = context.player();
         player.updateLastActionTime();
-        ServerWorld serverWorld = player.getServerWorld();
+        ServerWorld serverWorld = player.getWorld();
         BlockEntity blockEntity = serverWorld.getBlockEntity(packet.pos());
 
         if (blockEntity instanceof IntegratedCircuitBlockEntity integratedCircuitBlockEntity) {
@@ -41,7 +40,7 @@ public class ServerPacketHandler {
     public static void receiveRenameCircuitPacket(RenameCircuitC2SPacket packet, ServerPlayNetworking.Context context) {
         BlockPos pos = packet.pos();
         ServerPlayerEntity renamingPlayer = context.player();
-        ServerWorld serverWorld = renamingPlayer.getServerWorld();
+        ServerWorld serverWorld = renamingPlayer.getWorld();
         BlockEntity blockEntity = serverWorld.getBlockEntity(pos);
 
         renamingPlayer.updateLastActionTime();
@@ -66,7 +65,7 @@ public class ServerPacketHandler {
 
     public static void receivePlaceComponentPacket(PlaceComponentC2SPacket packet, ServerPlayNetworking.Context context) {
         ServerPlayerEntity player = context.player();
-        ServerWorld world = player.getServerWorld();
+        ServerWorld world = player.getWorld();
         if(
                 world.getBlockState(packet.blockPos()).isIn(IntegratedCircuit.Tags.INTEGRATED_CIRCUITS_BLOCK_TAG) && 
                 world.getBlockEntity(packet.blockPos()) instanceof IntegratedCircuitBlockEntity integratedCircuitBlockEntity &&

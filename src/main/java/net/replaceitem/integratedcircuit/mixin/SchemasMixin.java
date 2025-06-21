@@ -6,8 +6,10 @@ import net.minecraft.datafixer.Schemas;
 import net.minecraft.datafixer.TypeReferences;
 import net.minecraft.datafixer.fix.ChoiceTypesFix;
 import net.minecraft.datafixer.fix.RenameBlockEntityFix;
+import net.minecraft.datafixer.schema.IdentifierNormalizingSchema;
 import net.replaceitem.integratedcircuit.datafix.Schema3120;
 import net.replaceitem.integratedcircuit.datafix.Schema3800_1;
+import net.replaceitem.integratedcircuit.datafix.UnflattenCircuitNameFix;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -33,5 +35,12 @@ public abstract class SchemasMixin {
     private static void beforeSchema3803(DataFixerBuilder builder, CallbackInfo ci) {
         Schema schema3800_1 = builder.addSchema(3800, 1, Schema3800_1::new);
         builder.addFixer(RenameBlockEntityFix.create(schema3800_1, "Rename integrated_circuit:integrated_circuit_block_entity to integrated_circuit:integrated_circuit", replacing("integrated_circuit:integrated_circuit_block_entity", "integrated_circuit:integrated_circuit")));
+    }
+
+    // 1.21.5 -> 1.21.6
+    @Inject(method = "build", at = @At(value = "CONSTANT", args = "intValue=4424"))
+    private static void beforeSchema4424(DataFixerBuilder builder, CallbackInfo ci) {
+        Schema schema4421_1 = builder.addSchema(4421, 1, IdentifierNormalizingSchema::new);
+        builder.addFixer(new UnflattenCircuitNameFix(schema4421_1, "integrated_circuit:integrated_circuit"));
     }
 }

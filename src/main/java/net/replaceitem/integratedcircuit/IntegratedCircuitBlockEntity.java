@@ -8,14 +8,19 @@ import net.minecraft.component.ComponentMap;
 import net.minecraft.component.ComponentsAccess;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.NbtComponent;
+import net.minecraft.nbt.NbtByteArray;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.storage.ReadView;
+import net.minecraft.storage.WriteView;
 import net.minecraft.text.Text;
+import net.minecraft.text.TextCodecs;
 import net.minecraft.util.Nameable;
+import net.minecraft.util.dynamic.Codecs;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
@@ -96,32 +101,36 @@ public class IntegratedCircuitBlockEntity extends BlockEntity implements Nameabl
     }
 
     @Override
-    public void removeFromCopiedStackNbt(NbtCompound nbt) {
-        super.removeFromCopiedStackNbt(nbt);
-        nbt.remove("CustomName");
-        nbt.remove("circuit");
+    public void removeFromCopiedStackData(WriteView view) {
+        super.removeFromCopiedStackData(view);
+        view.remove("CustomName");
+        view.remove("circuit");
     }
 
     @Override
-    public void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
-        this.customName = nbt.getString("CustomName").map(s -> Text.Serialization.fromJson(s, registryLookup)).orElse(null);
-        this.circuitNbt = nbt.getCompound("circuit").orElse(null);
+    protected void readData(ReadView view) {
+        this.customName = tryParseCustomName(view, "CustomName");
+        this.circuitNbt = view.read("circuit", NbtCompound.CODEC).orElse(null);
         tryCreateCircuit();
 
         // only received from toInitialChunkDataNbt on the client
-        nbt.getByteArray("outputStrengths").ifPresent(bytes -> this.renderSignalStrengths = bytes);
+        view.read("outputStrengths", Codecs.NBT_ELEMENT)
+                .flatMap(nbtElement ->
+                        nbtElement instanceof NbtByteArray byteArray ?
+                                Optional.of(byteArray) :
+                                Optional.empty()
+                )
+                .ifPresent(bytes -> this.renderSignalStrengths = bytes.getByteArray());
     }
 
     @Override
-    protected void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
-        if(this.hasCustomName()) {
-            nbt.putString("CustomName", Text.Serialization.toJsonString(this.customName, registryLookup));
-        }
-        
+    protected void writeData(WriteView view) {
+        view.putNullable("CustomName", TextCodecs.CODEC, this.customName);
+
         if(circuit != null) {
-            CircuitSerializer.writeCircuit(circuit).ifSuccess(nbtElement -> nbt.put("circuit", nbtElement));
+            view.putNullable("circuit", ServerCircuit.CODEC.withContext(this.circuit.getContext()), this.circuit);
         } else if(circuitNbt != null) {
-            nbt.put("circuit", circuitNbt);
+            view.put("circuit", NbtCompound.CODEC, circuitNbt);
         }
     }
 
@@ -198,7 +207,7 @@ public class IntegratedCircuitBlockEntity extends BlockEntity implements Nameabl
         NbtCompound nbt = new NbtCompound();
         nbt.putByteArray("outputStrengths", this.renderSignalStrengths.clone());
         if(this.hasCustomName()) {
-            nbt.putString("CustomName", Text.Serialization.toJsonString(this.customName, registryLookup));
+            nbt.put("CustomName", TextCodecs.CODEC, this.customName);
         }
         return nbt;
     }

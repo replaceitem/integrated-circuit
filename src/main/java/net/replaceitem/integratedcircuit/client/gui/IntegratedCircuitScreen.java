@@ -2,18 +2,17 @@ package net.replaceitem.integratedcircuit.client.gui;
 
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.block.RedstoneWireBlock;
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.Drawable;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.Selectable;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.ColorHelper;
-import net.minecraft.util.math.RotationAxis;
 import net.replaceitem.integratedcircuit.IntegratedCircuit;
 import net.replaceitem.integratedcircuit.circuit.*;
 import net.replaceitem.integratedcircuit.circuit.components.FacingComponent;
@@ -161,7 +160,7 @@ public class IntegratedCircuitScreen extends Screen {
         super.renderBackground(context, mouseX, mouseY, delta);
 
         context.drawTexture(
-            RenderLayer::getGuiTextured,
+            RenderPipelines.GUI_TEXTURED,
             BACKGROUND_TEXTURE,
             x, y,
             0, 0,
@@ -239,19 +238,19 @@ public class IntegratedCircuitScreen extends Screen {
         boolean validSpot = circuit.getComponentState(pos).isAir();
         float a = validSpot ? 0.5f : 0.2f;
         if (this.cursorState != null && circuit.isInside(pos)) {
-            drawContext.getMatrices().push();
-            drawContext.getMatrices().translate(getGridPosX(0), getGridPosY(0), 0);
-            drawContext.getMatrices().scale(RENDER_SCALE, RENDER_SCALE, 1);
+            drawContext.getMatrices().pushMatrix();
+            drawContext.getMatrices().translate(getGridPosX(0), getGridPosY(0));
+            drawContext.getMatrices().scale(RENDER_SCALE, RENDER_SCALE);
             renderComponentStateInGrid(drawContext, this.cursorState, pos.getX(), pos.getY(), a);
-            drawContext.getMatrices().pop();
+            drawContext.getMatrices().popMatrix();
         }
     }
 
     protected void renderContent(DrawContext drawContext) {
-        drawContext.getMatrices().push();
-        drawContext.getMatrices().translate(getGridPosX(0), getGridPosY(0), 0);
+        drawContext.getMatrices().pushMatrix();
+        drawContext.getMatrices().translate(getGridPosX(0), getGridPosY(0));
 
-        drawContext.getMatrices().scale(RENDER_SCALE, RENDER_SCALE, 1);
+        drawContext.getMatrices().scale(RENDER_SCALE, RENDER_SCALE);
 
         for (FlatDirection direction : FlatDirection.VALUES) {
             ComponentState port = circuit.getPorts()[direction.getIndex()];
@@ -266,7 +265,7 @@ public class IntegratedCircuitScreen extends Screen {
             }
         }
 
-        drawContext.getMatrices().pop();
+        drawContext.getMatrices().popMatrix();
     }
 
     protected static void renderComponentState(DrawContext drawContext, ComponentState state, int x, int y, float a) {
@@ -299,12 +298,12 @@ public class IntegratedCircuitScreen extends Screen {
     }
 
     private static void renderPartialTexture(DrawContext drawContext, Identifier texture, int componentX, int componentY, int x, int y, int textureW, int textureH, int rot, int color, int u, int v, int w, int h) {
-        drawContext.getMatrices().push();
-        drawContext.getMatrices().translate(componentX + 8, componentY + 8, 0);
-        drawContext.getMatrices().multiply(RotationAxis.POSITIVE_Z.rotation((float) (rot * Math.PI * 0.5)));
-        drawContext.getMatrices().translate(-8, -8, 0);
-        drawContext.drawTexture(RenderLayer::getGuiTextured, texture, x, y, u, v, w, h, textureW, textureH, color);
-        drawContext.getMatrices().pop();
+        drawContext.getMatrices().pushMatrix();
+        drawContext.getMatrices().translate(componentX + 8, componentY + 8);
+        drawContext.getMatrices().rotate((float) (rot * Math.PI * 0.5));
+        drawContext.getMatrices().translate(-8, -8);
+        drawContext.drawTexture(RenderPipelines.GUI_TEXTURED, texture, x, y, u, v, w, h, textureW, textureH, color);
+        drawContext.getMatrices().popMatrix();
     }
 
     @Override

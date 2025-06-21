@@ -45,12 +45,12 @@ public class LecternComponent extends Component {
         TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
         String text = String.valueOf(state.get(PAGE));
         
-        drawContext.getMatrices().push();
-        drawContext.getMatrices().translate(x + 8, y + 8, 0);
-        drawContext.getMatrices().scale(.8f, .8f, 1);
-        drawContext.getMatrices().translate( (float) textRenderer.getWidth(text) / -2, (float) textRenderer.fontHeight / -2 + 1, 0);
+        drawContext.getMatrices().pushMatrix();
+        drawContext.getMatrices().translate(x + 8, y + 8);
+        drawContext.getMatrices().scale(.8f, .8f);
+        drawContext.getMatrices().translate( (float) textRenderer.getWidth(text) / -2, (float) textRenderer.fontHeight / -2 + 1);
         drawContext.drawText(textRenderer, text, 0, 0, 0, false);
-        drawContext.getMatrices().pop();
+        drawContext.getMatrices().popMatrix();
     }
 
     @Override
