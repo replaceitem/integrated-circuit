@@ -9,6 +9,7 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.IntProperty;
 import net.minecraft.text.Text;
+import net.minecraft.util.Colors;
 import net.minecraft.util.Identifier;
 import net.replaceitem.integratedcircuit.IntegratedCircuit;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
@@ -49,7 +50,7 @@ public class LecternComponent extends Component {
         drawContext.getMatrices().translate(x + 8, y + 8);
         drawContext.getMatrices().scale(.8f, .8f);
         drawContext.getMatrices().translate( (float) textRenderer.getWidth(text) / -2, (float) textRenderer.fontHeight / -2 + 1);
-        drawContext.drawText(textRenderer, text, 0, 0, 0, false);
+        drawContext.drawText(textRenderer, text, 0, 0, Colors.BLACK, false);
         drawContext.getMatrices().popMatrix();
     }
 
