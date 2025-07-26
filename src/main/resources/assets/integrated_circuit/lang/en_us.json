@@ -69,5 +69,6 @@
   "text.autoconfig.integrated_circuit.option.rotate_component": "Rotate Component",
   "text.autoconfig.integrated_circuit.option.scroll_behaviour": "Scroll Behaviour",
   "text.autoconfig.integrated_circuit.option.invert_scroll_direction": "Invert Scroll Direction",
-  "text.autoconfig.integrated_circuit.option.render_circuit_name": "Render Circuit Name"
+  "text.autoconfig.integrated_circuit.option.render_circuit_name": "Render Circuit Name",
+  "text.autoconfig.integrated_circuit.option.title": "Integrated circuit"
 }
