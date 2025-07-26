@@ -11,6 +11,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.text.Text;
+import net.minecraft.util.Colors;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.ColorHelper;
 import net.replaceitem.integratedcircuit.IntegratedCircuit;
@@ -149,7 +150,7 @@ public class IntegratedCircuitScreen extends Screen {
     @Override
     public void render(DrawContext drawContext, int mouseX, int mouseY, float delta) {
         super.render(drawContext, mouseX, mouseY, delta);
-        drawContext.drawText(this.textRenderer, this.title, this.titleX, this.titleY, 0x404040, false);
+        drawContext.drawText(this.textRenderer, this.title, this.titleX, this.titleY, Colors.DARK_GRAY, false);
         this.renderStatusBar(drawContext, mouseX, mouseY);
         this.renderContent(drawContext);
         this.renderCursorState(drawContext, mouseX, mouseY);
@@ -209,7 +210,7 @@ public class IntegratedCircuitScreen extends Screen {
                 leftSideText,
                 this.x + STATUSBAR_X,
                 this.y + STATUSBAR_Y,
-                0x404040,
+                Colors.DARK_GRAY,
                 false
             );
         }
@@ -222,7 +223,7 @@ public class IntegratedCircuitScreen extends Screen {
                 rightSideText,
                 this.x + BACKGROUND_WIDTH - componentInfoWidth - STATUSBAR_RIGHT_MARGIN,
                 this.y + STATUSBAR_Y,
-                0x404040,
+                Colors.DARK_GRAY,
                 false
             );
         }
