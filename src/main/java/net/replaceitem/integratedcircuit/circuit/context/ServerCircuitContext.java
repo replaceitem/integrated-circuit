@@ -7,7 +7,7 @@ import net.minecraft.world.entity.player.Player;
 import net.replaceitem.integratedcircuit.circuit.ComponentState;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public interface ServerCircuitContext extends CircuitContext {
     RandomSource getRandom();

@@ -12,7 +12,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.replaceitem.integratedcircuit.circuit.components.PortComponent;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Arrays;
 

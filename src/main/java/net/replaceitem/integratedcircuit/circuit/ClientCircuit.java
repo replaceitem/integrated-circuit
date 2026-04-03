@@ -12,7 +12,7 @@ import net.replaceitem.integratedcircuit.network.packet.PlaceComponentC2SPacket;
 import net.replaceitem.integratedcircuit.network.packet.RenameCircuitC2SPacket;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public class ClientCircuit extends Circuit {
 

@@ -14,7 +14,7 @@ import net.replaceitem.integratedcircuit.circuit.ComponentState;
 import net.replaceitem.integratedcircuit.circuit.ServerCircuit;
 import net.replaceitem.integratedcircuit.client.gui.IntegratedCircuitScreen;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public class CopperBulbComponent extends Component {
     private static final Identifier ITEM_TEXTURE = IntegratedCircuit.id("textures/integrated_circuit/copper_bulb.png");

@@ -11,7 +11,7 @@ import net.replaceitem.integratedcircuit.circuit.context.ServerCircuitContext;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.ContextCodec;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public class ServerCircuit extends Circuit {
     public static final ContextCodec<ServerCircuitContext,ServerCircuit> CODEC = context -> RecordCodecBuilder.create(instance -> instance.group(

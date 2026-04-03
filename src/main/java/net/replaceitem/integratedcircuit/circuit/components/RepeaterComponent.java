@@ -15,7 +15,7 @@ import net.replaceitem.integratedcircuit.circuit.ComponentState;
 import net.replaceitem.integratedcircuit.client.gui.IntegratedCircuitScreen;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public class RepeaterComponent extends AbstractRedstoneGateComponent {
     private static final Identifier ITEM_TEXTURE = Identifier.withDefaultNamespace("textures/item/repeater.png");

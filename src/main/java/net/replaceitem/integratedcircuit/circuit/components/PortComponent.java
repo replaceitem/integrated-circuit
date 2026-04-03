@@ -18,7 +18,7 @@ import net.replaceitem.integratedcircuit.circuit.context.ServerCircuitContext;
 import net.replaceitem.integratedcircuit.client.gui.IntegratedCircuitScreen;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public class PortComponent extends AbstractWireComponent {
     private static final Identifier TEXTURE_ARROW = IntegratedCircuit.id("textures/integrated_circuit/port.png");

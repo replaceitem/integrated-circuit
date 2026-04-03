@@ -13,7 +13,7 @@ import net.replaceitem.integratedcircuit.circuit.ComponentState;
 import net.replaceitem.integratedcircuit.client.gui.IntegratedCircuitScreen;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public class CrossoverComponent extends AbstractConductingComponent {
     private static final Identifier ITEM_TEXTURE = IntegratedCircuit.id("textures/integrated_circuit/crossover.png");

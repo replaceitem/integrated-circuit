@@ -15,7 +15,7 @@ import net.replaceitem.integratedcircuit.circuit.*;
 import net.replaceitem.integratedcircuit.client.gui.IntegratedCircuitScreen;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;

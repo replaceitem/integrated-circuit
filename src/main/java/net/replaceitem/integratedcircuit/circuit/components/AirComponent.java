@@ -6,7 +6,7 @@ import net.replaceitem.integratedcircuit.circuit.Circuit;
 import net.replaceitem.integratedcircuit.circuit.Component;
 import net.replaceitem.integratedcircuit.circuit.ComponentState;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public class AirComponent extends Component {
     public AirComponent(Settings settings) {

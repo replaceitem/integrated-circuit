@@ -15,7 +15,7 @@ import net.replaceitem.integratedcircuit.circuit.ServerCircuit;
 import net.replaceitem.integratedcircuit.client.gui.IntegratedCircuitScreen;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public class ObserverComponent extends FacingComponent {
     public static final Identifier ITEM_TEXTURE = IntegratedCircuit.id("textures/integrated_circuit/observer.png");

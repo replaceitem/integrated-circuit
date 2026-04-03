@@ -2,7 +2,7 @@ package net.replaceitem.integratedcircuit.circuit;
 
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 
 /**

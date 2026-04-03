@@ -29,7 +29,7 @@ import net.replaceitem.integratedcircuit.circuit.ServerCircuit;
 import net.replaceitem.integratedcircuit.circuit.components.PortComponent;
 import net.replaceitem.integratedcircuit.circuit.context.BlockEntityServerCircuitContext;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Optional;
 import java.util.Set;
