@@ -3,7 +3,7 @@ package net.replaceitem.integratedcircuit.circuit;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.Holder;
 import net.minecraft.core.IdMapper;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -43,7 +43,7 @@ public abstract class Component {
     
     private final Settings settings;
     private ComponentState defaultState;
-    private final StateDefinition<Component, ComponentState> stateManager;
+    private final StateDefinition<Component, ComponentState> stateDefinition;
     
     public static final FlatDirection[] DIRECTIONS = new FlatDirection[]{FlatDirection.WEST, FlatDirection.EAST, FlatDirection.NORTH, FlatDirection.SOUTH};
 
@@ -51,8 +51,8 @@ public abstract class Component {
         this.settings = settings;
         StateDefinition.Builder<Component, ComponentState> builder = new StateDefinition.Builder<>(this);
         this.appendProperties(builder);
-        this.stateManager = builder.create(Component::getDefaultState, ComponentState::new);
-        this.setDefaultState(this.stateManager.any());
+        this.stateDefinition = builder.create(Component::getDefaultState, ComponentState::new);
+        this.setDefaultState(this.stateDefinition.any());
     }
 
     public Settings getSettings() {
@@ -78,14 +78,14 @@ public abstract class Component {
     @Nullable
     public ComponentState getPlacementState(Circuit circuit, ComponentPos pos, FlatDirection rotation) {
         ComponentState defaultState = this.getDefaultState();
-        if(this.stateManager.getProperties().contains(FacingComponent.FACING)) return defaultState.setValue(FacingComponent.FACING, rotation);
+        if(this.stateDefinition.getProperties().contains(FacingComponent.FACING)) return defaultState.setValue(FacingComponent.FACING, rotation);
         return defaultState;
     }
 
     public abstract @Nullable Identifier getItemTexture();
     public abstract @Nullable Identifier getToolTexture();
 
-    public abstract void render(GuiGraphics drawContext, int x, int y, float a, ComponentState state);
+    public abstract void extractRenderState(GuiGraphicsExtractor drawContext, int x, int y, float a, ComponentState state);
 
     public static void replace(ComponentState state, ComponentState newState, Circuit world, ComponentPos pos, int flags) {
         replace(state, newState, world, pos, flags, 512);
@@ -192,8 +192,8 @@ public abstract class Component {
         return net.minecraft.network.chat.Component.empty();
     }
 
-    public StateDefinition<Component, ComponentState> getStateManager() {
-        return stateManager;
+    public StateDefinition<Component, ComponentState> getStateDefinition() {
+        return stateDefinition;
     }
 
 

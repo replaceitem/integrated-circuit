@@ -1,6 +1,6 @@
 package net.replaceitem.integratedcircuit.circuit.components;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
 import net.minecraft.world.level.block.RedStoneWireBlock;
@@ -25,7 +25,7 @@ public class CrossoverComponent extends AbstractConductingComponent {
 
     public CrossoverComponent(Settings settings) {
         super(settings);
-        this.setDefaultState(this.getStateManager().any().setValue(POWER_X, 0).setValue(POWER_Y, 0));
+        this.setDefaultState(this.getStateDefinition().any().setValue(POWER_X, 0).setValue(POWER_Y, 0));
     }
 
     @Override
@@ -47,13 +47,13 @@ public class CrossoverComponent extends AbstractConductingComponent {
     }
 
     @Override
-    public void render(GuiGraphics drawContext, int x, int y, float a, ComponentState state) {
+    public void extractRenderState(GuiGraphicsExtractor drawContext, int x, int y, float a, ComponentState state) {
         int colorX = RedStoneWireBlock.getColorForPower(state.getValue(POWER_X));
         int colorY = RedStoneWireBlock.getColorForPower(state.getValue(POWER_Y));
 
-        IntegratedCircuitScreen.renderComponentTexture(drawContext, TEXTURE_X, x, y, 0, ARGB.color(ARGB.as8BitChannel(a), colorX));
-        IntegratedCircuitScreen.renderComponentTexture(drawContext, TEXTURE_BRIDGE, x, y, 0, a);
-        IntegratedCircuitScreen.renderComponentTexture(drawContext, TEXTURE_Y, x, y, 0, ARGB.color(ARGB.as8BitChannel(a), colorY));
+        IntegratedCircuitScreen.extractComponentTextureRenderState(drawContext, TEXTURE_X, x, y, 0, ARGB.color(ARGB.as8BitChannel(a), colorX));
+        IntegratedCircuitScreen.extractComponentTextureRenderState(drawContext, TEXTURE_BRIDGE, x, y, 0, a);
+        IntegratedCircuitScreen.extractComponentTextureRenderState(drawContext, TEXTURE_Y, x, y, 0, ARGB.color(ARGB.as8BitChannel(a), colorY));
     }
 
 

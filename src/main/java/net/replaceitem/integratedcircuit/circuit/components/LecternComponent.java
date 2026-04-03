@@ -2,7 +2,7 @@ package net.replaceitem.integratedcircuit.circuit.components;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -27,7 +27,7 @@ public class LecternComponent extends Component {
     
     public LecternComponent(Settings settings) {
         super(settings);
-        this.setDefaultState(this.getStateManager().any().setValue(PAGE, 1));
+        this.setDefaultState(this.getStateDefinition().any().setValue(PAGE, 1));
     }
 
     @Override
@@ -41,8 +41,8 @@ public class LecternComponent extends Component {
     }
 
     @Override
-    public void render(GuiGraphics drawContext, int x, int y, float a, ComponentState state) {
-        IntegratedCircuitScreen.renderComponentTexture(drawContext, ITEM_TEXTURE, x, y, 0, a);
+    public void extractRenderState(GuiGraphicsExtractor drawContext, int x, int y, float a, ComponentState state) {
+        IntegratedCircuitScreen.extractComponentTextureRenderState(drawContext, ITEM_TEXTURE, x, y, 0, a);
         Font textRenderer = Minecraft.getInstance().font;
         String text = String.valueOf(state.getValue(PAGE));
         
@@ -50,7 +50,7 @@ public class LecternComponent extends Component {
         drawContext.pose().translate(x + 8, y + 8);
         drawContext.pose().scale(.8f, .8f);
         drawContext.pose().translate( (float) textRenderer.width(text) / -2, (float) textRenderer.lineHeight / -2 + 1);
-        drawContext.drawString(textRenderer, text, 0, 0, ARGB.color(a, CommonColors.BLACK), false);
+        drawContext.text(textRenderer, text, 0, 0, ARGB.color(a, CommonColors.BLACK), false);
         drawContext.pose().popMatrix();
     }
 

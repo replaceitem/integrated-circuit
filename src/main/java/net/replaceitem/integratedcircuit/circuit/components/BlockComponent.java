@@ -1,6 +1,6 @@
 package net.replaceitem.integratedcircuit.circuit.components;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.resources.Identifier;
 import net.replaceitem.integratedcircuit.IntegratedCircuit;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
@@ -29,8 +29,8 @@ public class BlockComponent extends Component {
     }
 
     @Override
-    public void render(GuiGraphics drawContext, int x, int y, float a, ComponentState state) {
-        IntegratedCircuitScreen.renderComponentTexture(drawContext, ITEM_TEXTURE, x, y, 0, a);
+    public void extractRenderState(GuiGraphicsExtractor drawContext, int x, int y, float a, ComponentState state) {
+        IntegratedCircuitScreen.extractComponentTextureRenderState(drawContext, ITEM_TEXTURE, x, y, 0, a);
     }
 
     @Override

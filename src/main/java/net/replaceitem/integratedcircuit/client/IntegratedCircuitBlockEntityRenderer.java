@@ -6,14 +6,14 @@ import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
-import net.minecraft.client.renderer.state.CameraRenderState;
-import net.minecraft.core.Direction;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.CommonColors;
 import net.minecraft.world.phys.Vec3;
 import net.replaceitem.integratedcircuit.IntegratedCircuitBlock;
 import net.replaceitem.integratedcircuit.IntegratedCircuitBlockEntity;
 import net.replaceitem.integratedcircuit.client.config.DefaultConfig;
+import org.joml.Quaternionf;
 import org.jspecify.annotations.Nullable;
 
 public class IntegratedCircuitBlockEntityRenderer implements BlockEntityRenderer<IntegratedCircuitBlockEntity, IntegratedCircuitBlockEntityRenderState> {
@@ -33,19 +33,20 @@ public class IntegratedCircuitBlockEntityRenderer implements BlockEntityRenderer
     @Override
     public void extractRenderState(IntegratedCircuitBlockEntity blockEntity, IntegratedCircuitBlockEntityRenderState state, float tickProgress, Vec3 cameraPos, ModelFeatureRenderer.@Nullable CrumblingOverlay crumblingOverlay) {
         BlockEntityRenderer.super.extractRenderState(blockEntity, state, tickProgress, cameraPos, crumblingOverlay);
-        state.customName = blockEntity.getCustomName();
+        state.customName = DefaultConfig.getConfig().getRenderCircuitName() ? blockEntity.getCustomName() : null;
+        state.orientation = blockEntity.getBlockState().getValue(IntegratedCircuitBlock.FACING).getRotation();
     }
 
     @Override
     public void submit(IntegratedCircuitBlockEntityRenderState state, PoseStack matrices, SubmitNodeCollector queue, CameraRenderState cameraState) {
-        if(!DefaultConfig.getConfig().getRenderCircuitName()) return;
-        Direction facing = state.blockState.getValue(IntegratedCircuitBlock.FACING);
         Component customName = state.customName;
-        if (customName == null) return;
+        Quaternionf orientation = state.orientation;
+
+        if (customName == null || orientation == null) return;
 
         matrices.pushPose();
         matrices.translate(0.5F, 3f/16+0.001f, 0.5F);
-        matrices.mulPose(facing.getRotation());
+        matrices.mulPose(orientation);
         int light = state.lightCoords;
         int textWidth = textRenderer.width(customName);
         float scale = Math.min(MAX_WIDTH / textWidth, MAX_HEIGHT / textRenderer.lineHeight);

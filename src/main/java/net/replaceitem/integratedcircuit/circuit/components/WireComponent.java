@@ -2,7 +2,7 @@ package net.replaceitem.integratedcircuit.circuit.components;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
 import net.minecraft.world.entity.player.Player;
@@ -48,7 +48,7 @@ public class WireComponent extends AbstractWireComponent {
 
     public WireComponent(Settings settings) {
         super(settings);
-        this.setDefaultState(this.getStateManager().any()
+        this.setDefaultState(this.getStateDefinition().any()
                 .setValue(CONNECTED_NORTH, false)
                 .setValue(CONNECTED_EAST, false)
                 .setValue(CONNECTED_SOUTH, false)
@@ -79,23 +79,23 @@ public class WireComponent extends AbstractWireComponent {
     }
 
     @Override
-    public void render(GuiGraphics drawContext, int x, int y, float a, ComponentState state) {
+    public void extractRenderState(GuiGraphicsExtractor drawContext, int x, int y, float a, ComponentState state) {
         final int size = IntegratedCircuitScreen.COMPONENT_SIZE;
         final int halfSize = size/2;
 
         int color = ARGB.color(ARGB.as8BitChannel(a), RedStoneWireBlock.getColorForPower(state.getValue(POWER)));
 
-        if(state.getValue(CONNECTED_NORTH)) IntegratedCircuitScreen.renderComponentTexture(drawContext, TEXTURE_Y, x, y, 0, color, 0, 0, size, halfSize);
-        if(state.getValue(CONNECTED_EAST)) IntegratedCircuitScreen.renderComponentTexture(drawContext, TEXTURE_X, x, y, 0, color, halfSize, 0, halfSize, size);
-        if(state.getValue(CONNECTED_SOUTH)) IntegratedCircuitScreen.renderComponentTexture(drawContext, TEXTURE_Y, x, y, 0, color, 0, halfSize, size, halfSize);
-        if(state.getValue(CONNECTED_WEST)) IntegratedCircuitScreen.renderComponentTexture(drawContext, TEXTURE_X, x, y, 0, color, 0, 0, halfSize, size);
+        if(state.getValue(CONNECTED_NORTH)) IntegratedCircuitScreen.extractComponentTextureRenderState(drawContext, TEXTURE_Y, x, y, 0, color, 0, 0, size, halfSize);
+        if(state.getValue(CONNECTED_EAST)) IntegratedCircuitScreen.extractComponentTextureRenderState(drawContext, TEXTURE_X, x, y, 0, color, halfSize, 0, halfSize, size);
+        if(state.getValue(CONNECTED_SOUTH)) IntegratedCircuitScreen.extractComponentTextureRenderState(drawContext, TEXTURE_Y, x, y, 0, color, 0, halfSize, size, halfSize);
+        if(state.getValue(CONNECTED_WEST)) IntegratedCircuitScreen.extractComponentTextureRenderState(drawContext, TEXTURE_X, x, y, 0, color, 0, 0, halfSize, size);
 
         int connections = 0;
         for (FlatDirection direction : FlatDirection.VALUES) if(state.getValue(DIRECTION_TO_CONNECTION_PROPERTY.get(direction))) connections++;
-        if(connections != 2) IntegratedCircuitScreen.renderComponentTexture(drawContext, TEXTURE_DOT, x, y, 0, color, 0, 0, size, size);
+        if(connections != 2) IntegratedCircuitScreen.extractComponentTextureRenderState(drawContext, TEXTURE_DOT, x, y, 0, color, 0, 0, size, size);
         
         if(!(state.getValue(CONNECTED_NORTH) && state.getValue(CONNECTED_SOUTH) || state.getValue(CONNECTED_EAST) && state.getValue(CONNECTED_WEST))) {
-            IntegratedCircuitScreen.renderComponentTexture(drawContext, TEXTURE_DOT, x, y, 0, color, 0, 0, size, size);
+            IntegratedCircuitScreen.extractComponentTextureRenderState(drawContext, TEXTURE_DOT, x, y, 0, color, 0, 0, size, size);
         }
     }
 

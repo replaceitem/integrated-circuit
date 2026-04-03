@@ -1,8 +1,6 @@
 package net.replaceitem.integratedcircuit.circuit;
 
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.MapCodec;
-import it.unimi.dsi.fastutil.objects.Reference2ObjectArrayMap;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.state.StateHolder;
@@ -13,10 +11,10 @@ import net.replaceitem.integratedcircuit.util.FlatDirection;
 
 public class ComponentState extends StateHolder<Component, ComponentState> {
 
-    public static final Codec<ComponentState> CODEC = codec(IntegratedCircuit.COMPONENTS_REGISTRY.byNameCodec(), Component::getDefaultState).stable();
-    
-    protected ComponentState(Component owner, Reference2ObjectArrayMap<Property<?>, Comparable<?>> entries, MapCodec<ComponentState> codec) {
-        super(owner, entries, codec);
+    public static final Codec<ComponentState> CODEC = codec(IntegratedCircuit.COMPONENTS_REGISTRY.byNameCodec(), Component::getDefaultState, Component::getStateDefinition).stable();
+
+    public ComponentState(Component owner, Property<?>[] propertyKeys, Comparable<?>[] propertyValues) {
+        super(owner, propertyKeys, propertyValues);
     }
 
     public Component getComponent() {

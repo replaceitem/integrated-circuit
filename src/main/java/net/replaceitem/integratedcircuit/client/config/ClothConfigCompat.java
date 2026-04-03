@@ -3,6 +3,7 @@ package net.replaceitem.integratedcircuit.client.config;
 import com.google.gson.GsonBuilder;
 import com.mojang.blaze3d.platform.InputConstants;
 import me.shedaniel.autoconfig.AutoConfig;
+import me.shedaniel.autoconfig.AutoConfigClient;
 import me.shedaniel.autoconfig.ConfigHolder;
 import me.shedaniel.autoconfig.gui.registry.GuiRegistry;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
@@ -17,7 +18,7 @@ import static me.shedaniel.autoconfig.util.Utils.setUnsafely;
 public class ClothConfigCompat {
 
     public static DefaultConfig createConfig() {
-        registerKeyCodeProvider(AutoConfig.getGuiRegistry(ClothConfig.class));
+        registerKeyCodeProvider(AutoConfigClient.getGuiRegistry(ClothConfig.class));
         AutoConfig.register(ClothConfig.class, (definition, configClass) ->
                 new GsonConfigSerializer<>(definition, configClass, new GsonBuilder().setPrettyPrinting().registerTypeAdapter(InputConstants.Key.class, new KeySerializer()).create())
         );
@@ -43,6 +44,6 @@ public class ClothConfigCompat {
     }
 
     public static Screen getConfigScreenFavtory(Screen parent) {
-        return AutoConfig.getConfigScreen(ClothConfig.class, parent).get();
+        return AutoConfigClient.getConfigScreen(ClothConfig.class, parent).get();
     }
 }

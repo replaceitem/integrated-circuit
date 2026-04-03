@@ -14,8 +14,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ClientPacketListener.class)
 public abstract class ClientPlayNetworkHandlerMixin {
-    @Inject(method = "method_38542(Lnet/minecraft/network/protocol/game/ClientboundBlockEntityDataPacket;Lnet/minecraft/world/level/block/entity/BlockEntity;)V", at = @At("TAIL"))
-    private void onBlockEntityUpdate(ClientboundBlockEntityDataPacket blockEntityUpdateS2CPacket, BlockEntity blockEntity, CallbackInfo ci) {
+    @Inject(method = "lambda$handleBlockEntityData$0", at = @At("TAIL"))
+    private void onBlockEntityUpdate(ClientboundBlockEntityDataPacket packet, BlockEntity blockEntity, CallbackInfo ci) {
         if(blockEntity instanceof IntegratedCircuitBlockEntity && blockEntity.getLevel() != null) {
             BlockPos pos = blockEntity.getBlockPos();
             BlockState state = blockEntity.getLevel().getBlockState(pos);

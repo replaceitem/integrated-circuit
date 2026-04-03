@@ -1,6 +1,6 @@
 package net.replaceitem.integratedcircuit.circuit.components;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -25,7 +25,7 @@ public class LampComponent extends Component {
 
     public LampComponent(Settings settings) {
         super(settings);
-        this.setDefaultState(this.getStateManager().any().setValue(LIT, false));
+        this.setDefaultState(this.getStateDefinition().any().setValue(LIT, false));
     }
 
     @Override
@@ -39,9 +39,9 @@ public class LampComponent extends Component {
     }
 
     @Override
-    public void render(GuiGraphics drawContext, int x, int y, float a, ComponentState state) {
+    public void extractRenderState(GuiGraphicsExtractor drawContext, int x, int y, float a, ComponentState state) {
         Identifier texture = state.getValue(LIT) ? TEXTURE_ON : ITEM_TEXTURE;
-        IntegratedCircuitScreen.renderComponentTexture(drawContext, texture, x, y, 0, a);
+        IntegratedCircuitScreen.extractComponentTextureRenderState(drawContext, texture, x, y, 0, a);
     }
 
     @Override

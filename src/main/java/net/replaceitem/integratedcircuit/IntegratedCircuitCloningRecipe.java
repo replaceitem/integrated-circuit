@@ -1,31 +1,36 @@
 package net.replaceitem.integratedcircuit;
 
-import net.minecraft.core.HolderLookup;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
-import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 
 public class IntegratedCircuitCloningRecipe extends CustomRecipe {
-    public IntegratedCircuitCloningRecipe(CraftingBookCategory category) {
-        super(category);
-    }
     
     public static DataComponentType<CustomData> CLONED_COMPONENT = IntegratedCircuit.CIRCUIT_DATA;
 
+    public static final MapCodec<IntegratedCircuitCloningRecipe> MAP_CODEC = MapCodec.unit(IntegratedCircuitCloningRecipe::new);
+    public static final StreamCodec<RegistryFriendlyByteBuf, IntegratedCircuitCloningRecipe> STREAM_CODEC = StreamCodec.unit(
+            new IntegratedCircuitCloningRecipe()
+    );
+
+    public static final RecipeSerializer<IntegratedCircuitCloningRecipe> SERIALIZER = new RecipeSerializer<>(MAP_CODEC, STREAM_CODEC);
+
     @Override
-    public boolean matches(CraftingInput inventory, Level world) {
+    public boolean matches(CraftingInput input, Level world) {
         int sourceIndex = -1;
         int destIndex = -1;
 
-        for (int i = 0; i < inventory.size(); i++) {
-            ItemStack stack = inventory.getItem(i);
+        for (int i = 0; i < input.size(); i++) {
+            ItemStack stack = input.getItem(i);
 
             if(stack.isEmpty()) continue;
             if(!(stack.getItem() instanceof IntegratedCircuitItem)) return false;
@@ -43,7 +48,7 @@ public class IntegratedCircuitCloningRecipe extends CustomRecipe {
     }
 
     @Override
-    public ItemStack assemble(CraftingInput input, HolderLookup.Provider wrapperLookup) {
+    public ItemStack assemble(CraftingInput input) {
         int sourceIndex = -1;
         int destIndex = -1;
 
@@ -94,6 +99,6 @@ public class IntegratedCircuitCloningRecipe extends CustomRecipe {
 
     @Override
     public RecipeSerializer<? extends CustomRecipe> getSerializer() {
-        return IntegratedCircuit.CIRCUIT_CLONING_RECIPE;
+        return SERIALIZER;
     }
 }

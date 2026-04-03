@@ -1,6 +1,6 @@
 package net.replaceitem.integratedcircuit.client.gui.widget;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
@@ -53,24 +53,24 @@ public class ToolboxButton extends AbstractWidget {
     }
 
     @Override
-    protected void renderWidget(GuiGraphics context, int mouseX, int mouseY, float delta) {
-        context.blitSprite(
-            RenderPipelines.GUI_TEXTURED,
-            selectBackgroundTexture(),
-            getX(),
-            getY(),
-            SIZE,
-            SIZE
+    protected void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+        graphics.blitSprite(
+                RenderPipelines.GUI_TEXTURED,
+                selectBackgroundTexture(),
+                getX(),
+                getY(),
+                SIZE,
+                SIZE
         );
 
         Identifier toolTexture = component.getToolTexture();
 
         if (toolTexture != null)
-            renderPaletteItem(context, toolTexture);
+            renderPaletteItem(graphics, toolTexture);
     }
 
-    private void renderPaletteItem(GuiGraphics drawContext, Identifier itemTexture) {
-        drawContext.blitSprite(
+    private void renderPaletteItem(GuiGraphicsExtractor graphics, Identifier itemTexture) {
+        graphics.blitSprite(
             RenderPipelines.GUI_TEXTURED,
             itemTexture,
             getX(),

@@ -43,7 +43,7 @@ public class Components {
 
     static {
         for(Component component : IntegratedCircuit.COMPONENTS_REGISTRY) {
-            for(ComponentState componentState : component.getStateManager().getPossibleStates()) {
+            for(ComponentState componentState : component.getStateDefinition().getPossibleStates()) {
                 Component.STATE_IDS.add(componentState);
             }
         }

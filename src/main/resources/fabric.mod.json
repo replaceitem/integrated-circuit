@@ -1,48 +1,48 @@
 {
-  "schemaVersion": 1,
-  "id": "integrated_circuit",
-  "version": "${version}",
-  "name": "Integrated Circuit",
-  "description": "Adds an integrated circuit block",
-  "authors": [
-    "replaceitem"
-  ],
-  "contact": {
-    "homepage": "https://modrinth.com/mod/integrated-circuit",
-    "issues": "https://github.com/replaceitem/integrated-circuit/issues",
-    "sources": "https://github.com/replaceitem/integrated-circuit"
-  },
-  "license": "MIT",
-  "icon": "assets/integrated_circuit/icon.png",
-  "environment": "*",
-  "entrypoints": {
-    "client": [
-      "net.replaceitem.integratedcircuit.client.IntegratedCircuitClient"
+    "schemaVersion": 1,
+    "id": "integrated_circuit",
+    "version": "${version}",
+    "name": "Integrated Circuit",
+    "description": "Adds an integrated circuit block",
+    "authors": [
+        "replaceitem"
     ],
-    "main": [
-      "net.replaceitem.integratedcircuit.IntegratedCircuit"
+    "contact": {
+        "homepage": "https://modrinth.com/mod/integrated-circuit",
+        "issues": "https://github.com/replaceitem/integrated-circuit/issues",
+        "sources": "https://github.com/replaceitem/integrated-circuit"
+    },
+    "license": "MIT",
+    "icon": "assets/integrated_circuit/icon.png",
+    "environment": "*",
+    "entrypoints": {
+        "client": [
+            "net.replaceitem.integratedcircuit.client.IntegratedCircuitClient"
+        ],
+        "main": [
+            "net.replaceitem.integratedcircuit.IntegratedCircuit"
+        ],
+        "modmenu": [
+            "net.replaceitem.integratedcircuit.client.ModMenuApiImpl"
+        ],
+        "fabric-datagen": [
+            "net.replaceitem.integratedcircuit.datagen.IntegratedCircuitDataGenerator"
+        ]
+    },
+    "mixins": [
+        "integrated_circuit.mixins.json"
     ],
-    "modmenu": [
-      "net.replaceitem.integratedcircuit.client.ModMenuApiImpl"
-    ],
-    "fabric-datagen": [
-      "net.replaceitem.integratedcircuit.datagen.IntegratedCircuitDataGenerator"
-    ]
-  },
-  "mixins": [
-    "integrated_circuit.mixins.json"
-  ],
-  "accessWidener": "integrated_circuit.accesswidener",
-  "depends": {
-    "minecraft": ">=1.21.11",
-    "fabricloader": ">=0.15.0",
-    "fabric": "*"
-  },
-  "custom": {
-    "modmenu": {
-      "links": {
-        "modmenu.discord": "https://discord.gg/etTDQAVSgt"
-      }
+    "accessWidener": "integrated_circuit.accesswidener",
+    "depends": {
+        "minecraft": ">=26.1",
+        "fabricloader": ">=0.18.4",
+        "fabric-api": ">=0.144.0"
+    },
+    "custom": {
+        "modmenu": {
+            "links": {
+                "modmenu.discord": "https://discord.gg/etTDQAVSgt"
+            }
+        }
     }
-  }
 }

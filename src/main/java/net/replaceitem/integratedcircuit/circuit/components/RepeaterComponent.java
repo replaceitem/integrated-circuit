@@ -1,6 +1,6 @@
 package net.replaceitem.integratedcircuit.circuit.components;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
@@ -31,7 +31,7 @@ public class RepeaterComponent extends AbstractRedstoneGateComponent {
 
     public RepeaterComponent(Settings settings) {
         super(settings);
-        this.setDefaultState(this.getStateManager().any().setValue(FACING, FlatDirection.NORTH).setValue(POWERED, false).setValue(DELAY, 1).setValue(LOCKED, false));
+        this.setDefaultState(this.getStateDefinition().any().setValue(FACING, FlatDirection.NORTH).setValue(POWERED, false).setValue(DELAY, 1).setValue(LOCKED, false));
     }
 
     @Override
@@ -45,24 +45,24 @@ public class RepeaterComponent extends AbstractRedstoneGateComponent {
     }
 
     @Override
-    public void render(GuiGraphics drawContext, int x, int y, float a, ComponentState state) {
+    public void extractRenderState(GuiGraphicsExtractor drawContext, int x, int y, float a, ComponentState state) {
         FlatDirection renderedRotation = state.getValue(FACING).getOpposite();
 
         Identifier baseTexture = state.getValue(POWERED) ? TEXTURE_ON : TEXTURE_OFF;
-        IntegratedCircuitScreen.renderComponentTexture(drawContext, baseTexture, x, y, renderedRotation.getIndex(), a);
+        IntegratedCircuitScreen.extractComponentTextureRenderState(drawContext, baseTexture, x, y, renderedRotation.getIndex(), a);
 
 
         Identifier torchTexture = state.getValue(POWERED) ? TEXTURE_TORCH_ON : TEXTURE_TORCH_OFF;
         
-        IntegratedCircuitScreen.renderPartialTexture(drawContext, torchTexture, x, y, 6, 1, 4, 4, renderedRotation.getIndex(), a);
+        IntegratedCircuitScreen.extractPartialTextureRenderState(drawContext, torchTexture, x, y, 6, 1, 4, 4, renderedRotation.getIndex(), a);
 
         boolean locked = state.getValue(LOCKED);
         Identifier knobTexture = locked ? TEXTURE_BAR : torchTexture;
         int knobOffsetAmount = (state.getValue(DELAY)-1) * 2;
         if(locked) {
-            IntegratedCircuitScreen.renderPartialTexture(drawContext, knobTexture, x, y, 2, 6 + knobOffsetAmount, 12, 2, renderedRotation.getIndex(), a);
+            IntegratedCircuitScreen.extractPartialTextureRenderState(drawContext, knobTexture, x, y, 2, 6 + knobOffsetAmount, 12, 2, renderedRotation.getIndex(), a);
         } else {
-            IntegratedCircuitScreen.renderPartialTexture(drawContext, knobTexture, x, y, 6, 5 + knobOffsetAmount, 4, 4, renderedRotation.getIndex(), a);
+            IntegratedCircuitScreen.extractPartialTextureRenderState(drawContext, knobTexture, x, y, 6, 5 + knobOffsetAmount, 4, 4, renderedRotation.getIndex(), a);
         }
     }
 

@@ -1,6 +1,6 @@
 package net.replaceitem.integratedcircuit.circuit.components;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -28,7 +28,7 @@ public class CopperBulbComponent extends Component {
 
     public CopperBulbComponent(Settings settings) {
         super(settings);
-        this.setDefaultState(this.getStateManager().any().setValue(LIT, false).setValue(POWERED, false));
+        this.setDefaultState(this.getStateDefinition().any().setValue(LIT, false).setValue(POWERED, false));
     }
 
     @Override
@@ -46,8 +46,8 @@ public class CopperBulbComponent extends Component {
     }
 
     @Override
-    public void render(GuiGraphics drawContext, int x, int y, float a, ComponentState state) {
-        IntegratedCircuitScreen.renderComponentTexture(drawContext, getTexture(state.getValue(LIT), state.getValue(POWERED)), x, y, 0, a);
+    public void extractRenderState(GuiGraphicsExtractor drawContext, int x, int y, float a, ComponentState state) {
+        IntegratedCircuitScreen.extractComponentTextureRenderState(drawContext, getTexture(state.getValue(LIT), state.getValue(POWERED)), x, y, 0, a);
     }
 
     @Override

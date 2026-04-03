@@ -1,6 +1,6 @@
 package net.replaceitem.integratedcircuit.circuit.components;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -35,7 +35,7 @@ public class ButtonComponent extends FacingComponent {
     public ButtonComponent(Settings settings, boolean wooden) {
         super(settings);
         this.wooden = wooden;
-        this.setDefaultState(this.getStateManager().any().setValue(POWERED, false));
+        this.setDefaultState(this.getStateDefinition().any().setValue(POWERED, false));
     }
 
     @Override
@@ -54,11 +54,11 @@ public class ButtonComponent extends FacingComponent {
     }
 
     @Override
-    public void render(GuiGraphics drawContext, int x, int y, float a, ComponentState state) {
+    public void extractRenderState(GuiGraphicsExtractor drawContext, int x, int y, float a, ComponentState state) {
         Identifier texture = getItemTexture();
         if(texture != null) {
             float b = state.getValue(POWERED) ? 0.5f : 1f;
-            IntegratedCircuitScreen.renderComponentTexture(drawContext, texture, x, y, state.getValue(FACING).getIndex(), ARGB.colorFromFloat(a, b, b, b));
+            IntegratedCircuitScreen.extractComponentTextureRenderState(drawContext, texture, x, y, state.getValue(FACING).getIndex(), ARGB.colorFromFloat(a, b, b, b));
         }
     }
 

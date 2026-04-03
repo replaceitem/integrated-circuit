@@ -1,7 +1,7 @@
 package net.replaceitem.integratedcircuit.circuit.components;
 
 import com.google.common.collect.Lists;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
@@ -66,9 +66,9 @@ public class TorchComponent extends FacingComponent {
     }
 
     @Override
-    public void render(GuiGraphics drawContext, int x, int y, float a, ComponentState state) {
+    public void extractRenderState(GuiGraphicsExtractor drawContext, int x, int y, float a, ComponentState state) {
         Identifier texture = state.getValue(LIT) ? TEXTURE : TEXTURE_OFF;
-        IntegratedCircuitScreen.renderComponentTexture(drawContext, texture, x, y, state.getValue(FACING).getIndex(), a);
+        IntegratedCircuitScreen.extractComponentTextureRenderState(drawContext, texture, x, y, state.getValue(FACING).getIndex(), a);
     }
 
     @Override

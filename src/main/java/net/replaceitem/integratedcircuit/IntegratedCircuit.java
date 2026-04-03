@@ -3,9 +3,9 @@ package net.replaceitem.integratedcircuit;
 import com.mojang.logging.LogUtils;
 import com.mojang.serialization.Lifecycle;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.fabricmc.fabric.api.event.registry.RegistryAttribute;
-import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
@@ -22,8 +22,6 @@ import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.component.CustomData;
-import net.minecraft.world.item.crafting.CustomRecipe;
-import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -33,12 +31,12 @@ import net.replaceitem.integratedcircuit.circuit.Component;
 import net.replaceitem.integratedcircuit.circuit.Components;
 import net.replaceitem.integratedcircuit.network.ServerPacketHandler;
 import net.replaceitem.integratedcircuit.network.packet.*;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 
 public class IntegratedCircuit implements ModInitializer {
     public static final Logger LOGGER = LogUtils.getLogger();
-    public static final String MOD_ID = "integrated_circuit"; // TODO - maybe make this dynamic
+    public static final String MOD_ID = "integrated_circuit";
 
     public static final ResourceKey<Registry<Component>> COMPONENTS_REGISTRY_KEY = ResourceKey.createRegistryKey(IntegratedCircuit.id("components"));
     public static final DefaultedRegistry<Component> COMPONENTS_REGISTRY = FabricRegistryBuilder
@@ -175,8 +173,6 @@ public class IntegratedCircuit implements ModInitializer {
     public static final BlockEntityType<IntegratedCircuitBlockEntity> INTEGRATED_CIRCUIT_BLOCK_ENTITY =
             FabricBlockEntityTypeBuilder.create(IntegratedCircuitBlockEntity::new, Blocks.CIRCUITS).build();
 
-    public static final RecipeSerializer<? extends CustomRecipe> CIRCUIT_CLONING_RECIPE = new CustomRecipe.Serializer<>(IntegratedCircuitCloningRecipe::new);
-
     public static Identifier id(String path) {
         return Identifier.fromNamespaceAndPath(MOD_ID, path);
     }
@@ -223,7 +219,7 @@ public class IntegratedCircuit implements ModInitializer {
         Registry.register(BuiltInRegistries.ITEM, Items.Keys.RED_INTEGRATED_CIRCUIT, Items.RED_INTEGRATED_CIRCUIT);
         Registry.register(BuiltInRegistries.ITEM, Items.Keys.BLACK_INTEGRATED_CIRCUIT, Items.BLACK_INTEGRATED_CIRCUIT);
 
-        ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.REDSTONE_BLOCKS).register(entries -> {
+        CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.REDSTONE_BLOCKS).register(entries -> {
             for(Item item : Items.CIRCUITS) {
                 entries.accept(item);
             }
@@ -231,16 +227,16 @@ public class IntegratedCircuit implements ModInitializer {
 
         Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("integrated_circuit"), INTEGRATED_CIRCUIT_BLOCK_ENTITY);
 
-        Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, id("crafting_special_circuit_cloning"), CIRCUIT_CLONING_RECIPE);
+        Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, id("crafting_special_circuit_cloning"), IntegratedCircuitCloningRecipe.SERIALIZER);
 
-        PayloadTypeRegistry.playC2S().register(ComponentInteractionC2SPacket.ID, ComponentInteractionC2SPacket.PACKET_CODEC);
-        PayloadTypeRegistry.playC2S().register(FinishEditingC2SPacket.ID, FinishEditingC2SPacket.PACKET_CODEC);
-        PayloadTypeRegistry.playC2S().register(PlaceComponentC2SPacket.ID, PlaceComponentC2SPacket.PACKET_CODEC);
-        PayloadTypeRegistry.playC2S().register(RenameCircuitC2SPacket.ID, RenameCircuitC2SPacket.PACKET_CODEC);
+        PayloadTypeRegistry.serverboundPlay().register(ComponentInteractionC2SPacket.ID, ComponentInteractionC2SPacket.PACKET_CODEC);
+        PayloadTypeRegistry.serverboundPlay().register(FinishEditingC2SPacket.ID, FinishEditingC2SPacket.PACKET_CODEC);
+        PayloadTypeRegistry.serverboundPlay().register(PlaceComponentC2SPacket.ID, PlaceComponentC2SPacket.PACKET_CODEC);
+        PayloadTypeRegistry.serverboundPlay().register(RenameCircuitC2SPacket.ID, RenameCircuitC2SPacket.PACKET_CODEC);
 
-        PayloadTypeRegistry.playS2C().register(CircuitNameUpdateS2CPacket.ID, CircuitNameUpdateS2CPacket.PACKET_CODEC);
-        PayloadTypeRegistry.playS2C().register(ComponentUpdateS2CPacket.ID, ComponentUpdateS2CPacket.PACKET_CODEC);
-        PayloadTypeRegistry.playS2C().register(EditIntegratedCircuitS2CPacket.ID, EditIntegratedCircuitS2CPacket.PACKET_CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(CircuitNameUpdateS2CPacket.ID, CircuitNameUpdateS2CPacket.PACKET_CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(ComponentUpdateS2CPacket.ID, ComponentUpdateS2CPacket.PACKET_CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(EditIntegratedCircuitS2CPacket.ID, EditIntegratedCircuitS2CPacket.PACKET_CODEC);
 
         ServerPlayNetworking.registerGlobalReceiver(ComponentInteractionC2SPacket.ID, ServerPacketHandler::receiveComponentInteraction);
         ServerPlayNetworking.registerGlobalReceiver(FinishEditingC2SPacket.ID, ServerPacketHandler::receiveFinishEditingPacket);

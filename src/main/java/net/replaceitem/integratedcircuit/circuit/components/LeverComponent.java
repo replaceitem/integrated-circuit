@@ -1,6 +1,6 @@
 package net.replaceitem.integratedcircuit.circuit.components;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -27,7 +27,7 @@ public class LeverComponent extends FacingComponent {
 
     public LeverComponent(Settings settings) {
         super(settings);
-        this.setDefaultState(this.getStateManager().any().setValue(FACING, FlatDirection.NORTH).setValue(POWERED, false));
+        this.setDefaultState(this.getStateDefinition().any().setValue(FACING, FlatDirection.NORTH).setValue(POWERED, false));
     }
 
     @Override
@@ -46,9 +46,9 @@ public class LeverComponent extends FacingComponent {
     }
 
     @Override
-    public void render(GuiGraphics drawContext, int x, int y, float a, ComponentState state) {
+    public void extractRenderState(GuiGraphicsExtractor drawContext, int x, int y, float a, ComponentState state) {
         Identifier texture = state.getValue(POWERED) ? TEXTURE_ON : TEXTURE_OFF;
-        IntegratedCircuitScreen.renderComponentTexture(drawContext, texture, x, y, state.getValue(FACING).getIndex(), a);
+        IntegratedCircuitScreen.extractComponentTextureRenderState(drawContext, texture, x, y, state.getValue(FACING).getIndex(), a);
     }
 
     @Override

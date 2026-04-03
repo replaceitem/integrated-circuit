@@ -1,6 +1,6 @@
 package net.replaceitem.integratedcircuit.circuit.components;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.Block;
@@ -26,7 +26,7 @@ public class ObserverComponent extends FacingComponent {
 
     public ObserverComponent(Settings settings) {
         super(settings);
-        this.setDefaultState(this.getStateManager().any().setValue(FACING, FlatDirection.NORTH).setValue(POWERED, false));
+        this.setDefaultState(this.getStateDefinition().any().setValue(FACING, FlatDirection.NORTH).setValue(POWERED, false));
     }
 
     @Override
@@ -45,8 +45,8 @@ public class ObserverComponent extends FacingComponent {
     }
 
     @Override
-    public void render(GuiGraphics drawContext, int x, int y, float a, ComponentState state) {
-        IntegratedCircuitScreen.renderComponentTexture(drawContext, state.getValue(POWERED) ? TEXTURE_ON : ITEM_TEXTURE, x, y, state.getValue(FACING).getOpposite().getIndex(), a);
+    public void extractRenderState(GuiGraphicsExtractor drawContext, int x, int y, float a, ComponentState state) {
+        IntegratedCircuitScreen.extractComponentTextureRenderState(drawContext, state.getValue(POWERED) ? TEXTURE_ON : ITEM_TEXTURE, x, y, state.getValue(FACING).getOpposite().getIndex(), a);
     }
 
     @Override

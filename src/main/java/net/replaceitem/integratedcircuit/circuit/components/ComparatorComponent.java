@@ -1,6 +1,6 @@
 package net.replaceitem.integratedcircuit.circuit.components;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -36,7 +36,7 @@ public class ComparatorComponent extends AbstractRedstoneGateComponent {
 
     public ComparatorComponent(Settings settings) {
         super(settings);
-        this.setDefaultState(this.getStateManager().any().setValue(FACING, FlatDirection.NORTH).setValue(POWERED, false).setValue(MODE, ComparatorMode.COMPARE).setValue(OUTPUT_POWER, 0));
+        this.setDefaultState(this.getStateDefinition().any().setValue(FACING, FlatDirection.NORTH).setValue(POWERED, false).setValue(MODE, ComparatorMode.COMPARE).setValue(OUTPUT_POWER, 0));
     }
 
     @Override
@@ -56,18 +56,18 @@ public class ComparatorComponent extends AbstractRedstoneGateComponent {
     }
 
     @Override
-    public void render(GuiGraphics drawContext, int x, int y, float a, ComponentState state) {
+    public void extractRenderState(GuiGraphicsExtractor drawContext, int x, int y, float a, ComponentState state) {
         boolean powered = state.getValue(POWERED);
         int rot = state.getValue(FACING).getOpposite().getIndex();
-        IntegratedCircuitScreen.renderComponentTexture(drawContext, powered ? TEXTURE_ON : TEXTURE, x, y, rot, a);
+        IntegratedCircuitScreen.extractComponentTextureRenderState(drawContext, powered ? TEXTURE_ON : TEXTURE, x, y, rot, a);
 
         Identifier torchTexture = powered ? TEXTURE_TORCH_ON : TEXTURE_TORCH_OFF;
 
-        IntegratedCircuitScreen.renderPartialTexture(drawContext, torchTexture, x, y, 3, 10, 4, 4, rot, a);
-        IntegratedCircuitScreen.renderPartialTexture(drawContext, torchTexture, x, y, 9, 10, 4, 4, rot, a);
+        IntegratedCircuitScreen.extractPartialTextureRenderState(drawContext, torchTexture, x, y, 3, 10, 4, 4, rot, a);
+        IntegratedCircuitScreen.extractPartialTextureRenderState(drawContext, torchTexture, x, y, 9, 10, 4, 4, rot, a);
 
         Identifier modeTorchTexture = state.getValue(MODE) == ComparatorMode.SUBTRACT ? TEXTURE_TORCH_ON : TEXTURE_TORCH_OFF;
-        IntegratedCircuitScreen.renderPartialTexture(drawContext, modeTorchTexture, x, y, 6, 1, 4, 4, rot, a);
+        IntegratedCircuitScreen.extractPartialTextureRenderState(drawContext, modeTorchTexture, x, y, 6, 1, 4, 4, rot, a);
     }
 
 

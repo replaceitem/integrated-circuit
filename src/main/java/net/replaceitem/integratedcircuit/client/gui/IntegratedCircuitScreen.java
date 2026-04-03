@@ -2,7 +2,7 @@ package net.replaceitem.integratedcircuit.client.gui;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.minecraft.client.gui.*;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.GuiEventListener;
@@ -152,31 +152,33 @@ public class IntegratedCircuitScreen extends Screen {
     }
 
     @Override
-    public void render(GuiGraphics drawContext, int mouseX, int mouseY, float delta) {
-        super.render(drawContext, mouseX, mouseY, delta);
-        drawContext.drawString(this.font, this.title, this.titleX, this.titleY, CommonColors.DARK_GRAY, false);
-        this.renderStatusBar(drawContext, mouseX, mouseY);
-        this.renderContent(drawContext);
-        this.renderCursorState(drawContext, mouseX, mouseY);
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+        super.extractRenderState(graphics, mouseX, mouseY, a);
+        graphics.text(this.font, this.title, this.titleX, this.titleY, CommonColors.DARK_GRAY, false);
+        this.renderStatusBar(graphics, mouseX, mouseY);
+        this.renderContent(graphics);
+        this.renderCursorState(graphics, mouseX, mouseY);
     }
 
     @Override
-    public void renderBackground(GuiGraphics context, int mouseX, int mouseY, float delta) {
-        super.renderBackground(context, mouseX, mouseY, delta);
+    public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+        super.extractBackground(graphics, mouseX, mouseY, a);
 
-        context.blit(
-            RenderPipelines.GUI_TEXTURED,
-            BACKGROUND_TEXTURE,
-            x, y,
-            0, 0,
-            BACKGROUND_WIDTH,
-            BACKGROUND_HEIGHT,
-            512,
-            512
+        graphics.blit(
+                RenderPipelines.GUI_TEXTURED,
+                BACKGROUND_TEXTURE,
+                x, y,
+                0, 0,
+                BACKGROUND_WIDTH,
+                BACKGROUND_HEIGHT,
+                512,
+                512
         );
     }
 
-    private void renderStatusBar(GuiGraphics drawContext, int mouseX, int mouseY) {
+
+
+    private void renderStatusBar(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
         ComponentPos pos = getComponentPosAt(mouseX, mouseY);
         ComponentState componentState = circuit.getComponentState(pos);
         net.replaceitem.integratedcircuit.circuit.Component component = componentState.getComponent();
@@ -209,7 +211,7 @@ public class IntegratedCircuitScreen extends Screen {
         }
 
         if (leftSideText != null) {
-            drawContext.drawString(
+            graphics.text(
                 this.font,
                 leftSideText,
                 this.x + STATUSBAR_X,
@@ -222,7 +224,7 @@ public class IntegratedCircuitScreen extends Screen {
         if (rightSideText != null) {
             int componentInfoWidth = this.font.width(rightSideText);
 
-            drawContext.drawString(
+            graphics.text(
                 this.font,
                 rightSideText,
                 this.x + BACKGROUND_WIDTH - componentInfoWidth - STATUSBAR_RIGHT_MARGIN,
@@ -238,77 +240,77 @@ public class IntegratedCircuitScreen extends Screen {
         return Component.literal(String.valueOf(signalStrength)).withStyle(style -> style.withColor(color));
     }
 
-    private void renderCursorState(GuiGraphics drawContext, int mouseX, int mouseY) {
+    private void renderCursorState(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
         ComponentPos pos = getComponentPosAt(mouseX, mouseY);
         boolean validSpot = circuit.getComponentState(pos).isAir();
         float a = validSpot ? 0.5f : 0.2f;
         if (this.cursorState != null && circuit.isInside(pos)) {
-            drawContext.pose().pushMatrix();
-            drawContext.pose().translate(getGridPosX(0), getGridPosY(0));
-            drawContext.pose().scale(RENDER_SCALE, RENDER_SCALE);
-            renderComponentStateInGrid(drawContext, this.cursorState, pos.getX(), pos.getY(), a);
-            drawContext.pose().popMatrix();
+            graphics.pose().pushMatrix();
+            graphics.pose().translate(getGridPosX(0), getGridPosY(0));
+            graphics.pose().scale(RENDER_SCALE, RENDER_SCALE);
+            extractComponentStateRenderStateInGrid(graphics, this.cursorState, pos.getX(), pos.getY(), a);
+            graphics.pose().popMatrix();
         }
     }
 
-    protected void renderContent(GuiGraphics drawContext) {
-        drawContext.pose().pushMatrix();
-        drawContext.pose().translate(getGridPosX(0), getGridPosY(0));
+    protected void renderContent(GuiGraphicsExtractor graphics) {
+        graphics.pose().pushMatrix();
+        graphics.pose().translate(getGridPosX(0), getGridPosY(0));
 
-        drawContext.pose().scale(RENDER_SCALE, RENDER_SCALE);
+        graphics.pose().scale(RENDER_SCALE, RENDER_SCALE);
 
         for (FlatDirection direction : FlatDirection.VALUES) {
             ComponentState port = circuit.getPorts()[direction.getIndex()];
             ComponentPos pos = Circuit.PORT_POSITIONS.get(direction);
-            renderComponentStateInGrid(drawContext, port, pos.getX(), pos.getY(), 1);
+            extractComponentStateRenderStateInGrid(graphics, port, pos.getX(), pos.getY(), 1);
         }
 
         for (int i = 0; i < Circuit.SIZE; i++) {
             for (int j = 0; j < Circuit.SIZE; j++) {
                 ComponentState componentState = circuit.getSection().getComponentState(i, j);
-                renderComponentStateInGrid(drawContext, componentState, i, j, 1);
+                extractComponentStateRenderStateInGrid(graphics, componentState, i, j, 1);
             }
         }
 
-        drawContext.pose().popMatrix();
+        graphics.pose().popMatrix();
     }
 
-    protected static void renderComponentState(GuiGraphics drawContext, ComponentState state, int x, int y, float a) {
-        state.getComponent().render(drawContext, x, y, a, state);
+    protected static void extractComponentStateRenderState(GuiGraphicsExtractor graphics, ComponentState state, int x, int y, float a) {
+        state.getComponent().extractRenderState(graphics, x, y, a, state);
     }
 
-    protected void renderComponentStateInGrid(GuiGraphics drawContext, ComponentState state, int x, int y, float a) {
-        renderComponentState(drawContext, state, x * COMPONENT_SIZE, y * COMPONENT_SIZE, a);
+    protected void extractComponentStateRenderStateInGrid(GuiGraphicsExtractor graphics, ComponentState state, int x, int y, float a) {
+        extractComponentStateRenderState(graphics, state, x * COMPONENT_SIZE, y * COMPONENT_SIZE, a);
     }
 
-    public static void renderComponentTexture(GuiGraphics drawContext, Identifier component, int x, int y, int rot, float alpha) {
-        renderComponentTexture(drawContext, component, x, y, rot, ARGB.white(alpha));
+    public static void extractComponentTextureRenderState(GuiGraphicsExtractor graphics, Identifier component, int x, int y, int rot, float alpha) {
+        extractComponentTextureRenderState(graphics, component, x, y, rot, ARGB.white(alpha));
     }
 
-    public static void renderComponentTexture(GuiGraphics drawContext, Identifier component, int x, int y, int rot, int color) {
-        renderComponentTexture(drawContext, component, x, y, rot, color, 0, 0, 16, 16);
+    public static void extractComponentTextureRenderState(GuiGraphicsExtractor graphics, Identifier component, int x, int y, int rot, int color) {
+        extractComponentTextureRenderState(graphics, component, x, y, rot, color, 0, 0, 16, 16);
     }
 
-    public static void renderComponentTexture(GuiGraphics drawContext, Identifier component, int x, int y, int rot, int color, int u, int v, int w, int h) {
-        renderPartialTexture(drawContext, component, x, y, u, v, 16, 16, rot, color, u, v, w, h);
+    public static void extractComponentTextureRenderState(GuiGraphicsExtractor graphics, Identifier component, int x, int y, int rot, int color, int u, int v, int w, int h) {
+        extractPartialTextureRenderState(graphics, component, x, y, u, v, 16, 16, rot, color, u, v, w, h);
     }
 
 
-    public static void renderPartialTexture(GuiGraphics drawContext, Identifier texture, int componentX, int componentY, int x, int y, int textureW, int textureH, int rot, float alpha) {
-        renderPartialTexture(drawContext, texture, componentX, componentY, x, y, textureW, textureH, rot, ARGB.white(alpha));
+    public static void extractPartialTextureRenderState(GuiGraphicsExtractor graphics, Identifier texture, int componentX, int componentY, int x, int y, int textureW, int textureH, int rot, float alpha) {
+        extractPartialTextureRenderState(graphics, texture, componentX, componentY, x, y, textureW, textureH, rot, ARGB.white(alpha));
     }
 
-    public static void renderPartialTexture(GuiGraphics drawContext, Identifier texture, int componentX, int componentY, int x, int y, int textureW, int textureH, int rot, int color) {
-        renderPartialTexture(drawContext, texture, componentX, componentY, x, y, textureW, textureH, rot, color, 0, 0, textureW, textureH);
+    public static void extractPartialTextureRenderState(GuiGraphicsExtractor graphics, Identifier texture, int componentX, int componentY, int x, int y, int textureW, int textureH, int rot, int color) {
+        extractPartialTextureRenderState(graphics, texture, componentX, componentY, x, y, textureW, textureH, rot, color, 0, 0, textureW, textureH);
     }
 
-    private static void renderPartialTexture(GuiGraphics drawContext, Identifier texture, int componentX, int componentY, int x, int y, int textureW, int textureH, int rot, int color, int u, int v, int w, int h) {
-        drawContext.pose().pushMatrix();
-        drawContext.pose().translate(componentX + 8, componentY + 8);
-        drawContext.pose().rotate((float) (rot * Math.PI * 0.5));
-        drawContext.pose().translate(-8, -8);
-        drawContext.blit(RenderPipelines.GUI_TEXTURED, texture, x, y, u, v, w, h, textureW, textureH, color);
-        drawContext.pose().popMatrix();
+    private static void extractPartialTextureRenderState(GuiGraphicsExtractor graphics, Identifier texture, int componentX, int componentY, int x, int y, int textureW, int textureH, int rot, int color, int u, int v, int w, int h) {
+        graphics.pose().pushMatrix();
+        graphics.pose().translate(componentX + 8, componentY + 8);
+        graphics.pose().rotate((float) (rot * Math.PI * 0.5));
+        graphics.pose().translate(-8, -8);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, texture, x, y, u, v, w, h, textureW, textureH, color);
+        graphics.pose().popMatrix();
     }
 
     @Override

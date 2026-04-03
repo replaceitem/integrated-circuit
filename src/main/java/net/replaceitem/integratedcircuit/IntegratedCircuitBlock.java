@@ -3,6 +3,8 @@ package net.replaceitem.integratedcircuit;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.client.color.block.BlockTintSource;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
@@ -18,7 +20,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
@@ -33,6 +34,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.redstone.ExperimentalRedstoneUtils;
 import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.level.storage.loot.LootParams;
@@ -47,7 +49,10 @@ import net.replaceitem.integratedcircuit.network.packet.EditIntegratedCircuitS2C
 import net.replaceitem.integratedcircuit.util.FlatDirection;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.IntStream;
 
 public class IntegratedCircuitBlock extends HorizontalDirectionalBlock implements EntityBlock {
     public static final MapCodec<IntegratedCircuitBlock> CODEC = simpleCodec(IntegratedCircuitBlock::new);
@@ -56,6 +61,31 @@ public class IntegratedCircuitBlock extends HorizontalDirectionalBlock implement
     public IntegratedCircuitBlock(Properties settings) {
         super(settings);
         registerDefaultState(this.getStateDefinition().any().setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH));
+    }
+
+    public static List<BlockTintSource> createBlockTintSources() {
+        return Arrays.stream(FlatDirection.VALUES).map(IntegratedCircuitBlock::createBlockTintSource).toList();
+    }
+
+    private static BlockTintSource createBlockTintSource(FlatDirection circuitDirection) {
+        return new BlockTintSource() {
+            @Override
+            public int color(BlockState state) {
+                return RedStoneWireBlock.getColorForPower(0);
+            }
+
+            @Override
+            public int colorInWorld(BlockState state, BlockAndTintGetter level, BlockPos pos) {
+                return RedStoneWireBlock.getColorForPower(getPower(level, pos));
+            }
+
+            public int getPower(BlockAndTintGetter level, BlockPos pos) {
+                if(level.getBlockEntity(pos) instanceof IntegratedCircuitBlockEntity integratedCircuitBlockEntity) {
+                    return integratedCircuitBlockEntity.getPortRenderStrength(circuitDirection);
+                }
+                return 0;
+            }
+        };
     }
 
     @Override
@@ -249,13 +279,6 @@ public class IntegratedCircuitBlock extends HorizontalDirectionalBlock implement
             }
         }
         return list;
-    }
-    
-    public int getPortRenderStrength(BlockAndTintGetter view, BlockPos pos, FlatDirection circuitDirection) {
-        if(view.getBlockEntity(pos) instanceof IntegratedCircuitBlockEntity integratedCircuitBlockEntity) {
-            return integratedCircuitBlockEntity.getPortRenderStrength(circuitDirection);
-        }
-        return 0;
     }
 
     @Override

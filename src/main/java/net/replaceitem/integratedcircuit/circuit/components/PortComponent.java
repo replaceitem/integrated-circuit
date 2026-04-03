@@ -1,6 +1,6 @@
 package net.replaceitem.integratedcircuit.circuit.components;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.RedStoneWireBlock;
@@ -29,7 +29,7 @@ public class PortComponent extends AbstractWireComponent {
 
     public PortComponent(Settings settings) {
         super(settings);
-        this.setDefaultState(this.getStateManager().any().setValue(FACING, FlatDirection.NORTH).setValue(POWER, 0).setValue(IS_OUTPUT, false));
+        this.setDefaultState(this.getStateDefinition().any().setValue(FACING, FlatDirection.NORTH).setValue(POWER, 0).setValue(IS_OUTPUT, false));
     }
 
     @Override
@@ -56,14 +56,14 @@ public class PortComponent extends AbstractWireComponent {
     }
 
     @Override
-    public void render(GuiGraphics drawContext, int x, int y, float a, ComponentState state) {
+    public void extractRenderState(GuiGraphicsExtractor drawContext, int x, int y, float a, ComponentState state) {
         int color = RedStoneWireBlock.getColorForPower(state.getValue(POWER));
 
         FlatDirection rotation = state.getValue(FACING);
-        IntegratedCircuitScreen.renderComponentTexture(drawContext, TEXTURE_ARROW, x, y, rotation.getIndex(), color);
+        IntegratedCircuitScreen.extractComponentTextureRenderState(drawContext, TEXTURE_ARROW, x, y, rotation.getIndex(), color);
 
         Identifier wireTexture = rotation.getAxis() == FlatDirection.Axis.X ? TEXTURE_X : TEXTURE_Y;
-        IntegratedCircuitScreen.renderComponentTexture(drawContext, wireTexture, x, y, 0, color);
+        IntegratedCircuitScreen.extractComponentTextureRenderState(drawContext, wireTexture, x, y, 0, color);
     }
 
     @Override

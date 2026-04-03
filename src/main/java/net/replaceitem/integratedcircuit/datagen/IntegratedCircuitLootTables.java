@@ -1,7 +1,7 @@
 package net.replaceitem.integratedcircuit.datagen;
 
-import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
-import net.fabricmc.fabric.api.datagen.v1.provider.FabricBlockLootTableProvider;
+import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
+import net.fabricmc.fabric.api.datagen.v1.provider.FabricBlockLootSubProvider;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.level.block.Block;
@@ -17,8 +17,8 @@ import net.replaceitem.integratedcircuit.IntegratedCircuitBlock;
 
 import java.util.concurrent.CompletableFuture;
 
-public class IntegratedCircuitLootTables extends FabricBlockLootTableProvider {
-    public IntegratedCircuitLootTables(FabricDataOutput dataOutput, CompletableFuture<HolderLookup.Provider> registryLookup) {
+public class IntegratedCircuitLootTables extends FabricBlockLootSubProvider {
+    public IntegratedCircuitLootTables(FabricPackOutput dataOutput, CompletableFuture<HolderLookup.Provider> registryLookup) {
         super(dataOutput, registryLookup);
     }
 
