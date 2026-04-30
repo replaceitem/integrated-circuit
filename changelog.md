@@ -1,1 +1,1 @@
-* Updated to Minecraft 26.1
+* Fixed crash when loading the mod on a dedicated server [#74](https://github.com/replaceitem/integrated-circuit/issues/47)
