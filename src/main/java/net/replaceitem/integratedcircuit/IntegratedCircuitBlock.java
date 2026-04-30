@@ -3,8 +3,6 @@ package net.replaceitem.integratedcircuit;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.client.color.block.BlockTintSource;
-import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
@@ -40,7 +38,6 @@ import net.replaceitem.integratedcircuit.network.packet.EditIntegratedCircuitS2C
 import net.replaceitem.integratedcircuit.util.FlatDirection;
 import org.jspecify.annotations.Nullable;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class IntegratedCircuitBlock extends HorizontalDirectionalBlock implements EntityBlock {
@@ -50,31 +47,6 @@ public class IntegratedCircuitBlock extends HorizontalDirectionalBlock implement
     public IntegratedCircuitBlock(Properties settings) {
         super(settings);
         registerDefaultState(this.getStateDefinition().any().setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH));
-    }
-
-    public static List<BlockTintSource> createBlockTintSources() {
-        return Arrays.stream(FlatDirection.VALUES).map(IntegratedCircuitBlock::createBlockTintSource).toList();
-    }
-
-    private static BlockTintSource createBlockTintSource(FlatDirection circuitDirection) {
-        return new BlockTintSource() {
-            @Override
-            public int color(BlockState state) {
-                return RedStoneWireBlock.getColorForPower(0);
-            }
-
-            @Override
-            public int colorInWorld(BlockState state, BlockAndTintGetter level, BlockPos pos) {
-                return RedStoneWireBlock.getColorForPower(getPower(level, pos));
-            }
-
-            public int getPower(BlockAndTintGetter level, BlockPos pos) {
-                if(level.getBlockEntity(pos) instanceof IntegratedCircuitBlockEntity integratedCircuitBlockEntity) {
-                    return integratedCircuitBlockEntity.getPortRenderStrength(circuitDirection);
-                }
-                return 0;
-            }
-        };
     }
 
     @Override
