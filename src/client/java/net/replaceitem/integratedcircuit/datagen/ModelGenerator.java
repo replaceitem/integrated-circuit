@@ -46,22 +46,22 @@ public class ModelGenerator extends FabricModelProvider {
     @Override
     public void generateBlockStateModels(BlockModelGenerators blockStateModelGenerator) {
         registerCircuit(blockStateModelGenerator, INTEGRATED_CIRCUIT, Blocks.SMOOTH_STONE);
-        registerCircuit(blockStateModelGenerator, WHITE_INTEGRATED_CIRCUIT, Blocks.WHITE_CONCRETE);
-        registerCircuit(blockStateModelGenerator, ORANGE_INTEGRATED_CIRCUIT, Blocks.ORANGE_CONCRETE);
-        registerCircuit(blockStateModelGenerator, MAGENTA_INTEGRATED_CIRCUIT, Blocks.MAGENTA_CONCRETE);
-        registerCircuit(blockStateModelGenerator, LIGHT_BLUE_INTEGRATED_CIRCUIT, Blocks.LIGHT_BLUE_CONCRETE);
-        registerCircuit(blockStateModelGenerator, YELLOW_INTEGRATED_CIRCUIT, Blocks.YELLOW_CONCRETE);
-        registerCircuit(blockStateModelGenerator, LIME_INTEGRATED_CIRCUIT, Blocks.LIME_CONCRETE);
-        registerCircuit(blockStateModelGenerator, PINK_INTEGRATED_CIRCUIT, Blocks.PINK_CONCRETE);
-        registerCircuit(blockStateModelGenerator, GRAY_INTEGRATED_CIRCUIT, Blocks.GRAY_CONCRETE);
-        registerCircuit(blockStateModelGenerator, LIGHT_GRAY_INTEGRATED_CIRCUIT, Blocks.LIGHT_GRAY_CONCRETE);
-        registerCircuit(blockStateModelGenerator, CYAN_INTEGRATED_CIRCUIT, Blocks.CYAN_CONCRETE);
-        registerCircuit(blockStateModelGenerator, PURPLE_INTEGRATED_CIRCUIT, Blocks.PURPLE_CONCRETE);
-        registerCircuit(blockStateModelGenerator, BLUE_INTEGRATED_CIRCUIT, Blocks.BLUE_CONCRETE);
-        registerCircuit(blockStateModelGenerator, BROWN_INTEGRATED_CIRCUIT, Blocks.BROWN_CONCRETE);
-        registerCircuit(blockStateModelGenerator, GREEN_INTEGRATED_CIRCUIT, Blocks.GREEN_CONCRETE);
-        registerCircuit(blockStateModelGenerator, RED_INTEGRATED_CIRCUIT, Blocks.RED_CONCRETE);
-        registerCircuit(blockStateModelGenerator, BLACK_INTEGRATED_CIRCUIT, Blocks.BLACK_CONCRETE);
+        registerCircuit(blockStateModelGenerator, WHITE_INTEGRATED_CIRCUIT, Blocks.CONCRETE.white());
+        registerCircuit(blockStateModelGenerator, ORANGE_INTEGRATED_CIRCUIT, Blocks.CONCRETE.orange());
+        registerCircuit(blockStateModelGenerator, MAGENTA_INTEGRATED_CIRCUIT, Blocks.CONCRETE.magenta());
+        registerCircuit(blockStateModelGenerator, LIGHT_BLUE_INTEGRATED_CIRCUIT, Blocks.CONCRETE.lightBlue());
+        registerCircuit(blockStateModelGenerator, YELLOW_INTEGRATED_CIRCUIT, Blocks.CONCRETE.yellow());
+        registerCircuit(blockStateModelGenerator, LIME_INTEGRATED_CIRCUIT, Blocks.CONCRETE.lime());
+        registerCircuit(blockStateModelGenerator, PINK_INTEGRATED_CIRCUIT, Blocks.CONCRETE.pink());
+        registerCircuit(blockStateModelGenerator, GRAY_INTEGRATED_CIRCUIT, Blocks.CONCRETE.gray());
+        registerCircuit(blockStateModelGenerator, LIGHT_GRAY_INTEGRATED_CIRCUIT, Blocks.CONCRETE.lightGray());
+        registerCircuit(blockStateModelGenerator, CYAN_INTEGRATED_CIRCUIT, Blocks.CONCRETE.cyan());
+        registerCircuit(blockStateModelGenerator, PURPLE_INTEGRATED_CIRCUIT, Blocks.CONCRETE.purple());
+        registerCircuit(blockStateModelGenerator, BLUE_INTEGRATED_CIRCUIT, Blocks.CONCRETE.blue());
+        registerCircuit(blockStateModelGenerator, BROWN_INTEGRATED_CIRCUIT, Blocks.CONCRETE.brown());
+        registerCircuit(blockStateModelGenerator, GREEN_INTEGRATED_CIRCUIT, Blocks.CONCRETE.green());
+        registerCircuit(blockStateModelGenerator, RED_INTEGRATED_CIRCUIT, Blocks.CONCRETE.red());
+        registerCircuit(blockStateModelGenerator, BLACK_INTEGRATED_CIRCUIT, Blocks.CONCRETE.black());
     }
 
     @Override

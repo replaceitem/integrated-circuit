@@ -28,22 +28,22 @@ public class IntegratedCircuitRecipeGenerator extends RecipeProvider {
 
     private static final Map<Item, Item> BASE_ITEMS = ImmutableMap.<Item,Item>builder()
             .put(IntegratedCircuit.Items.INTEGRATED_CIRCUIT           , Items.STONE)
-            .put(IntegratedCircuit.Items.WHITE_INTEGRATED_CIRCUIT     , Items.WHITE_CONCRETE)
-            .put(IntegratedCircuit.Items.ORANGE_INTEGRATED_CIRCUIT    , Items.ORANGE_CONCRETE)
-            .put(IntegratedCircuit.Items.MAGENTA_INTEGRATED_CIRCUIT   , Items.MAGENTA_CONCRETE)
-            .put(IntegratedCircuit.Items.LIGHT_BLUE_INTEGRATED_CIRCUIT, Items.LIGHT_BLUE_CONCRETE)
-            .put(IntegratedCircuit.Items.YELLOW_INTEGRATED_CIRCUIT    , Items.YELLOW_CONCRETE)
-            .put(IntegratedCircuit.Items.LIME_INTEGRATED_CIRCUIT      , Items.LIME_CONCRETE)
-            .put(IntegratedCircuit.Items.PINK_INTEGRATED_CIRCUIT      , Items.PINK_CONCRETE)
-            .put(IntegratedCircuit.Items.GRAY_INTEGRATED_CIRCUIT      , Items.GRAY_CONCRETE)
-            .put(IntegratedCircuit.Items.LIGHT_GRAY_INTEGRATED_CIRCUIT, Items.LIGHT_GRAY_CONCRETE)
-            .put(IntegratedCircuit.Items.CYAN_INTEGRATED_CIRCUIT      , Items.CYAN_CONCRETE)
-            .put(IntegratedCircuit.Items.PURPLE_INTEGRATED_CIRCUIT    , Items.PURPLE_CONCRETE)
-            .put(IntegratedCircuit.Items.BLUE_INTEGRATED_CIRCUIT      , Items.BLUE_CONCRETE)
-            .put(IntegratedCircuit.Items.BROWN_INTEGRATED_CIRCUIT     , Items.BROWN_CONCRETE)
-            .put(IntegratedCircuit.Items.GREEN_INTEGRATED_CIRCUIT     , Items.GREEN_CONCRETE)
-            .put(IntegratedCircuit.Items.RED_INTEGRATED_CIRCUIT       , Items.RED_CONCRETE)
-            .put(IntegratedCircuit.Items.BLACK_INTEGRATED_CIRCUIT     , Items.BLACK_CONCRETE)
+            .put(IntegratedCircuit.Items.WHITE_INTEGRATED_CIRCUIT     , Items.CONCRETE.white())
+            .put(IntegratedCircuit.Items.ORANGE_INTEGRATED_CIRCUIT    , Items.CONCRETE.orange())
+            .put(IntegratedCircuit.Items.MAGENTA_INTEGRATED_CIRCUIT   , Items.CONCRETE.magenta())
+            .put(IntegratedCircuit.Items.LIGHT_BLUE_INTEGRATED_CIRCUIT, Items.CONCRETE.lightBlue())
+            .put(IntegratedCircuit.Items.YELLOW_INTEGRATED_CIRCUIT    , Items.CONCRETE.yellow())
+            .put(IntegratedCircuit.Items.LIME_INTEGRATED_CIRCUIT      , Items.CONCRETE.lime())
+            .put(IntegratedCircuit.Items.PINK_INTEGRATED_CIRCUIT      , Items.CONCRETE.pink())
+            .put(IntegratedCircuit.Items.GRAY_INTEGRATED_CIRCUIT      , Items.CONCRETE.gray())
+            .put(IntegratedCircuit.Items.LIGHT_GRAY_INTEGRATED_CIRCUIT, Items.CONCRETE.lightGray())
+            .put(IntegratedCircuit.Items.CYAN_INTEGRATED_CIRCUIT      , Items.CONCRETE.cyan())
+            .put(IntegratedCircuit.Items.PURPLE_INTEGRATED_CIRCUIT    , Items.CONCRETE.purple())
+            .put(IntegratedCircuit.Items.BLUE_INTEGRATED_CIRCUIT      , Items.CONCRETE.blue())
+            .put(IntegratedCircuit.Items.BROWN_INTEGRATED_CIRCUIT     , Items.CONCRETE.brown())
+            .put(IntegratedCircuit.Items.GREEN_INTEGRATED_CIRCUIT     , Items.CONCRETE.green())
+            .put(IntegratedCircuit.Items.RED_INTEGRATED_CIRCUIT       , Items.CONCRETE.red())
+            .put(IntegratedCircuit.Items.BLACK_INTEGRATED_CIRCUIT     , Items.CONCRETE.black())
             .build();
 
     private void offerCircuitRecipes() {
@@ -55,7 +55,7 @@ public class IntegratedCircuitRecipeGenerator extends RecipeProvider {
                     .pattern(" T ")
                     .pattern("RQR")
                     .pattern("CCC")
-                    .define('T', Items.BLACK_TERRACOTTA)
+                    .define('T', Items.DYED_TERRACOTTA.black())
                     .define('R', Items.REDSTONE)
                     .define('Q', Items.QUARTZ)
                     .define('C', baseItem)
@@ -66,22 +66,22 @@ public class IntegratedCircuitRecipeGenerator extends RecipeProvider {
     }
     
     private void offerDyeingRecipes() {
-        offerDyeingRecipe(Items.WHITE_DYE, IntegratedCircuit.Items.WHITE_INTEGRATED_CIRCUIT);
-        offerDyeingRecipe(Items.ORANGE_DYE, IntegratedCircuit.Items.ORANGE_INTEGRATED_CIRCUIT);
-        offerDyeingRecipe(Items.MAGENTA_DYE, IntegratedCircuit.Items.MAGENTA_INTEGRATED_CIRCUIT);
-        offerDyeingRecipe(Items.LIGHT_BLUE_DYE, IntegratedCircuit.Items.LIGHT_BLUE_INTEGRATED_CIRCUIT);
-        offerDyeingRecipe(Items.YELLOW_DYE, IntegratedCircuit.Items.YELLOW_INTEGRATED_CIRCUIT);
-        offerDyeingRecipe(Items.LIME_DYE, IntegratedCircuit.Items.LIME_INTEGRATED_CIRCUIT);
-        offerDyeingRecipe(Items.PINK_DYE, IntegratedCircuit.Items.PINK_INTEGRATED_CIRCUIT);
-        offerDyeingRecipe(Items.GRAY_DYE, IntegratedCircuit.Items.GRAY_INTEGRATED_CIRCUIT);
-        offerDyeingRecipe(Items.LIGHT_GRAY_DYE, IntegratedCircuit.Items.LIGHT_GRAY_INTEGRATED_CIRCUIT);
-        offerDyeingRecipe(Items.CYAN_DYE, IntegratedCircuit.Items.CYAN_INTEGRATED_CIRCUIT);
-        offerDyeingRecipe(Items.PURPLE_DYE, IntegratedCircuit.Items.PURPLE_INTEGRATED_CIRCUIT);
-        offerDyeingRecipe(Items.BLUE_DYE, IntegratedCircuit.Items.BLUE_INTEGRATED_CIRCUIT);
-        offerDyeingRecipe(Items.BROWN_DYE, IntegratedCircuit.Items.BROWN_INTEGRATED_CIRCUIT);
-        offerDyeingRecipe(Items.GREEN_DYE, IntegratedCircuit.Items.GREEN_INTEGRATED_CIRCUIT);
-        offerDyeingRecipe(Items.RED_DYE, IntegratedCircuit.Items.RED_INTEGRATED_CIRCUIT);
-        offerDyeingRecipe(Items.BLACK_DYE, IntegratedCircuit.Items.BLACK_INTEGRATED_CIRCUIT);
+        offerDyeingRecipe(Items.DYE.white(), IntegratedCircuit.Items.WHITE_INTEGRATED_CIRCUIT);
+        offerDyeingRecipe(Items.DYE.orange(), IntegratedCircuit.Items.ORANGE_INTEGRATED_CIRCUIT);
+        offerDyeingRecipe(Items.DYE.magenta(), IntegratedCircuit.Items.MAGENTA_INTEGRATED_CIRCUIT);
+        offerDyeingRecipe(Items.DYE.lightBlue(), IntegratedCircuit.Items.LIGHT_BLUE_INTEGRATED_CIRCUIT);
+        offerDyeingRecipe(Items.DYE.yellow(), IntegratedCircuit.Items.YELLOW_INTEGRATED_CIRCUIT);
+        offerDyeingRecipe(Items.DYE.lime(), IntegratedCircuit.Items.LIME_INTEGRATED_CIRCUIT);
+        offerDyeingRecipe(Items.DYE.pink(), IntegratedCircuit.Items.PINK_INTEGRATED_CIRCUIT);
+        offerDyeingRecipe(Items.DYE.gray(), IntegratedCircuit.Items.GRAY_INTEGRATED_CIRCUIT);
+        offerDyeingRecipe(Items.DYE.lightGray(), IntegratedCircuit.Items.LIGHT_GRAY_INTEGRATED_CIRCUIT);
+        offerDyeingRecipe(Items.DYE.cyan(), IntegratedCircuit.Items.CYAN_INTEGRATED_CIRCUIT);
+        offerDyeingRecipe(Items.DYE.purple(), IntegratedCircuit.Items.PURPLE_INTEGRATED_CIRCUIT);
+        offerDyeingRecipe(Items.DYE.blue(), IntegratedCircuit.Items.BLUE_INTEGRATED_CIRCUIT);
+        offerDyeingRecipe(Items.DYE.brown(), IntegratedCircuit.Items.BROWN_INTEGRATED_CIRCUIT);
+        offerDyeingRecipe(Items.DYE.green(), IntegratedCircuit.Items.GREEN_INTEGRATED_CIRCUIT);
+        offerDyeingRecipe(Items.DYE.red(), IntegratedCircuit.Items.RED_INTEGRATED_CIRCUIT);
+        offerDyeingRecipe(Items.DYE.black(), IntegratedCircuit.Items.BLACK_INTEGRATED_CIRCUIT);
     }
 
     private void offerDyeingRecipe(Item dyeItem, Item circuitItem) {

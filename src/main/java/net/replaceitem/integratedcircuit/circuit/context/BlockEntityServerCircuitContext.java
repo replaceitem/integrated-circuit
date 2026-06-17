@@ -105,7 +105,7 @@ public class BlockEntityServerCircuitContext implements ServerCircuitContext {
         if(getWorld() != null) {
             for (ServerPlayer editingPlayer : this.blockEntity.getEditingPlayers()) {
                 if(Objects.equals(editingPlayer, except)) continue;
-                Vec3 soundPos = getPos().getCenter();
+                Vec3 soundPos = Vec3.atCenterOf(getPos());
                 editingPlayer.connection.send(new ClientboundSoundPacket(BuiltInRegistries.SOUND_EVENT.wrapAsHolder(sound), category, soundPos.x, soundPos.y, soundPos.z, volume, pitch, this.getRandom().nextLong()));
             }
         }

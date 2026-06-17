@@ -18,17 +18,17 @@ public class ClientPacketHandler {
         var serializer = new ClientCircuitSerializer(packet.circuitNbt());
         var circuit = serializer.readClientCircuit(new ClientWorldClientCircuitContext(level, packet.pos()));
 
-        context.client().setScreen(new IntegratedCircuitScreen(circuit, packet.customName()));
+        context.client().setScreenAndShow(new IntegratedCircuitScreen(circuit, packet.customName()));
     }
 
     public static void receiveCircuitNameUpdatePacket(CircuitNameUpdateS2CPacket packet, ClientPlayNetworking.Context context) {
-        if (context.client().screen instanceof IntegratedCircuitScreen integratedCircuitScreen) {
+        if (context.client().gui.screen() instanceof IntegratedCircuitScreen integratedCircuitScreen) {
             integratedCircuitScreen.updateCustomNameForExternalChange(packet.newName());
         }
     }
 
     public static void receiveComponentUpdatePacket(ComponentUpdateS2CPacket packet, ClientPlayNetworking.Context context) {
-        if (context.client().screen instanceof IntegratedCircuitScreen integratedCircuitScreen) {
+        if (context.client().gui.screen() instanceof IntegratedCircuitScreen integratedCircuitScreen) {
             integratedCircuitScreen.getClientCircuit().onComponentUpdateFromServer(
                 packet.state(),
                 packet.pos()
