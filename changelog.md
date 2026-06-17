@@ -1,1 +1,1 @@
-* Fixed crash when loading the mod on a dedicated server [#74](https://github.com/replaceitem/integrated-circuit/issues/47)
+* Updated to MC 26.2
