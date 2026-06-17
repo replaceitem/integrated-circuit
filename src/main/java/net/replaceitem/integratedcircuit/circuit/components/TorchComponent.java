@@ -1,18 +1,13 @@
 package net.replaceitem.integratedcircuit.circuit.components;
 
 import com.google.common.collect.Lists;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.replaceitem.integratedcircuit.IntegratedCircuit;
 import net.replaceitem.integratedcircuit.circuit.*;
-import net.replaceitem.integratedcircuit.client.gui.IntegratedCircuitScreen;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
 import org.jspecify.annotations.Nullable;
@@ -22,11 +17,6 @@ import java.util.Map;
 import java.util.WeakHashMap;
 
 public class TorchComponent extends FacingComponent {
-    private static final Identifier ITEM_TEXTURE = Identifier.withDefaultNamespace("textures/block/redstone_torch.png");
-    private static final Identifier TOOL_TEXTURE = IntegratedCircuit.id("toolbox/icons/torch");
-    private static final Identifier TEXTURE = IntegratedCircuit.id("textures/integrated_circuit/torch.png");
-    private static final Identifier TEXTURE_OFF = IntegratedCircuit.id("textures/integrated_circuit/torch_off.png");
-
     public static final BooleanProperty LIT = BlockStateProperties.LIT;
 
     private static final Map<ServerCircuit, List<BurnoutEntry>> BURNOUT_MAP = new WeakHashMap<>();
@@ -48,27 +38,6 @@ public class TorchComponent extends FacingComponent {
             return null;
         }
         return componentState;
-    }
-
-    @Override
-    public @Nullable Identifier getItemTexture() {
-        return ITEM_TEXTURE;
-    }
-
-    @Override
-    public @Nullable Identifier getToolTexture() {
-        return TOOL_TEXTURE;
-    }
-
-    @Override
-    public Component getHoverInfoText(ComponentState state) {
-        return IntegratedCircuitScreen.getSignalStrengthText(state.getValue(LIT) ? 15 : 0);
-    }
-
-    @Override
-    public void extractRenderState(GuiGraphicsExtractor drawContext, int x, int y, float a, ComponentState state) {
-        Identifier texture = state.getValue(LIT) ? TEXTURE : TEXTURE_OFF;
-        IntegratedCircuitScreen.extractComponentTextureRenderState(drawContext, texture, x, y, state.getValue(FACING).getIndex(), a);
     }
 
     @Override

@@ -1,12 +1,10 @@
 package net.replaceitem.integratedcircuit.circuit.components;
 
 import com.google.common.collect.Sets;
-import net.minecraft.resources.Identifier;
-import net.replaceitem.integratedcircuit.IntegratedCircuit;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
 import net.replaceitem.integratedcircuit.circuit.Component;
-import net.replaceitem.integratedcircuit.circuit.Components;
 import net.replaceitem.integratedcircuit.circuit.ComponentState;
+import net.replaceitem.integratedcircuit.circuit.Components;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
 
@@ -16,10 +14,6 @@ public abstract class AbstractConductingComponent extends Component {
     public AbstractConductingComponent(Settings settings) {
         super(settings);
     }
-
-    protected static final Identifier TEXTURE_X = IntegratedCircuit.id("textures/integrated_circuit/wire_x.png");
-    protected static final Identifier TEXTURE_Y = IntegratedCircuit.id("textures/integrated_circuit/wire_y.png");
-
 
     protected static boolean wiresGivePower = true;
 

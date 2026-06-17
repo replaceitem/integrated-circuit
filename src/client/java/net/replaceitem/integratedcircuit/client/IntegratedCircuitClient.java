@@ -6,7 +6,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.BlockColorRegistry;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.replaceitem.integratedcircuit.IntegratedCircuit;
 import net.replaceitem.integratedcircuit.client.config.DefaultConfig;
-import net.replaceitem.integratedcircuit.network.ClientPacketHandler;
+import net.replaceitem.integratedcircuit.client.network.ClientPacketHandler;
 import net.replaceitem.integratedcircuit.network.packet.CircuitNameUpdateS2CPacket;
 import net.replaceitem.integratedcircuit.network.packet.ComponentUpdateS2CPacket;
 import net.replaceitem.integratedcircuit.network.packet.EditIntegratedCircuitS2CPacket;

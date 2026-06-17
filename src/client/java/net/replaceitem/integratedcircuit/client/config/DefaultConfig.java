@@ -4,7 +4,7 @@ import com.mojang.blaze3d.platform.InputConstants;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
-import net.replaceitem.integratedcircuit.mixin.KeyBindingAccessor;
+import net.replaceitem.integratedcircuit.client.mixin.KeyBindingAccessor;
 import org.jspecify.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 

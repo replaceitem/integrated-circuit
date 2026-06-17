@@ -3,13 +3,11 @@ package net.replaceitem.integratedcircuit.circuit;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.Holder;
 import net.minecraft.core.IdMapper;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.Identifier;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.SoundType;
@@ -81,11 +79,6 @@ public abstract class Component {
         if(this.stateDefinition.getProperties().contains(FacingComponent.FACING)) return defaultState.setValue(FacingComponent.FACING, rotation);
         return defaultState;
     }
-
-    public abstract @Nullable Identifier getItemTexture();
-    public abstract @Nullable Identifier getToolTexture();
-
-    public abstract void extractRenderState(GuiGraphicsExtractor drawContext, int x, int y, float a, ComponentState state);
 
     public static void replace(ComponentState state, ComponentState newState, Circuit world, ComponentPos pos, int flags) {
         replace(state, newState, world, pos, flags, 512);
@@ -186,10 +179,6 @@ public abstract class Component {
 
     public boolean emitsRedstonePower(ComponentState state) {
         return false;
-    }
-
-    public net.minecraft.network.chat.Component getHoverInfoText(ComponentState state) {
-        return net.minecraft.network.chat.Component.empty();
     }
 
     public StateDefinition<Component, ComponentState> getStateDefinition() {

@@ -1,4 +1,4 @@
-package net.replaceitem.integratedcircuit.mixin;
+package net.replaceitem.integratedcircuit.client.mixin;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;

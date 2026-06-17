@@ -4,19 +4,12 @@ import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
 import net.replaceitem.integratedcircuit.circuit.Component;
 import net.replaceitem.integratedcircuit.circuit.ComponentState;
-import net.replaceitem.integratedcircuit.client.gui.IntegratedCircuitScreen;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
 
 public abstract class AbstractWireComponent extends AbstractConductingComponent {
     public AbstractWireComponent(Settings settings) {
         super(settings);
-    }
-
-    @Override
-    public net.minecraft.network.chat.Component getHoverInfoText(ComponentState state) {
-        int signalStrength = state.getValue(getPowerProperty());
-        return IntegratedCircuitScreen.getSignalStrengthText(signalStrength);
     }
 
     @Override

@@ -1,9 +1,10 @@
-package net.replaceitem.integratedcircuit.circuit.context;
+package net.replaceitem.integratedcircuit.client.circuit.context;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
+import net.replaceitem.integratedcircuit.circuit.context.CircuitContext;
 import org.jspecify.annotations.Nullable;
 
 public interface ClientCircuitContext extends CircuitContext {

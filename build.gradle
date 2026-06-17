@@ -12,7 +12,15 @@ base {
 }
 
 loom {
+    splitEnvironmentSourceSets()
     accessWidenerPath = file("src/main/resources/integrated_circuit.accesswidener")
+
+    mods {
+        "integrated_circuit" {
+            sourceSet sourceSets.main
+            sourceSet sourceSets.client
+        }
+    }
 }
 
 fabricApi {

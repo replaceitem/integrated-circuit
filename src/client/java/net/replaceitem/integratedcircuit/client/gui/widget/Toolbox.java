@@ -1,6 +1,8 @@
 package net.replaceitem.integratedcircuit.client.gui.widget;
 
 import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.resources.Identifier;
+import net.replaceitem.integratedcircuit.IntegratedCircuit;
 import net.replaceitem.integratedcircuit.circuit.Component;
 import net.replaceitem.integratedcircuit.circuit.Components;
 import net.replaceitem.integratedcircuit.client.gui.IntegratedCircuitScreen;
@@ -17,22 +19,24 @@ public class Toolbox {
     private final int x;
     private final int y;
 
-    private static final Component[] PALETTE = new Component[] {
-        Components.WIRE,
-        Components.CROSSOVER,
-        Components.TORCH,
-        Components.REDSTONE_BLOCK,
-        Components.REPEATER,
-        Components.COMPARATOR,
-        Components.OBSERVER,
-        Components.BLOCK,
-        Components.LAMP,
-        Components.COPPER_BULB,
-        Components.LECTERN,
-        Components.TARGET,
-        Components.STONE_BUTTON,
-        Components.WOODEN_BUTTON,
-        Components.LEVER
+    public record PaletteEntry(Component component, Identifier itemTexture) {}
+
+    private static final PaletteEntry[] PALETTE = new PaletteEntry[] {
+        new PaletteEntry(Components.WIRE, IntegratedCircuit.id("toolbox/icons/redstone")),
+        new PaletteEntry(Components.CROSSOVER, IntegratedCircuit.id("toolbox/icons/crossover")),
+        new PaletteEntry(Components.TORCH, IntegratedCircuit.id("toolbox/icons/torch")),
+        new PaletteEntry(Components.REDSTONE_BLOCK, IntegratedCircuit.id("toolbox/icons/redstone_block")),
+        new PaletteEntry(Components.REPEATER, IntegratedCircuit.id("toolbox/icons/repeater")),
+        new PaletteEntry(Components.COMPARATOR, IntegratedCircuit.id("toolbox/icons/comparator")),
+        new PaletteEntry(Components.OBSERVER, IntegratedCircuit.id("toolbox/icons/observer")),
+        new PaletteEntry(Components.BLOCK, IntegratedCircuit.id("toolbox/icons/block")),
+        new PaletteEntry(Components.LAMP, IntegratedCircuit.id("toolbox/icons/lamp")),
+        new PaletteEntry(Components.COPPER_BULB, IntegratedCircuit.id("toolbox/icons/copper_bulb")),
+        new PaletteEntry(Components.LECTERN, IntegratedCircuit.id("toolbox/icons/lectern")),
+        new PaletteEntry(Components.TARGET, IntegratedCircuit.id("toolbox/icons/target")),
+        new PaletteEntry(Components.STONE_BUTTON, IntegratedCircuit.id("toolbox/icons/button_stone")),
+        new PaletteEntry(Components.WOODEN_BUTTON, IntegratedCircuit.id("toolbox/icons/button_wood")),
+        new PaletteEntry(Components.LEVER, IntegratedCircuit.id("toolbox/icons/lever"))
     };
 
     private int selectedToolSlot = -1;
@@ -49,7 +53,7 @@ public class Toolbox {
         componentButtons.clear();
 
         for (int i = 0; i < PALETTE.length; i++) {
-            Component component = PALETTE[i];
+            var entry = PALETTE[i];
 
             int slotColumn = (i % PALETTE_COLS);
             int slotX =  slotColumn * ToolboxButton.SIZE;
@@ -61,7 +65,7 @@ public class Toolbox {
 
             final int index = i;
 
-            componentButtons.add(new ToolboxButton(owner.getX() + this.x + slotX, owner.getY() + this.y + slotY, component) {
+            componentButtons.add(new ToolboxButton(owner.getX() + this.x + slotX, owner.getY() + this.y + slotY, entry) {
                 @Override
                 public void onClick(MouseButtonEvent click, boolean doubled) {
                     if (selected) {

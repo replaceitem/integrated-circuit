@@ -5,7 +5,6 @@ import com.mojang.serialization.DataResult;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
-import net.replaceitem.integratedcircuit.circuit.context.ClientCircuitContext;
 import net.replaceitem.integratedcircuit.circuit.context.ServerCircuitContext;
 import org.slf4j.Logger;
 
@@ -40,15 +39,7 @@ public class CircuitSerializer {
         return ServerCircuit.CODEC.parse(context, NbtOps.INSTANCE, root).result().orElseGet(() -> new ServerCircuit(context));
     }
 
-    public ClientCircuit readClientCircuit(ClientCircuitContext context) {
-        return new ClientCircuit(
-                context,
-                readPortStates(),
-                readSection()
-        );
-    }
-
-    private ComponentState[] readPortStates() {
+    protected ComponentState[] readPortStates() {
         return root.getList(PORTS_TAG)
                 .filter(nbtElements -> nbtElements.size() == 4)
                 .map(ports -> ports.stream()
@@ -60,7 +51,7 @@ public class CircuitSerializer {
                 .orElseGet(Circuit::createDefaultPorts);
     }
 
-    public CircuitSection readSection() {
+    protected CircuitSection readSection() {
         return root.getCompound(SECTION_TAG)
                 .flatMap(sectionNbt -> sectionNbt.getCompound(COMPONENT_STATES_TAG))
                 .flatMap(componentStatesNbt -> CircuitSection.PALETTE_CODEC.parse(NbtOps.INSTANCE, componentStatesNbt)

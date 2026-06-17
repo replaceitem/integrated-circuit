@@ -2,33 +2,22 @@ package net.replaceitem.integratedcircuit.circuit.components;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.resources.Identifier;
-import net.minecraft.util.ARGB;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.RedStoneWireBlock;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import net.replaceitem.integratedcircuit.IntegratedCircuit;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
 import net.replaceitem.integratedcircuit.circuit.Component;
 import net.replaceitem.integratedcircuit.circuit.ComponentState;
 import net.replaceitem.integratedcircuit.circuit.Components;
-import net.replaceitem.integratedcircuit.client.gui.IntegratedCircuitScreen;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
-import org.jspecify.annotations.Nullable;
 
 import java.util.Map;
 
 public class WireComponent extends AbstractWireComponent {
-    private static final Identifier ITEM_TEXTURE = Identifier.withDefaultNamespace("textures/item/redstone.png");
-    private static final Identifier TOOL_TEXTURE = IntegratedCircuit.id("toolbox/icons/redstone");
-    private static final Identifier TEXTURE_DOT = IntegratedCircuit.id("textures/integrated_circuit/wire_dot.png");
-
     public static final BooleanProperty CONNECTED_NORTH = BooleanProperty.create("connected_north");
     public static final BooleanProperty CONNECTED_EAST = BooleanProperty.create("connected_east");
     public static final BooleanProperty CONNECTED_SOUTH = BooleanProperty.create("connected_south");
@@ -66,37 +55,6 @@ public class WireComponent extends AbstractWireComponent {
     @Override
     public ComponentState getPlacementState(Circuit circuit, ComponentPos pos, FlatDirection rotation) {
         return this.getPlacementState(circuit, dotState, pos);
-    }
-
-    @Override
-    public @Nullable Identifier getItemTexture() {
-        return ITEM_TEXTURE;
-    }
-
-    @Override
-    public @Nullable Identifier getToolTexture() {
-        return TOOL_TEXTURE;
-    }
-
-    @Override
-    public void extractRenderState(GuiGraphicsExtractor drawContext, int x, int y, float a, ComponentState state) {
-        final int size = IntegratedCircuitScreen.COMPONENT_SIZE;
-        final int halfSize = size/2;
-
-        int color = ARGB.color(ARGB.as8BitChannel(a), RedStoneWireBlock.getColorForPower(state.getValue(POWER)));
-
-        if(state.getValue(CONNECTED_NORTH)) IntegratedCircuitScreen.extractComponentTextureRenderState(drawContext, TEXTURE_Y, x, y, 0, color, 0, 0, size, halfSize);
-        if(state.getValue(CONNECTED_EAST)) IntegratedCircuitScreen.extractComponentTextureRenderState(drawContext, TEXTURE_X, x, y, 0, color, halfSize, 0, halfSize, size);
-        if(state.getValue(CONNECTED_SOUTH)) IntegratedCircuitScreen.extractComponentTextureRenderState(drawContext, TEXTURE_Y, x, y, 0, color, 0, halfSize, size, halfSize);
-        if(state.getValue(CONNECTED_WEST)) IntegratedCircuitScreen.extractComponentTextureRenderState(drawContext, TEXTURE_X, x, y, 0, color, 0, 0, halfSize, size);
-
-        int connections = 0;
-        for (FlatDirection direction : FlatDirection.VALUES) if(state.getValue(DIRECTION_TO_CONNECTION_PROPERTY.get(direction))) connections++;
-        if(connections != 2) IntegratedCircuitScreen.extractComponentTextureRenderState(drawContext, TEXTURE_DOT, x, y, 0, color, 0, 0, size, size);
-        
-        if(!(state.getValue(CONNECTED_NORTH) && state.getValue(CONNECTED_SOUTH) || state.getValue(CONNECTED_EAST) && state.getValue(CONNECTED_WEST))) {
-            IntegratedCircuitScreen.extractComponentTextureRenderState(drawContext, TEXTURE_DOT, x, y, 0, color, 0, 0, size, size);
-        }
     }
 
     @Override

@@ -95,10 +95,6 @@ public class ComponentState extends StateHolder<Component, ComponentState> {
         return this.owner.canPlaceAt(this, circuit, pos);
     }
 
-    public net.minecraft.network.chat.Component getHoverInfoText() {
-        return this.owner.getHoverInfoText(this);
-    }
-
     public boolean hasComparatorOutput() {
         return this.owner.hasComparatorOutput(this);
     }

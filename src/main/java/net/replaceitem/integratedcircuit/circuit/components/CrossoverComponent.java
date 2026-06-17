@@ -1,25 +1,14 @@
 package net.replaceitem.integratedcircuit.circuit.components;
 
-import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.resources.Identifier;
-import net.minecraft.util.ARGB;
-import net.minecraft.world.level.block.RedStoneWireBlock;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import net.replaceitem.integratedcircuit.IntegratedCircuit;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
 import net.replaceitem.integratedcircuit.circuit.Component;
 import net.replaceitem.integratedcircuit.circuit.ComponentState;
-import net.replaceitem.integratedcircuit.client.gui.IntegratedCircuitScreen;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
-import org.jspecify.annotations.Nullable;
 
 public class CrossoverComponent extends AbstractConductingComponent {
-    private static final Identifier ITEM_TEXTURE = IntegratedCircuit.id("textures/integrated_circuit/crossover.png");
-    private static final Identifier TOOL_TEXTURE = IntegratedCircuit.id("toolbox/icons/crossover");
-    private static final Identifier TEXTURE_BRIDGE = IntegratedCircuit.id("textures/integrated_circuit/wire_bridge.png");
-
     public static final IntegerProperty POWER_X = IntegerProperty.create("power_x", 0, 15);
     public static final IntegerProperty POWER_Y = IntegerProperty.create("power_y", 0, 15);
 
@@ -27,35 +16,6 @@ public class CrossoverComponent extends AbstractConductingComponent {
         super(settings);
         this.setDefaultState(this.getStateDefinition().any().setValue(POWER_X, 0).setValue(POWER_Y, 0));
     }
-
-    @Override
-    public @Nullable Identifier getItemTexture() {
-        return ITEM_TEXTURE;
-    }
-
-    @Override
-    public @Nullable Identifier getToolTexture() {
-        return TOOL_TEXTURE;
-    }
-
-    @Override
-    public net.minecraft.network.chat.Component getHoverInfoText(ComponentState state) {
-        return net.minecraft.network.chat.Component.literal("─ ")
-            .append(IntegratedCircuitScreen.getSignalStrengthText(state.getValue(POWER_X)))
-            .append(" │ ")
-            .append(IntegratedCircuitScreen.getSignalStrengthText(state.getValue(POWER_Y)));
-    }
-
-    @Override
-    public void extractRenderState(GuiGraphicsExtractor drawContext, int x, int y, float a, ComponentState state) {
-        int colorX = RedStoneWireBlock.getColorForPower(state.getValue(POWER_X));
-        int colorY = RedStoneWireBlock.getColorForPower(state.getValue(POWER_Y));
-
-        IntegratedCircuitScreen.extractComponentTextureRenderState(drawContext, TEXTURE_X, x, y, 0, ARGB.color(ARGB.as8BitChannel(a), colorX));
-        IntegratedCircuitScreen.extractComponentTextureRenderState(drawContext, TEXTURE_BRIDGE, x, y, 0, a);
-        IntegratedCircuitScreen.extractComponentTextureRenderState(drawContext, TEXTURE_Y, x, y, 0, ARGB.color(ARGB.as8BitChannel(a), colorY));
-    }
-
 
     @Override
     public void onBlockAdded(ComponentState state, Circuit circuit, ComponentPos pos, ComponentState oldState) {

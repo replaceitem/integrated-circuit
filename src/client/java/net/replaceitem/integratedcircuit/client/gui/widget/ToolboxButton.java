@@ -29,18 +29,18 @@ public class ToolboxButton extends AbstractWidget {
     public static final int SIZE = 16;
     public static final int MARGIN = 2;
 
-    protected final Component component;
+    protected final Toolbox.PaletteEntry entry;
     protected boolean selected;
 
-    public ToolboxButton(int x, int y, Component component) {
+    public ToolboxButton(int x, int y, Toolbox.PaletteEntry entry) {
         super(x, y, SIZE, SIZE, net.minecraft.network.chat.Component.empty());
-        this.setTooltip(Tooltip.create(component.getName()));
+        this.setTooltip(Tooltip.create(entry.component().getName()));
         this.setTooltipDelay(Duration.ofMillis(700));
-        this.component = component;
+        this.entry = entry;
     }
 
     public Component getComponent() {
-        return component;
+        return entry.component();
     }
 
     @Override
@@ -63,10 +63,8 @@ public class ToolboxButton extends AbstractWidget {
                 SIZE
         );
 
-        Identifier toolTexture = component.getToolTexture();
-
-        if (toolTexture != null)
-            renderPaletteItem(graphics, toolTexture);
+        Identifier toolTexture = entry.itemTexture();
+        renderPaletteItem(graphics, toolTexture);
     }
 
     private void renderPaletteItem(GuiGraphicsExtractor graphics, Identifier itemTexture) {
@@ -99,6 +97,6 @@ public class ToolboxButton extends AbstractWidget {
 
     @Override
     protected MutableComponent createNarrationMessage() {
-        return net.minecraft.network.chat.Component.translatable("gui.narrate.button", component.getName());
+        return net.minecraft.network.chat.Component.translatable("gui.narrate.button", entry.component().getName());
     }
 }

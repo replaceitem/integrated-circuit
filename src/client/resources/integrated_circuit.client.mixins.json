@@ -1,0 +1,13 @@
+{
+    "required": true,
+    "minVersion": "0.8",
+    "package": "net.replaceitem.integratedcircuit.client.mixin",
+    "compatibilityLevel": "JAVA_25",
+    "client": [
+        "KeyBindingAccessor",
+        "ClientPlayNetworkHandlerMixin"
+    ],
+    "injectors": {
+        "defaultRequire": 1
+    }
+}

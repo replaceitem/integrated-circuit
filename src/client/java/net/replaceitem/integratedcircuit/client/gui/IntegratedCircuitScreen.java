@@ -13,13 +13,13 @@ import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
-import net.minecraft.util.ARGB;
 import net.minecraft.util.CommonColors;
-import net.minecraft.world.level.block.RedStoneWireBlock;
 import net.replaceitem.integratedcircuit.IntegratedCircuit;
-import net.replaceitem.integratedcircuit.circuit.*;
+import net.replaceitem.integratedcircuit.circuit.Circuit;
+import net.replaceitem.integratedcircuit.circuit.ComponentState;
 import net.replaceitem.integratedcircuit.circuit.components.FacingComponent;
-import net.replaceitem.integratedcircuit.circuit.components.PortComponent;
+import net.replaceitem.integratedcircuit.client.circuit.ClientCircuit;
+import net.replaceitem.integratedcircuit.client.circuit.renderer.CircuitRenderer;
 import net.replaceitem.integratedcircuit.client.config.DefaultConfig;
 import net.replaceitem.integratedcircuit.client.gui.widget.ToolSelectionInfo;
 import net.replaceitem.integratedcircuit.client.gui.widget.Toolbox;
@@ -37,16 +37,14 @@ public class IntegratedCircuitScreen extends Screen {
     protected static final int BACKGROUND_WIDTH = 302;
     protected static final int BACKGROUND_HEIGHT = 250;
 
-    public static final int COMPONENT_SIZE = 16;
     public static final int RENDER_COMPONENT_SIZE = 12;
 
-    private static final float RENDER_SCALE = (((float) RENDER_COMPONENT_SIZE) / ((float) COMPONENT_SIZE));
 
     private static final int TITLE_X = 8;
     private static final int TITLE_Y = 9;
 
-    private static final int GRID_X = 101;
-    private static final int GRID_Y = 36;
+    private static final int CIRCUIT_X = 101;
+    private static final int CIRCUIT_Y = 36;
 
     private static final int CIRCUIT_NAME_TEXTBOX_X = 153;
     private static final int CIRCUIT_NAME_TEXTBOX_Y = 9;
@@ -73,6 +71,9 @@ public class IntegratedCircuitScreen extends Screen {
     protected Component customName;
     protected final ClientCircuit circuit;
 
+    @Nullable
+    private CircuitRenderer circuitRenderer;
+
     private FlatDirection cursorRotation = FlatDirection.NORTH;
     private @Nullable ComponentState cursorState = null;
 
@@ -93,6 +94,8 @@ public class IntegratedCircuitScreen extends Screen {
         this.toolbox = new Toolbox(this, TOOLBOX_X, TOOLBOX_Y);
         this.toolbox.init();
         this.toolbox.registerToolSelectionSubscriber(this::updateToolSelection);
+
+        this.circuitRenderer = new CircuitRenderer(this.circuit, this.x + CIRCUIT_X, this.y + CIRCUIT_Y, RENDER_COMPONENT_SIZE);
 
         this.customNameTextField = new EditBox(
             this.font,
@@ -156,7 +159,9 @@ public class IntegratedCircuitScreen extends Screen {
         super.extractRenderState(graphics, mouseX, mouseY, a);
         graphics.text(this.font, this.title, this.titleX, this.titleY, CommonColors.DARK_GRAY, false);
         this.renderStatusBar(graphics, mouseX, mouseY);
-        this.renderContent(graphics);
+        if(this.circuitRenderer != null) {
+            this.circuitRenderer.extractRenderState(graphics, mouseX, mouseY, a);
+        }
         this.renderCursorState(graphics, mouseX, mouseY);
     }
 
@@ -179,41 +184,14 @@ public class IntegratedCircuitScreen extends Screen {
 
 
     private void renderStatusBar(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
-        ComponentPos pos = getComponentPosAt(mouseX, mouseY);
-        ComponentState componentState = circuit.getComponentState(pos);
-        net.replaceitem.integratedcircuit.circuit.Component component = componentState.getComponent();
+        if(this.circuitRenderer == null) return;
 
-        int gridX = getGridXAt(mouseX);
-        int gridY = getGridYAt(mouseY);
+        var texts = this.circuitRenderer.getStatusText(mouseX, mouseY);
 
-        Component leftSideText = null;
-        Component rightSideText = null;
-
-        if (circuit.isInside(pos)) {
-            String componentName = component != Components.AIR
-                ? component.getName().getString()
-                : "";
-
-            leftSideText = Component.literal(
-                String.format(
-                    "(%d, %d) %s",
-                    gridX,
-                    gridY,
-                    componentName
-                )
-            );
-        } else if (componentState.getComponent() instanceof PortComponent portComponent) {
-            leftSideText = portComponent.getName();
-        }
-
-        if (component != Components.AIR) {
-            rightSideText = componentState.getHoverInfoText();
-        }
-
-        if (leftSideText != null) {
+        if (texts.left() != null) {
             graphics.text(
                 this.font,
-                leftSideText,
+                texts.left(),
                 this.x + STATUSBAR_X,
                 this.y + STATUSBAR_Y,
                 CommonColors.DARK_GRAY,
@@ -221,12 +199,12 @@ public class IntegratedCircuitScreen extends Screen {
             );
         }
 
-        if (rightSideText != null) {
-            int componentInfoWidth = this.font.width(rightSideText);
+        if (texts.right() != null) {
+            int componentInfoWidth = this.font.width(texts.right());
 
             graphics.text(
                 this.font,
-                rightSideText,
+                    texts.right(),
                 this.x + BACKGROUND_WIDTH - componentInfoWidth - STATUSBAR_RIGHT_MARGIN,
                 this.y + STATUSBAR_Y,
                 CommonColors.DARK_GRAY,
@@ -235,82 +213,14 @@ public class IntegratedCircuitScreen extends Screen {
         }
     }
 
-    public static Component getSignalStrengthText(int signalStrength) {
-        int color = RedStoneWireBlock.getColorForPower(signalStrength);
-        return Component.literal(String.valueOf(signalStrength)).withStyle(style -> style.withColor(color));
-    }
-
     private void renderCursorState(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
-        ComponentPos pos = getComponentPosAt(mouseX, mouseY);
+        if(this.circuitRenderer == null) return;
+        ComponentPos pos = this.circuitRenderer.getComponentPosAt(mouseX, mouseY);
         boolean validSpot = circuit.getComponentState(pos).isAir();
         float a = validSpot ? 0.5f : 0.2f;
         if (this.cursorState != null && circuit.isInside(pos)) {
-            graphics.pose().pushMatrix();
-            graphics.pose().translate(getGridPosX(0), getGridPosY(0));
-            graphics.pose().scale(RENDER_SCALE, RENDER_SCALE);
-            extractComponentStateRenderStateInGrid(graphics, this.cursorState, pos.getX(), pos.getY(), a);
-            graphics.pose().popMatrix();
+            this.circuitRenderer.renderStateAtComponentPos(graphics, this.cursorState, pos.getX(), pos.getY(), a);
         }
-    }
-
-    protected void renderContent(GuiGraphicsExtractor graphics) {
-        graphics.pose().pushMatrix();
-        graphics.pose().translate(getGridPosX(0), getGridPosY(0));
-
-        graphics.pose().scale(RENDER_SCALE, RENDER_SCALE);
-
-        for (FlatDirection direction : FlatDirection.VALUES) {
-            ComponentState port = circuit.getPorts()[direction.getIndex()];
-            ComponentPos pos = Circuit.PORT_POSITIONS.get(direction);
-            extractComponentStateRenderStateInGrid(graphics, port, pos.getX(), pos.getY(), 1);
-        }
-
-        for (int i = 0; i < Circuit.SIZE; i++) {
-            for (int j = 0; j < Circuit.SIZE; j++) {
-                ComponentState componentState = circuit.getSection().getComponentState(i, j);
-                extractComponentStateRenderStateInGrid(graphics, componentState, i, j, 1);
-            }
-        }
-
-        graphics.pose().popMatrix();
-    }
-
-    protected static void extractComponentStateRenderState(GuiGraphicsExtractor graphics, ComponentState state, int x, int y, float a) {
-        state.getComponent().extractRenderState(graphics, x, y, a, state);
-    }
-
-    protected void extractComponentStateRenderStateInGrid(GuiGraphicsExtractor graphics, ComponentState state, int x, int y, float a) {
-        extractComponentStateRenderState(graphics, state, x * COMPONENT_SIZE, y * COMPONENT_SIZE, a);
-    }
-
-    public static void extractComponentTextureRenderState(GuiGraphicsExtractor graphics, Identifier component, int x, int y, int rot, float alpha) {
-        extractComponentTextureRenderState(graphics, component, x, y, rot, ARGB.white(alpha));
-    }
-
-    public static void extractComponentTextureRenderState(GuiGraphicsExtractor graphics, Identifier component, int x, int y, int rot, int color) {
-        extractComponentTextureRenderState(graphics, component, x, y, rot, color, 0, 0, 16, 16);
-    }
-
-    public static void extractComponentTextureRenderState(GuiGraphicsExtractor graphics, Identifier component, int x, int y, int rot, int color, int u, int v, int w, int h) {
-        extractPartialTextureRenderState(graphics, component, x, y, u, v, 16, 16, rot, color, u, v, w, h);
-    }
-
-
-    public static void extractPartialTextureRenderState(GuiGraphicsExtractor graphics, Identifier texture, int componentX, int componentY, int x, int y, int textureW, int textureH, int rot, float alpha) {
-        extractPartialTextureRenderState(graphics, texture, componentX, componentY, x, y, textureW, textureH, rot, ARGB.white(alpha));
-    }
-
-    public static void extractPartialTextureRenderState(GuiGraphicsExtractor graphics, Identifier texture, int componentX, int componentY, int x, int y, int textureW, int textureH, int rot, int color) {
-        extractPartialTextureRenderState(graphics, texture, componentX, componentY, x, y, textureW, textureH, rot, color, 0, 0, textureW, textureH);
-    }
-
-    private static void extractPartialTextureRenderState(GuiGraphicsExtractor graphics, Identifier texture, int componentX, int componentY, int x, int y, int textureW, int textureH, int rot, int color, int u, int v, int w, int h) {
-        graphics.pose().pushMatrix();
-        graphics.pose().translate(componentX + 8, componentY + 8);
-        graphics.pose().rotate((float) (rot * Math.PI * 0.5));
-        graphics.pose().translate(-8, -8);
-        graphics.blit(RenderPipelines.GUI_TEXTURED, texture, x, y, u, v, w, h, textureW, textureH, color);
-        graphics.pose().popMatrix();
     }
 
     @Override
@@ -321,8 +231,9 @@ public class IntegratedCircuitScreen extends Screen {
     @Override
     public boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
         if(this.minecraft.player == null) return true;
+        if(this.circuitRenderer == null) return true;
 
-        ComponentPos clickedPos = getComponentPosAt((int) click.x(), (int) click.y());
+        ComponentPos clickedPos = this.circuitRenderer.getComponentPosAt((int) click.x(), (int) click.y());
 
         if (customNameTextField != null && customNameTextField.isFocused() && !customNameTextField.isMouseOver(click.x(), click.y())) {
             customNameTextField.setFocused(false);
@@ -433,8 +344,9 @@ public class IntegratedCircuitScreen extends Screen {
 
     @Override
     public boolean mouseDragged(MouseButtonEvent click, double offsetX, double offsetY) {
+        if(this.circuitRenderer == null) return false;
         if (startedDraggingInside) {
-            ComponentPos mousePos = getComponentPosAt((int) click.x(), (int) click.y());
+            ComponentPos mousePos = this.circuitRenderer.getComponentPosAt((int) click.x(), (int) click.y());
             if (circuit.isInside(mousePos)) {
                 boolean isPlace = matchesMouse(DefaultConfig.getConfig().getPlaceKeybind(), click.button());
                 boolean isDestroy = !isPlace && matchesMouse(DefaultConfig.getConfig().getDestroyKeybind(), click.button());
@@ -504,26 +416,6 @@ public class IntegratedCircuitScreen extends Screen {
 
     public int getY() {
         return y;
-    }
-
-    protected int getGridPosX(int gridX) {
-        return this.x + GRID_X + gridX * RENDER_COMPONENT_SIZE;
-    }
-
-    protected int getGridPosY(int gridY) {
-        return this.y + GRID_Y + gridY * RENDER_COMPONENT_SIZE;
-    }
-
-    protected int getGridXAt(int pixelX) {
-        return Math.floorDiv(pixelX - this.x - GRID_X, RENDER_COMPONENT_SIZE);
-    }
-
-    protected int getGridYAt(int pixelY) {
-        return Math.floorDiv(pixelY - this.y - GRID_Y, RENDER_COMPONENT_SIZE);
-    }
-
-    protected ComponentPos getComponentPosAt(int pixelX, int pixelY) {
-        return new ComponentPos(getGridXAt(pixelX), getGridYAt(pixelY));
     }
 
     public static boolean matchesMouse(InputConstants.Key key, int button) {

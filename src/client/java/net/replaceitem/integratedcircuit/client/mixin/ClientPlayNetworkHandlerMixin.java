@@ -1,4 +1,4 @@
-package net.replaceitem.integratedcircuit.mixin.client;
+package net.replaceitem.integratedcircuit.client.mixin;
 
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.core.BlockPos;

@@ -22,6 +22,7 @@ import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
 import org.jspecify.annotations.Nullable;
 
+import java.util.Objects;
 import java.util.Set;
 
 public class BlockEntityServerCircuitContext implements ServerCircuitContext {
@@ -103,7 +104,7 @@ public class BlockEntityServerCircuitContext implements ServerCircuitContext {
     public void playSound(@Nullable Player except, SoundEvent sound, SoundSource category, float volume, float pitch) {
         if(getWorld() != null) {
             for (ServerPlayer editingPlayer : this.blockEntity.getEditingPlayers()) {
-                if(editingPlayer.equals(except)) continue;
+                if(Objects.equals(editingPlayer, except)) continue;
                 Vec3 soundPos = getPos().getCenter();
                 editingPlayer.connection.send(new ClientboundSoundPacket(BuiltInRegistries.SOUND_EVENT.wrapAsHolder(sound), category, soundPos.x, soundPos.y, soundPos.z, volume, pitch, this.getRandom().nextLong()));
             }

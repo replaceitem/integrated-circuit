@@ -30,7 +30,14 @@
         ]
     },
     "mixins": [
-        "integrated_circuit.mixins.json"
+        {
+            "config": "integrated_circuit.mixins.json",
+            "environment": "*"
+        },
+        {
+            "config": "integrated_circuit.client.mixins.json",
+            "environment": "client"
+        }
     ],
     "accessWidener": "integrated_circuit.accesswidener",
     "depends": {

@@ -1,6 +1,5 @@
 package net.replaceitem.integratedcircuit.network.packet;
 
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -10,9 +9,6 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.replaceitem.integratedcircuit.IntegratedCircuit;
-import net.replaceitem.integratedcircuit.circuit.CircuitSerializer;
-import net.replaceitem.integratedcircuit.circuit.ClientCircuit;
-import net.replaceitem.integratedcircuit.circuit.context.ClientWorldClientCircuitContext;
 
 public record EditIntegratedCircuitS2CPacket(
         BlockPos pos,
@@ -27,10 +23,6 @@ public record EditIntegratedCircuitS2CPacket(
         ByteBufCodecs.COMPOUND_TAG, EditIntegratedCircuitS2CPacket::circuitNbt, // TODO use packet codec for circuit
         EditIntegratedCircuitS2CPacket::new
     );
-    
-    public ClientCircuit getClientCircuit(ClientLevel world, BlockPos pos) {
-        return new CircuitSerializer(circuitNbt).readClientCircuit(new ClientWorldClientCircuitContext(world, pos));
-    }
 
     @Override
     public Type<? extends CustomPacketPayload> type() {

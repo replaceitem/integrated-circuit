@@ -1,4 +1,4 @@
-package net.replaceitem.integratedcircuit.circuit.context;
+package net.replaceitem.integratedcircuit.client.circuit.context;
 
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;

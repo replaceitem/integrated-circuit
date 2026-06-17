@@ -1,4 +1,4 @@
-package net.replaceitem.integratedcircuit.circuit;
+package net.replaceitem.integratedcircuit.client.circuit;
 
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.Minecraft;
@@ -6,7 +6,8 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.SoundType;
-import net.replaceitem.integratedcircuit.circuit.context.ClientCircuitContext;
+import net.replaceitem.integratedcircuit.circuit.*;
+import net.replaceitem.integratedcircuit.client.circuit.context.ClientCircuitContext;
 import net.replaceitem.integratedcircuit.network.packet.ComponentInteractionC2SPacket;
 import net.replaceitem.integratedcircuit.network.packet.PlaceComponentC2SPacket;
 import net.replaceitem.integratedcircuit.network.packet.RenameCircuitC2SPacket;

@@ -1,9 +1,7 @@
 package net.replaceitem.integratedcircuit.circuit.components;
 
-import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.block.RedStoneWireBlock;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
@@ -15,10 +13,8 @@ import net.replaceitem.integratedcircuit.circuit.Component;
 import net.replaceitem.integratedcircuit.circuit.ComponentState;
 import net.replaceitem.integratedcircuit.circuit.ServerCircuit;
 import net.replaceitem.integratedcircuit.circuit.context.ServerCircuitContext;
-import net.replaceitem.integratedcircuit.client.gui.IntegratedCircuitScreen;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
-import org.jspecify.annotations.Nullable;
 
 public class PortComponent extends AbstractWireComponent {
     private static final Identifier TEXTURE_ARROW = IntegratedCircuit.id("textures/integrated_circuit/port.png");
@@ -30,40 +26,6 @@ public class PortComponent extends AbstractWireComponent {
     public PortComponent(Settings settings) {
         super(settings);
         this.setDefaultState(this.getStateDefinition().any().setValue(FACING, FlatDirection.NORTH).setValue(POWER, 0).setValue(IS_OUTPUT, false));
-    }
-
-    @Override
-    public @Nullable Identifier getItemTexture() {
-        return null;
-    }
-
-    @Override
-    public @Nullable Identifier getToolTexture() {
-        return null;
-    }
-
-    @Override
-    public net.minecraft.network.chat.Component getHoverInfoText(ComponentState state) {
-        int signalStrength = state.getValue(getPowerProperty());
-
-        return net.minecraft.network.chat.Component.translatable(
-                state.getValue(IS_OUTPUT)
-                    ? "integrated_circuit.component.integrated_circuit.port_output"
-                    : "integrated_circuit.component.integrated_circuit.port_input"
-            )
-            .append(" | ")
-            .append(IntegratedCircuitScreen.getSignalStrengthText(signalStrength));
-    }
-
-    @Override
-    public void extractRenderState(GuiGraphicsExtractor drawContext, int x, int y, float a, ComponentState state) {
-        int color = RedStoneWireBlock.getColorForPower(state.getValue(POWER));
-
-        FlatDirection rotation = state.getValue(FACING);
-        IntegratedCircuitScreen.extractComponentTextureRenderState(drawContext, TEXTURE_ARROW, x, y, rotation.getIndex(), color);
-
-        Identifier wireTexture = rotation.getAxis() == FlatDirection.Axis.X ? TEXTURE_X : TEXTURE_Y;
-        IntegratedCircuitScreen.extractComponentTextureRenderState(drawContext, wireTexture, x, y, 0, color);
     }
 
     @Override

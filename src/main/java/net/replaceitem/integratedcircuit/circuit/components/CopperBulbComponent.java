@@ -1,53 +1,23 @@
 package net.replaceitem.integratedcircuit.circuit.components;
 
-import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.replaceitem.integratedcircuit.IntegratedCircuit;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
 import net.replaceitem.integratedcircuit.circuit.Component;
 import net.replaceitem.integratedcircuit.circuit.ComponentState;
 import net.replaceitem.integratedcircuit.circuit.ServerCircuit;
-import net.replaceitem.integratedcircuit.client.gui.IntegratedCircuitScreen;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
-import org.jspecify.annotations.Nullable;
 
 public class CopperBulbComponent extends Component {
-    private static final Identifier ITEM_TEXTURE = IntegratedCircuit.id("textures/integrated_circuit/copper_bulb.png");
-    private static final Identifier TOOL_TEXTURE = IntegratedCircuit.id("toolbox/icons/copper_bulb");
-    private static final Identifier TEXTURE_LIT = IntegratedCircuit.id("textures/integrated_circuit/copper_bulb_lit.png");
-    private static final Identifier TEXTURE_POWERED = IntegratedCircuit.id("textures/integrated_circuit/copper_bulb_powered.png");
-    private static final Identifier TEXTURE_LIT_POWERED = IntegratedCircuit.id("textures/integrated_circuit/copper_bulb_lit_powered.png");
-
     public static final BooleanProperty LIT = BlockStateProperties.LIT;
     public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
 
     public CopperBulbComponent(Settings settings) {
         super(settings);
         this.setDefaultState(this.getStateDefinition().any().setValue(LIT, false).setValue(POWERED, false));
-    }
-
-    @Override
-    public @Nullable Identifier getItemTexture() {
-        return ITEM_TEXTURE;
-    }
-
-    @Override
-    public @Nullable Identifier getToolTexture() {
-        return TOOL_TEXTURE;
-    }
-
-    private Identifier getTexture(boolean lit, boolean powered) {
-        return lit ? (powered ? TEXTURE_LIT_POWERED : TEXTURE_LIT) : (powered ? TEXTURE_POWERED : ITEM_TEXTURE);
-    }
-
-    @Override
-    public void extractRenderState(GuiGraphicsExtractor drawContext, int x, int y, float a, ComponentState state) {
-        IntegratedCircuitScreen.extractComponentTextureRenderState(drawContext, getTexture(state.getValue(LIT), state.getValue(POWERED)), x, y, 0, a);
     }
 
     @Override

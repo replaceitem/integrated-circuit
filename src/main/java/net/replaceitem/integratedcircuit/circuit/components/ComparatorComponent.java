@@ -1,7 +1,5 @@
 package net.replaceitem.integratedcircuit.circuit.components;
 
-import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
@@ -13,24 +11,14 @@ import net.minecraft.world.level.block.state.properties.ComparatorMode;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.ticks.TickPriority;
-import net.replaceitem.integratedcircuit.IntegratedCircuit;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
 import net.replaceitem.integratedcircuit.circuit.Component;
 import net.replaceitem.integratedcircuit.circuit.ComponentState;
 import net.replaceitem.integratedcircuit.circuit.ServerCircuit;
-import net.replaceitem.integratedcircuit.client.gui.IntegratedCircuitScreen;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
-import org.jspecify.annotations.Nullable;
 
 public class ComparatorComponent extends AbstractRedstoneGateComponent {
-    private static final Identifier ITEM_TEXTURE = Identifier.withDefaultNamespace("textures/item/comparator.png");
-    private static final Identifier TOOL_TEXTURE = IntegratedCircuit.id("toolbox/icons/comparator");
-    private static final Identifier TEXTURE = IntegratedCircuit.id("textures/integrated_circuit/comparator.png");
-    private static final Identifier TEXTURE_ON = IntegratedCircuit.id("textures/integrated_circuit/comparator_on.png");
-    private static final Identifier TEXTURE_TORCH_OFF = IntegratedCircuit.id("textures/integrated_circuit/torch_top_off.png");
-    private static final Identifier TEXTURE_TORCH_ON = IntegratedCircuit.id("textures/integrated_circuit/torch_top_on.png");
-
     public static final EnumProperty<ComparatorMode> MODE = BlockStateProperties.MODE_COMPARATOR;
     public static final IntegerProperty OUTPUT_POWER = BlockStateProperties.POWER;
 
@@ -38,38 +26,6 @@ public class ComparatorComponent extends AbstractRedstoneGateComponent {
         super(settings);
         this.setDefaultState(this.getStateDefinition().any().setValue(FACING, FlatDirection.NORTH).setValue(POWERED, false).setValue(MODE, ComparatorMode.COMPARE).setValue(OUTPUT_POWER, 0));
     }
-
-    @Override
-    public @Nullable Identifier getItemTexture() {
-        return ITEM_TEXTURE;
-    }
-
-    @Override
-    public @Nullable Identifier getToolTexture() {
-        return TOOL_TEXTURE;
-    }
-
-    @Override
-    public net.minecraft.network.chat.Component getHoverInfoText(ComponentState state) {
-        int signalStrength = state.getValue(OUTPUT_POWER);
-        return IntegratedCircuitScreen.getSignalStrengthText(signalStrength);
-    }
-
-    @Override
-    public void extractRenderState(GuiGraphicsExtractor drawContext, int x, int y, float a, ComponentState state) {
-        boolean powered = state.getValue(POWERED);
-        int rot = state.getValue(FACING).getOpposite().getIndex();
-        IntegratedCircuitScreen.extractComponentTextureRenderState(drawContext, powered ? TEXTURE_ON : TEXTURE, x, y, rot, a);
-
-        Identifier torchTexture = powered ? TEXTURE_TORCH_ON : TEXTURE_TORCH_OFF;
-
-        IntegratedCircuitScreen.extractPartialTextureRenderState(drawContext, torchTexture, x, y, 3, 10, 4, 4, rot, a);
-        IntegratedCircuitScreen.extractPartialTextureRenderState(drawContext, torchTexture, x, y, 9, 10, 4, 4, rot, a);
-
-        Identifier modeTorchTexture = state.getValue(MODE) == ComparatorMode.SUBTRACT ? TEXTURE_TORCH_ON : TEXTURE_TORCH_OFF;
-        IntegratedCircuitScreen.extractPartialTextureRenderState(drawContext, modeTorchTexture, x, y, 6, 1, 4, 4, rot, a);
-    }
-
 
     @Override
     protected int getUpdateDelayInternal(ComponentState state) {

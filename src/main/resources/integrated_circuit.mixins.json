@@ -6,10 +6,6 @@
     "mixins": [
         "SchemasMixin"
     ],
-    "client": [
-        "KeyBindingAccessor",
-        "client.ClientPlayNetworkHandlerMixin"
-    ],
     "injectors": {
         "defaultRequire": 1
     }

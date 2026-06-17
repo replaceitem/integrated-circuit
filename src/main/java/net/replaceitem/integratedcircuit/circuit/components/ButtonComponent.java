@@ -1,33 +1,23 @@
 package net.replaceitem.integratedcircuit.circuit.components;
 
-import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.ARGB;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.replaceitem.integratedcircuit.IntegratedCircuit;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
 import net.replaceitem.integratedcircuit.circuit.Component;
 import net.replaceitem.integratedcircuit.circuit.ComponentState;
 import net.replaceitem.integratedcircuit.circuit.ServerCircuit;
-import net.replaceitem.integratedcircuit.client.gui.IntegratedCircuitScreen;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
 import org.jspecify.annotations.Nullable;
 
 public class ButtonComponent extends FacingComponent {
-    private static final Identifier ITEM_TEXTURE_STONE = IntegratedCircuit.id("textures/integrated_circuit/button_stone.png");
-    private static final Identifier ITEM_TEXTURE_WOOD = IntegratedCircuit.id("textures/integrated_circuit/button_wood.png");
-    private static final Identifier TOOL_TEXTURE_STONE = IntegratedCircuit.id("toolbox/icons/button_stone");
-    private static final Identifier TOOL_TEXTURE_WOOD = IntegratedCircuit.id("toolbox/icons/button_wood");
-
     public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
 
     private final boolean wooden;
@@ -36,30 +26,6 @@ public class ButtonComponent extends FacingComponent {
         super(settings);
         this.wooden = wooden;
         this.setDefaultState(this.getStateDefinition().any().setValue(POWERED, false));
-    }
-
-    @Override
-    public @Nullable Identifier getItemTexture() {
-        return wooden ? ITEM_TEXTURE_WOOD : ITEM_TEXTURE_STONE;
-    }
-
-    @Override
-    public @Nullable Identifier getToolTexture() {
-        return wooden ? TOOL_TEXTURE_WOOD : TOOL_TEXTURE_STONE;
-    }
-
-    @Override
-    public net.minecraft.network.chat.Component getHoverInfoText(ComponentState state) {
-        return IntegratedCircuitScreen.getSignalStrengthText(state.getValue(POWERED) ? 15 : 0);
-    }
-
-    @Override
-    public void extractRenderState(GuiGraphicsExtractor drawContext, int x, int y, float a, ComponentState state) {
-        Identifier texture = getItemTexture();
-        if(texture != null) {
-            float b = state.getValue(POWERED) ? 0.5f : 1f;
-            IntegratedCircuitScreen.extractComponentTextureRenderState(drawContext, texture, x, y, state.getValue(FACING).getIndex(), ARGB.colorFromFloat(a, b, b, b));
-        }
     }
 
     @Override
