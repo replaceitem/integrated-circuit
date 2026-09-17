@@ -3,7 +3,7 @@ package net.replaceitem.integratedcircuit.client.circuit.renderer;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.level.block.RedStoneWireBlock;
+import net.minecraft.world.level.block.RedstoneWireBlock;
 import net.replaceitem.integratedcircuit.circuit.Circuit;
 import net.replaceitem.integratedcircuit.circuit.ComponentState;
 import net.replaceitem.integratedcircuit.circuit.Components;
@@ -133,7 +133,7 @@ public class CircuitRenderer implements Renderable {
     }
 
     public static Component getSignalStrengthText(int signalStrength) {
-        int color = RedStoneWireBlock.getColorForPower(signalStrength);
+        int color = RedstoneWireBlock.getColorForPower(signalStrength);
         return Component.literal(String.valueOf(signalStrength)).withStyle(style -> style.withColor(color));
     }
 }

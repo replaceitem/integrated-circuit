@@ -41,7 +41,6 @@ import org.jspecify.annotations.Nullable;
 import java.util.List;
 
 public class IntegratedCircuitBlock extends HorizontalDirectionalBlock implements EntityBlock {
-    public static final MapCodec<IntegratedCircuitBlock> CODEC = simpleCodec(IntegratedCircuitBlock::new);
     protected static final VoxelShape SHAPE = Block.box(0.0, 0.0, 0.0, 16.0, 2.0, 16.0);
 
     public IntegratedCircuitBlock(Properties settings) {
@@ -191,7 +190,7 @@ public class IntegratedCircuitBlock extends HorizontalDirectionalBlock implement
         if (i >= 15) {
             return i;
         }
-        return Math.max(i, blockState.is(Blocks.REDSTONE_WIRE) ? blockState.getValue(RedStoneWireBlock.POWER) : 0);
+        return Math.max(i, blockState.is(Blocks.REDSTONE_WIRE) ? blockState.getValue(RedstoneWireBlock.POWER) : 0);
     }
 
     @Override
@@ -240,11 +239,6 @@ public class IntegratedCircuitBlock extends HorizontalDirectionalBlock implement
             }
         }
         return list;
-    }
-
-    @Override
-    protected MapCodec<? extends HorizontalDirectionalBlock> codec() {
-        return CODEC;
     }
 
     public static IntegratedCircuitBlock fromColor(DyeColor color) {

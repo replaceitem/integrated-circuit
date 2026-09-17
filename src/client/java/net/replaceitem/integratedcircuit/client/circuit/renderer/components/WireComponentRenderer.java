@@ -4,7 +4,7 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
-import net.minecraft.world.level.block.RedStoneWireBlock;
+import net.minecraft.world.level.block.RedstoneWireBlock;
 import net.replaceitem.integratedcircuit.IntegratedCircuit;
 import net.replaceitem.integratedcircuit.circuit.ComponentState;
 import net.replaceitem.integratedcircuit.client.circuit.renderer.CircuitRenderer;
@@ -25,7 +25,7 @@ public class WireComponentRenderer extends ComponentRenderer {
         final int size = CircuitRenderer.COMPONENT_SIZE;
         final int halfSize = size / 2;
 
-        int color = ARGB.color(ARGB.as8BitChannel(a), RedStoneWireBlock.getColorForPower(state.getValue(POWER)));
+        int color = ARGB.color(ARGB.as8BitChannel(a), RedstoneWireBlock.getColorForPower(state.getValue(POWER)));
 
         if(state.getValue(CONNECTED_NORTH)) ComponentRenderer.extractComponentTextureRenderState(graphics, TEXTURE_Y, x, y, 0, color, 0, 0, size, halfSize);
         if(state.getValue(CONNECTED_EAST)) ComponentRenderer.extractComponentTextureRenderState(graphics, TEXTURE_X, x, y, 0, color, halfSize, 0, halfSize, size);

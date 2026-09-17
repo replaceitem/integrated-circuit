@@ -3,7 +3,7 @@ package net.replaceitem.integratedcircuit.client.circuit.renderer.components;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.level.block.RedStoneWireBlock;
+import net.minecraft.world.level.block.RedstoneWireBlock;
 import net.replaceitem.integratedcircuit.IntegratedCircuit;
 import net.replaceitem.integratedcircuit.circuit.ComponentState;
 import net.replaceitem.integratedcircuit.client.circuit.renderer.CircuitRenderer;
@@ -21,7 +21,7 @@ public class PortComponentRenderer extends ComponentRenderer {
 
     @Override
     public void extractRenderState(GuiGraphicsExtractor graphics, int x, int y, float a, ComponentState state) {
-        int color = RedStoneWireBlock.getColorForPower(state.getValue(POWER));
+        int color = RedstoneWireBlock.getColorForPower(state.getValue(POWER));
 
         FlatDirection rotation = state.getValue(FACING);
         ComponentRenderer.extractComponentTextureRenderState(graphics, TEXTURE_ARROW, x, y, rotation.getIndex(), color);

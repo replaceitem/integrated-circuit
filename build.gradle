@@ -51,7 +51,7 @@ dependencies {
     }
 
     compileOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
-//    modRuntimeOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
+    runtimeOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
 }
 
 processResources {

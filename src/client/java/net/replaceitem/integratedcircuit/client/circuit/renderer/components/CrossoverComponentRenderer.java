@@ -4,7 +4,7 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
-import net.minecraft.world.level.block.RedStoneWireBlock;
+import net.minecraft.world.level.block.RedstoneWireBlock;
 import net.replaceitem.integratedcircuit.IntegratedCircuit;
 import net.replaceitem.integratedcircuit.circuit.ComponentState;
 import net.replaceitem.integratedcircuit.client.circuit.renderer.CircuitRenderer;
@@ -22,8 +22,8 @@ public class CrossoverComponentRenderer extends ComponentRenderer {
 
     @Override
     public void extractRenderState(GuiGraphicsExtractor graphics, int x, int y, float a, ComponentState state) {
-        int colorX = RedStoneWireBlock.getColorForPower(state.getValue(POWER_X));
-        int colorY = RedStoneWireBlock.getColorForPower(state.getValue(POWER_Y));
+        int colorX = RedstoneWireBlock.getColorForPower(state.getValue(POWER_X));
+        int colorY = RedstoneWireBlock.getColorForPower(state.getValue(POWER_Y));
 
         ComponentRenderer.extractComponentTextureRenderState(graphics, TEXTURE_X, x, y, 0, ARGB.color(ARGB.as8BitChannel(a), colorX));
         ComponentRenderer.extractComponentTextureRenderState(graphics, TEXTURE_BRIDGE, x, y, 0, a);

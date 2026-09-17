@@ -16,7 +16,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.RedStoneWireBlock;
+import net.minecraft.world.level.block.RedstoneWireBlock;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.replaceitem.integratedcircuit.IntegratedCircuit;
 
@@ -87,7 +87,7 @@ public class ModelGenerator extends FabricModelProvider {
                                 .with(NORTH_DEFAULT_HORIZONTAL_ROTATION_OPERATIONS)
                 );
 
-        ItemTintSource wireOffTint = ItemModelUtils.constantTint(RedStoneWireBlock.getColorForPower(0));
+        ItemTintSource wireOffTint = ItemModelUtils.constantTint(RedstoneWireBlock.getColorForPower(0));
         blockStateModelGenerator.itemModelOutput.accept(block.asItem(), ItemModelUtils.tintedModel(modelId, wireOffTint, wireOffTint, wireOffTint, wireOffTint));
     }
 }

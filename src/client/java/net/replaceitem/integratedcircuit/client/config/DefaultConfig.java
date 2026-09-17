@@ -6,8 +6,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
 import net.replaceitem.integratedcircuit.client.mixin.KeyBindingAccessor;
 import org.jspecify.annotations.Nullable;
-import org.lwjgl.glfw.GLFW;
-
 
 public class DefaultConfig {
     
@@ -31,18 +29,18 @@ public class DefaultConfig {
 
     public InputConstants.Key getPlaceKeybind() {
         Options options = getGameOptions();
-        return options == null ? InputConstants.Type.MOUSE.getOrCreate(GLFW.GLFW_MOUSE_BUTTON_RIGHT) : ((KeyBindingAccessor) options.keyUse).getKey();
+        return options == null ? InputConstants.Type.MOUSE.getOrCreate(InputConstants.MOUSE_BUTTON_RIGHT) : ((KeyBindingAccessor) options.keyUse).getKey();
     }
     public InputConstants.Key getDestroyKeybind() {
         Options options = getGameOptions();
-        return options == null ? InputConstants.Type.MOUSE.getOrCreate(GLFW.GLFW_MOUSE_BUTTON_LEFT) : ((KeyBindingAccessor) options.keyAttack).getKey();
+        return options == null ? InputConstants.Type.MOUSE.getOrCreate(InputConstants.MOUSE_BUTTON_LEFT) : ((KeyBindingAccessor) options.keyAttack).getKey();
     }
     public InputConstants.Key getPickKeybind() {
         Options options = getGameOptions();
-        return options == null ? InputConstants.Type.MOUSE.getOrCreate(GLFW.GLFW_MOUSE_BUTTON_MIDDLE) : ((KeyBindingAccessor) options.keyPickItem).getKey();
+        return options == null ? InputConstants.Type.MOUSE.getOrCreate(InputConstants.MOUSE_BUTTON_MIDDLE) : ((KeyBindingAccessor) options.keyPickItem).getKey();
     }
     public InputConstants.Key getRotateKeybind() {
-        return InputConstants.Type.KEYSYM.getOrCreate(GLFW.GLFW_KEY_R);
+        return InputConstants.Type.KEYBOARD.getOrCreate(InputConstants.KEY_R);
     }
     public ScrollBehaviour getScrollBehaviour() {
         return ScrollBehaviour.ROTATE;

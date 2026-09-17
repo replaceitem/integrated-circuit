@@ -43,7 +43,7 @@ public class ClothConfigCompat {
         );
     }
 
-    public static Screen getConfigScreenFavtory(Screen parent) {
+    public static Screen getConfigScreenFactory(Screen parent) {
         return AutoConfigClient.getConfigScreen(ClothConfig.class, parent).get();
     }
 }

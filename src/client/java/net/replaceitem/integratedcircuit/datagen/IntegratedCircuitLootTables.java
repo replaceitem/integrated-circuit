@@ -11,7 +11,7 @@ import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.functions.CopyComponentsFunction;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.ExplosionCondition;
-import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
+import net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProviders;
 import net.replaceitem.integratedcircuit.IntegratedCircuit;
 import net.replaceitem.integratedcircuit.IntegratedCircuitBlock;
 
@@ -33,7 +33,7 @@ public class IntegratedCircuitLootTables extends FabricBlockLootSubProvider {
         add(block, LootTable.lootTable().withPool(
                 LootPool.lootPool()
                         .when(ExplosionCondition.survivesExplosion())
-                        .setRolls(ConstantValue.exactly(1.0F))
+                        .setRolls(ContextIntProviders.exactly(1))
                         .add(
                                 LootItem.lootTableItem(block)
                                         .apply(

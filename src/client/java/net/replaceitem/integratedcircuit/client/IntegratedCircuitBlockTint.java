@@ -3,7 +3,7 @@ package net.replaceitem.integratedcircuit.client;
 import net.minecraft.client.color.block.BlockTintSource;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.block.RedStoneWireBlock;
+import net.minecraft.world.level.block.RedstoneWireBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.replaceitem.integratedcircuit.IntegratedCircuitBlockEntity;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
@@ -21,12 +21,12 @@ public class IntegratedCircuitBlockTint {
         return new BlockTintSource() {
             @Override
             public int color(BlockState state) {
-                return RedStoneWireBlock.getColorForPower(0);
+                return RedstoneWireBlock.getColorForPower(0);
             }
 
             @Override
             public int colorInWorld(BlockState state, BlockAndTintGetter level, BlockPos pos) {
-                return RedStoneWireBlock.getColorForPower(getPower(level, pos));
+                return RedstoneWireBlock.getColorForPower(getPower(level, pos));
             }
 
             public int getPower(BlockAndTintGetter level, BlockPos pos) {

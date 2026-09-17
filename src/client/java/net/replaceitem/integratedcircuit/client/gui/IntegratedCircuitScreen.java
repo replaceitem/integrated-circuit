@@ -27,7 +27,9 @@ import net.replaceitem.integratedcircuit.network.packet.FinishEditingC2SPacket;
 import net.replaceitem.integratedcircuit.util.ComponentPos;
 import net.replaceitem.integratedcircuit.util.FlatDirection;
 import org.jspecify.annotations.Nullable;
-import org.lwjgl.glfw.GLFW;
+
+import java.util.List;
+import java.util.stream.Stream;
 
 public class IntegratedCircuitScreen extends Screen {
     public static final Identifier BACKGROUND_TEXTURE = IntegratedCircuit.id(
@@ -57,6 +59,19 @@ public class IntegratedCircuitScreen extends Screen {
     private static final int STATUSBAR_X = 89;
     private static final int STATUSBAR_Y = 234;
     private static final int STATUSBAR_RIGHT_MARGIN = 8;
+
+    private static final InputConstants.Key PALETTE_DESELECT_KEY = InputConstants.Type.KEYBOARD.getOrCreate(InputConstants.KEY_0);
+    private static final List<InputConstants.Key> PALETTE_SHORTCUT_KEYS = Stream.of(
+            InputConstants.KEY_1,
+            InputConstants.KEY_2,
+            InputConstants.KEY_3,
+            InputConstants.KEY_4,
+            InputConstants.KEY_5,
+            InputConstants.KEY_6,
+            InputConstants.KEY_7,
+            InputConstants.KEY_8,
+            InputConstants.KEY_9
+    ).map(InputConstants.Type.KEYBOARD::getOrCreate).toList();
 
     private boolean startedDraggingInside = false;
 
@@ -387,6 +402,8 @@ public class IntegratedCircuitScreen extends Screen {
 
     @Override
     public boolean keyPressed(KeyEvent input) {
+        var key = InputConstants.getKey(input);
+
         if (this.customNameTextField != null && this.customNameTextField.isFocused()) {
             if (input.isConfirmation() || input.isEscape()) {
                 customNameTextField.setFocused(false);
@@ -394,17 +411,19 @@ public class IntegratedCircuitScreen extends Screen {
             }
         }
 
-        if (matchesKey(DefaultConfig.getConfig().getRotateKeybind(), input.input(), input.scancode())) {
+        if (key.equals(DefaultConfig.getConfig().getRotateKeybind())) {
             rotateComponent(1);
             return true;
         }
 
-        if (input.input() >= GLFW.GLFW_KEY_0 && input.input() <= GLFW.GLFW_KEY_9) {
-            if (input.input() == GLFW.GLFW_KEY_0) {
-                deselectPalette();
-            } else {
-                selectPalette(input.input() - GLFW.GLFW_KEY_1);
-            }
+        if(key.equals(PALETTE_DESELECT_KEY)) {
+            deselectPalette();
+            return true;
+        }
+
+        var paletteIndex = PALETTE_SHORTCUT_KEYS.indexOf(key);
+        if(paletteIndex >= 0) {
+            selectPalette(paletteIndex);
             return true;
         }
         return super.keyPressed(input);
@@ -421,12 +440,4 @@ public class IntegratedCircuitScreen extends Screen {
     public static boolean matchesMouse(InputConstants.Key key, int button) {
         return key.getType() == InputConstants.Type.MOUSE && key.getValue() == button;
     }
-
-    public static boolean matchesKey(InputConstants.Key key, int keyCode, int scanCode) {
-        if (keyCode == InputConstants.UNKNOWN.getValue()) {
-            return key.getType() == InputConstants.Type.SCANCODE && key.getValue() == scanCode;
-        }
-        return key.getType() == InputConstants.Type.KEYSYM && key.getValue() == keyCode;
-    }
-
 }

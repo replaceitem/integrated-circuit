@@ -36,7 +36,9 @@ public class CircuitSerializer {
     }
 
     public ServerCircuit readServerCircuit(ServerCircuitContext context) {
-        return ServerCircuit.CODEC.parse(context, NbtOps.INSTANCE, root).result().orElseGet(() -> new ServerCircuit(context));
+        return ServerCircuit.CODEC.parse(context, NbtOps.INSTANCE, root)
+                .result()
+                .orElseGet(() -> new ServerCircuit(context));
     }
 
     protected ComponentState[] readPortStates() {

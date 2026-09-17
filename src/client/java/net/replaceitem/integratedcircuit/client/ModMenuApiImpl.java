@@ -8,6 +8,6 @@ import net.replaceitem.integratedcircuit.client.config.DefaultConfig;
 public class ModMenuApiImpl implements ModMenuApi {
     @Override
     public ConfigScreenFactory<?> getModConfigScreenFactory() {
-        return parent -> DefaultConfig.clothConfigEnabled ? ClothConfigCompat.getConfigScreenFavtory(parent) : null;
+        return parent -> DefaultConfig.clothConfigEnabled ? ClothConfigCompat.getConfigScreenFactory(parent) : null;
     }
 }

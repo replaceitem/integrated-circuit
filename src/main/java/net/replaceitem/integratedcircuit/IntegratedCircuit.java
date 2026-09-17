@@ -99,7 +99,7 @@ public class IntegratedCircuit implements ModInitializer {
             BlockBehaviour.Properties settings = BlockBehaviour.Properties.of()
                     .instabreak()
                     .sound(SoundType.WOOD)
-                    .pushReaction(PushReaction.DESTROY)
+                    .pushReaction(PushReaction.POPPED)
                     .setId(registryKey);
             if(color != null) settings = settings.mapColor(color);
             return settings;

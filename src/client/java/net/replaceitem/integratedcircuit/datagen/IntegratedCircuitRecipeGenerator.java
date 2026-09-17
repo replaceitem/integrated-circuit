@@ -3,16 +3,18 @@ package net.replaceitem.integratedcircuit.datagen;
 import com.google.common.collect.ImmutableMap;
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
+import net.minecraft.advancements.Advancement;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.recipes.RecipeCategory;
-import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.TransmuteRecipeBuilder;
+import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.Recipe;
 import net.replaceitem.integratedcircuit.IntegratedCircuit;
 
 import java.util.Map;
@@ -20,8 +22,8 @@ import java.util.concurrent.CompletableFuture;
 
 public class IntegratedCircuitRecipeGenerator extends RecipeProvider {
 
-    protected IntegratedCircuitRecipeGenerator(HolderLookup.Provider registries, RecipeOutput exporter) {
-        super(registries, exporter);
+    protected IntegratedCircuitRecipeGenerator(BootstrapContext<Recipe<?>> recipes, BootstrapContext<Advancement> advancements) {
+        super(recipes, advancements);
     }
     
     private static final String GROUP = IntegratedCircuit.id("integrated_circuit").toString();
@@ -104,8 +106,8 @@ public class IntegratedCircuitRecipeGenerator extends RecipeProvider {
         }
 
         @Override
-        protected RecipeProvider createRecipeProvider(HolderLookup.Provider wrapperLookup, RecipeOutput recipeExporter) {
-            return new IntegratedCircuitRecipeGenerator(wrapperLookup, recipeExporter);
+        protected RecipeProvider createRecipeProvider(HolderLookup.Provider registries, BootstrapContext<Recipe<?>> recipes, BootstrapContext<Advancement> advancements) {
+            return new IntegratedCircuitRecipeGenerator(recipes, advancements);
         }
 
         @Override

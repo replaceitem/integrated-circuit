@@ -46,7 +46,7 @@ public class IntegratedCircuitBlockEntityRenderer implements BlockEntityRenderer
 
         matrices.pushPose();
         matrices.translate(0.5F, 3f/16+0.001f, 0.5F);
-        matrices.mulPose(orientation);
+        matrices.rotate(orientation);
         int light = state.lightCoords;
         int textWidth = textRenderer.width(customName);
         float scale = Math.min(MAX_WIDTH / textWidth, MAX_HEIGHT / textRenderer.lineHeight);

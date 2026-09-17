@@ -3,7 +3,7 @@
   "criteria": {
     "has_the_recipe": {
       "conditions": {
-        "recipe": "integrated_circuit:dye_yellow_integrated_circuit"
+        "recipes": "integrated_circuit:dye_yellow_integrated_circuit"
       },
       "trigger": "minecraft:recipe_unlocked"
     },

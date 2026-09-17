@@ -1,4 +1,4 @@
-package net.replaceitem.integratedcircuit.datafix;
+package net.replaceitem.integratedcircuit.datafix.fixes;
 
 import com.google.gson.JsonElement;
 import com.mojang.datafixers.DSL;
