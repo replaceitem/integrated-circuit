@@ -46,6 +46,7 @@ public class IntegratedCircuitBlockEntity extends BlockEntity implements Nameabl
     private ServerCircuit circuit;
     @Nullable
     private CompoundTag circuitNbt;
+    private boolean nbtReceived = false;
 
     protected byte[] renderSignalStrengths = new byte[] {0,0,0,0};
 
@@ -65,9 +66,10 @@ public class IntegratedCircuitBlockEntity extends BlockEntity implements Nameabl
                 for (int i = 0; i < Circuit.PORT_COUNT; i++) {
                     renderSignalStrengths[i] = circuit.getPorts()[i].getValue(PortComponent.POWER).byteValue();
                 }
-            } else {
+            } else if(nbtReceived) { // nbt was received (block entity or item data) but isnt present, so default circuit is created
                 this.circuit = new ServerCircuit(context);
             }
+            this.nbtReceived = false;
         }
     }
     
@@ -97,6 +99,7 @@ public class IntegratedCircuitBlockEntity extends BlockEntity implements Nameabl
         if(circuitComponent != null) {
             this.circuitNbt = circuitComponent.copyTag();
         }
+        this.nbtReceived = true;
         tryCreateCircuit();
     }
 
@@ -111,6 +114,7 @@ public class IntegratedCircuitBlockEntity extends BlockEntity implements Nameabl
     protected void loadAdditional(ValueInput view) {
         this.customName = parseCustomNameSafe(view, "CustomName");
         this.circuitNbt = view.read("circuit", CompoundTag.CODEC).orElse(null);
+        this.nbtReceived = true;
         tryCreateCircuit();
 
         // only received from toInitialChunkDataNbt on the client
