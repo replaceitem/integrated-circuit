@@ -402,14 +402,18 @@ public class IntegratedCircuitScreen extends Screen {
 
     @Override
     public boolean keyPressed(KeyEvent input) {
+        if(this.customNameTextField == null) return false;
+
         var key = InputConstants.getKey(input);
 
-        if (this.customNameTextField != null && this.customNameTextField.isFocused()) {
+        if (this.customNameTextField.isFocused()) {
             if (input.isConfirmation() || input.isEscape()) {
                 customNameTextField.setFocused(false);
                 return true;
             }
         }
+
+        if(key.getType() == InputConstants.Type.KEYBOARD && this.customNameTextField.capturesInput()) return false;
 
         if (key.equals(DefaultConfig.getConfig().getRotateKeybind())) {
             rotateComponent(1);
@@ -426,7 +430,15 @@ public class IntegratedCircuitScreen extends Screen {
             selectPalette(paletteIndex);
             return true;
         }
-        return super.keyPressed(input);
+
+        if(super.keyPressed(input)) return true;
+
+        if (this.minecraft.options.keyInventory.matches(input)) {
+            this.onClose();
+            return true;
+        }
+
+        return false;
     }
 
     public int getX() {
