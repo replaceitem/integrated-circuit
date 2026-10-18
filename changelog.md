@@ -1,7 +1,2 @@
-### ⚠️ Back up your world
-
-Due to changes in block state serialization in minecraft, circuits also need to be migrated, since they share the block state serialization for components. Make sure you make a backup of your world before upgrading it.
-
-### Changes
-
-* Updated to MC 26.3
+* Fixed circuits not being copied from items when placed ([#49](https://github.com/replaceitem/integrated-circuit/issues/49))
+* Made the inventory open keybind (E) close the circuit screen
